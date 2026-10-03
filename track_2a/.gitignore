@@ -25,3 +25,11 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# booklint
+.cache/
+runs/*
+!runs/v1/
+runs/v1/*.log
+data/dev/
+data/archive/synthetic-*/

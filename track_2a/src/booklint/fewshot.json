@@ -1,0 +1,78 @@
+[
+ {
+  "id": "v1-0020",
+  "claim": "Das Komitee vertritt die Auffassung, dass die vorgesehenen direkten Subventionen verfassungswidrig sind, weil Artikel 93 der Bundesverfassung ausschließlich die Förderung von Radio und Fernsehen zulässt.",
+  "claim_language": "de",
+  "booklet_language": "de",
+  "passages": [
+   "(p. 53; Vierte Vorlage: Massnahmen zugunsten der Medien / Der Text auf dieser Doppelseite stammt vom Referendumskomitee. Es ist für den Inhalt und die Wortwahl verantwortlich. / Verfassungswidrig) Artikel 93 der Bundesverfassung erlaubt nur die Förderung von Radio und TV. Die neuen direkten Subventionen sind ein Verfassungsbruch."
+  ],
+  "evidence": [
+   1
+  ],
+  "label": "entailment"
+ },
+ {
+  "id": "v1-0730",
+  "claim": "Le comité estime que les droits de scolarité dans les universités publiques devraient être abolis afin d’assurer l’égalité des chances d’accès à l’enseignement supérieur.",
+  "claim_language": "fr",
+  "booklet_language": "fr",
+  "passages": [
+   "(p. 17; Premier objet : initiative pour l'argent liquide et contre-projet / Objectifs de l'initiative) Les auteurs de l'initiative veulent empêcher que pièces et billets soient abolis ou supplantés. Ils veulent par ailleurs garantir que le franc reste la monnaie suisse et qu'il ne soit pas possible de le remplacer au moyen d'une simple modification de loi. C'est pourquoi ils demandent l'inscription de dispositions spéci"
+  ],
+  "evidence": [],
+  "label": "neutral"
+ },
+ {
+  "id": "v1-1444",
+  "claim": "Il riassunto sostiene che la Svizzera possiede una delle normative più permissive al mondo sulla sperimentazione animale.",
+  "claim_language": "it",
+  "booklet_language": "it",
+  "passages": [
+   "(p. 4; Primo oggetto: Divieto degli esperimenti sugli animali e sugli esseri umani / Il progetto) Chiede, inoltre, che la ricerca condotta senza impiegare animali riceva almeno lo stesso sostegno statale accordato oggi alla ricerca che se ne avvale. Esige infine anche il divieto degli esperimenti sugli esseri umani. In caso di accettazione dell'iniziativa, non sarebbero più disponibili in Svizzera nuovi farmaci ad ",
+   "(p. 4; Primo oggetto: Divieto degli esperimenti sugli animali e sugli esseri umani / Contesto) La Svizzera ha una delle leggi più severe al mondo in materia di sperimentazione animale: un esperimento è autorizzato soltanto se l'obiettivo non può essere raggiunto in altro modo e se l'utilità per la società giustifica la sofferenza inferta agli animali. Inoltre, i ricercatori possono impiegare unicamente il numero"
+  ],
+  "evidence": [
+   2
+  ],
+  "label": "contradiction"
+ },
+ {
+  "id": "v1-0387",
+  "claim": "Se il voto viene approvato, il Consiglio federale attuerà la modifica della legge sui trapianti e l’iniziativa popolare «Favorire la donazione di organi e salvare vite umane» sarà definitivamente ritirata.",
+  "claim_language": "it",
+  "booklet_language": "it",
+  "passages": [
+   "(p. 6; Secondo oggetto: Legge sui trapianti / Il progetto) La modifica della legge sui trapianti è il controprogetto all'iniziativa popolare «Favorire la donazione di organi e salvare vite umane» che chiede anch'essa di introdurre il principio del consenso presunto, ma non disciplina il ruolo dei congiunti. Il comitato ha ritirato l'iniziativa a condizione che la modifica dell",
+   "(p. 30; Secondo oggetto: Legge sui trapianti / Cosa accade in caso di un NO?) Se è accettata, il Consiglio federale la metterà in vigore e l'iniziativa popolare sarà definitivamente ritirata. Se invece la modifica di legge è respinta, avrà luogo la votazione sull'iniziativa popolare «Favorire la donazione di organi e salvare vite umane», a meno che il comitato promotore non la ritiri definitivam"
+  ],
+  "evidence": [
+   2
+  ],
+  "label": "entailment"
+ },
+ {
+  "id": "v1-1084",
+  "claim": "Laut dem Abstimmungstext sind Kapitaleinkommensteile, die einen gesetzlich festgelegten Betrag überschreiten, zu 100 Prozent steuerbar.",
+  "claim_language": "de",
+  "booklet_language": "de",
+  "passages": [
+   "(p. 20; Erste Vorlage: «Löhne entlasten, Kapital gerecht besteuern» / Art. 1) Kapitaleinkommensteile über einem durch das Gesetz festgelegten Betrag sind im Umfang von 150 Prozent steuerbar."
+  ],
+  "evidence": [
+   1
+  ],
+  "label": "contradiction"
+ },
+ {
+  "id": "v1-0880",
+  "claim": "Nel riassunto si sostiene che l’iniziativa è stata presentata nel 2021 da un comitato composto da 100'000 firmatari.",
+  "claim_language": "it",
+  "booklet_language": "it",
+  "passages": [
+   "(p. 7; Secondo oggetto: Iniziativa per un freno ai costi / Raccomandazione del comitato d'iniziativa) Il comitato d'iniziativa ritiene che i premi delle casse malati possano essere contenuti a lungo termine soltanto introducendo un freno ai costi. L'incessante aumento dei premi che si registra ormai da anni è infatti dovuto alla crescita incontrollata dei costi sanitari."
+  ],
+  "evidence": [],
+  "label": "neutral"
+ }
+]

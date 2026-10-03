@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "booklint"
+version = "0.2.0"
+description = "Document-level NLI with evidence over Swiss official voting booklets, built on Apertus"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = ["pymupdf>=1.24", "openai>=1.40", "rapidfuzz>=3.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+dense = ["fastembed>=0.7", "numpy>=1.26"]
+
+[project.scripts]
+booklint = "booklint.cli:main"
+
+[tool.setuptools.package-data]
+booklint = ["fewshot.json"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["booklint*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

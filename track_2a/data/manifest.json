@@ -1,0 +1,123 @@
+{
+  "dataset_name": "GeaNaVid OST Voting NLI Benchmark",
+  "version": "1.0.0",
+  "license": "MIT (OST v1.0 and derived splits); edge cases: Apache-2.0 with the code",
+  "benchmark_source": {
+    "huggingface": "OSTswiss/MNLIoverSwissVotingBooklets",
+    "commit": "adca9a5",
+    "curator": "OST (Ostschweizer Fachhochschule)",
+    "domain": "Swiss Federal Voting Booklets (2020-2026)",
+    "official_total_records": 1495,
+    "languages": [
+      "de",
+      "fr",
+      "it"
+    ],
+    "voting_dates": 20
+  },
+  "split_policy": {
+    "unit": "booklet_publish_date: the de/fr/it versions of one booklet always stay in one split",
+    "method": "draw 7 of the 19 free voting dates as test, 5000 seeded draws (seed 2026); keep the draw whose test part is closest to 1/3 of the rows and to the overall label, claim-language, booklet-language and same/cross-language distribution",
+    "forced_dev": [
+      "2026-06-14 (kickoff demo booklet, used to build the first pipeline)"
+    ],
+    "dev_s": "450 rows of dev, sampled proportionally per label x same/cross-language cell (seed 2026)",
+    "script": "experiments/v1/split.py",
+    "definition": "v1/split.json",
+    "test_use": "final numbers only; prompts, few-shot examples and thresholds come from dev/dev_s"
+  },
+  "tiers": {
+    "tier_1_official_benchmark": {
+      "v1.0.jsonl": {
+        "file": "v1/v1.0.jsonl",
+        "records": 1495,
+        "sha256": "f13c50392bd36d744a304fdacb1e61d53ab5eab5c9062f2a5182a175814fb88c",
+        "size_bytes": 12749674,
+        "labels": {
+          "0_entailment": 498,
+          "1_neutral": 498,
+          "2_contradiction": 499
+        },
+        "claim_languages": {
+          "de": 498,
+          "fr": 498,
+          "it": 499
+        }
+      },
+      "dev.jsonl": {
+        "file": "v1/dev.jsonl",
+        "records": 998,
+        "sha256": "9fe7b969ff42571e8ec516405bce0c2aa76b51364435947a770f174959dc3cc4",
+        "size_bytes": 7895122,
+        "labels": {
+          "0_entailment": 336,
+          "1_neutral": 329,
+          "2_contradiction": 333
+        },
+        "claim_languages": {
+          "de": 332,
+          "fr": 333,
+          "it": 333
+        }
+      },
+      "dev_s.jsonl": {
+        "file": "v1/dev_s.jsonl",
+        "records": 450,
+        "sha256": "67e7fe885734af96cdf72c6dec7c34fae807da4494040ef5dee19ea79f8d095b",
+        "size_bytes": 3523004,
+        "labels": {
+          "0_entailment": 151,
+          "1_neutral": 148,
+          "2_contradiction": 151
+        },
+        "claim_languages": {
+          "de": 136,
+          "fr": 148,
+          "it": 166
+        }
+      },
+      "test.jsonl": {
+        "file": "v1/test.jsonl",
+        "records": 497,
+        "sha256": "6856a37d208eb0156f763429b095892f646b7bdc97a16d72fe22b0b340da21fc",
+        "size_bytes": 3918125,
+        "labels": {
+          "0_entailment": 162,
+          "1_neutral": 169,
+          "2_contradiction": 166
+        },
+        "claim_languages": {
+          "de": 166,
+          "fr": 165,
+          "it": 166
+        }
+      }
+    },
+    "tier_3_archive": {
+      "demo_kickoff": "archive/demo-2026-10-01 (28-row OST demo, superseded by v1.0)"
+    },
+    "tier_2_synthetic_edge_cases": {
+      "edge_cases.jsonl": {
+        "file": "edge_cases.jsonl",
+        "records": 24,
+        "sha256": "5ce09dea61185332e340a23abf826ed505e84771a0df6320bdd187a6e9fc748f",
+        "size_bytes": 24753,
+        "labels": {
+          "0_entailment": 8,
+          "1_neutral": 4,
+          "2_contradiction": 12
+        },
+        "claim_languages": {
+          "de": 13,
+          "fr": 3,
+          "it": 3,
+          "rm": 5
+        },
+        "synthetic": true,
+        "reviewed": false,
+        "generator": "antigravity-agent (2026-10-02)",
+        "note": "LLM-written stress pairs; references are paraphrases, not verbatim booklet text; page numbers are placeholders; not part of the OST benchmark"
+      }
+    }
+  }
+}

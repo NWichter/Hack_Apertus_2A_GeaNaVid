@@ -1,0 +1,14 @@
+services:
+  booklint:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - LLM_NAME
+      - LLM_BASE_URL
+      - LLM_API_KEY
+    volumes:
+      - ./data:/work/data:ro
+      - ./runs:/work/runs
+      - ./.cache:/work/.cache

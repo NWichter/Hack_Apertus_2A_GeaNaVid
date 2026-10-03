@@ -1,0 +1,95 @@
+{
+  "source": "OSTswiss/MNLIoverSwissVotingBooklets v1.0.jsonl (HF commit adca9a5)",
+  "seed": 2026,
+  "unit": "booklet_publish_date (DE/FR/IT versions of a booklet stay in one split)",
+  "forced_dev": [
+    "2026-06-14"
+  ],
+  "test_dates": [
+    "2020-02-09",
+    "2020-09-27",
+    "2020-11-29",
+    "2023-06-18",
+    "2024-09-22",
+    "2024-11-24",
+    "2025-02-09"
+  ],
+  "dev_dates": [
+    "2021-03-07",
+    "2021-06-13",
+    "2021-09-26",
+    "2021-11-28",
+    "2022-02-13",
+    "2022-05-15",
+    "2022-09-25",
+    "2024-03-03",
+    "2024-06-09",
+    "2025-09-28",
+    "2025-11-30",
+    "2026-03-08",
+    "2026-06-14"
+  ],
+  "dev": {
+    "rows": 998,
+    "booklets": 39,
+    "labels": {
+      "0": 336,
+      "1": 329,
+      "2": 333
+    },
+    "same_language": 355,
+    "cross_language": 643,
+    "booklet_language": {
+      "de": 303,
+      "fr": 384,
+      "it": 311
+    },
+    "claim_language": {
+      "de": 332,
+      "fr": 333,
+      "it": 333
+    }
+  },
+  "test": {
+    "rows": 497,
+    "booklets": 21,
+    "labels": {
+      "0": 162,
+      "1": 169,
+      "2": 166
+    },
+    "same_language": 166,
+    "cross_language": 331,
+    "booklet_language": {
+      "de": 156,
+      "fr": 186,
+      "it": 155
+    },
+    "claim_language": {
+      "de": 166,
+      "fr": 165,
+      "it": 166
+    }
+  },
+  "dev_s": {
+    "rows": 450,
+    "booklets": 39,
+    "labels": {
+      "0": 151,
+      "1": 148,
+      "2": 151
+    },
+    "same_language": 160,
+    "cross_language": 290,
+    "booklet_language": {
+      "de": 128,
+      "fr": 179,
+      "it": 143
+    },
+    "claim_language": {
+      "de": 136,
+      "fr": 148,
+      "it": 166
+    }
+  }
+}
