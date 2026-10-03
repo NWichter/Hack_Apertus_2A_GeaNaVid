@@ -35,16 +35,23 @@ make run MODES=retrieval,baseline   # plus the whole-booklet baseline (~20 k tok
 ```
 
 `make run` prints a table (macro-F1 with 95 % bootstrap interval, F1 per class, macro-F1 for same- and
-cross-language claims, retrieval hit@5, tokens and Apertus calls per claim, seconds) and writes it to
+cross-language claims, retrieval hit@5, tokens (all and input only) and Apertus calls per claim, Apertus
+seconds, `inference_time_ms` mean and p95) and writes it to
 `runs/make-run/summary.md`, with one prediction file per model and mode next to it.
 
-OST task format (input as on slide 24 of the OST session, output as on slide 25):
+## OST task format
 
-```bash
-docker compose run --rm booklint predict --case data/case.json        # one object, a JSON list or JSONL
-docker compose run --rm booklint predict --booklet <pdf> --claim "…" --vote "…" --id case-0042
-docker compose run --rm booklint predict --reference "…" --claim "…" --id case-0043   # beginner task
-```
+**The command for OST is `booklint predict --case <file>`.** It reads the input of slide 24 of the OST session
+(2026-10-02) and prints the output of slide 25, nothing else. Both tasks:
+
+- **Advanced:** `{"id", "booklet": {"path"}, "vote", "claim": {"text"}}`: the system finds the evidence in the PDF.
+- **Beginner:** `{"id", "reference": {"text"}, "claim": {"text"}}`: the claim is compared with the reference.
+
+`--case` takes one JSON object, a JSON list or a JSONL file (one case per line); `-` reads stdin. One object
+gives pretty-printed JSON, otherwise one line per case, written and flushed as soon as the case is done.
+`-o FILE` writes to a file instead of stdout. No language field is needed: the claim language is detected,
+and a `vote` title in another language than the booklet is translated by Apertus before the proposal is
+located.
 
 ```json
 {"id": "case-0042", "label": 0, "label_name": "entailment",
@@ -52,10 +59,40 @@ docker compose run --rm booklint predict --reference "…" --claim "…" --id ca
  "metrics": {"input_tokens": 1650, "output_tokens": 40, "inference_time_ms": 1820}}
 ```
 
-`evidence` is required for entailment and contradiction and may be empty for neutral (we always return
-`[]`). `metrics` holds the token counts reported by the API and the measured wall time of this call (with
-a warm response cache the time is not inference time); OST measures tokens and time itself (mean and p95).
-`run` and `bench` also accept files in this nested format.
+- `evidence` is required for entailment and contradiction and may be empty for neutral (we always return
+  `[]`). `page` is the 1-based PDF page. `--evidence-unit sentence` (default) returns the deciding sentence(s),
+  `--evidence-unit paragraph` the whole text block(s) around them.
+- `metrics` holds the input and output tokens reported by the API and the wall time of the case in ms (with a
+  warm response cache this is not inference time; use `--no-cache` for timing). OST measures tokens through
+  its proxy and time itself (mean and p95).
+- A case that fails (missing PDF, no text layer, endpoint error, missing claim) never stops the batch: it is
+  answered neutral with empty evidence, zero metrics and an extra field `error`, and a line goes to stderr.
+
+**Docker.** Booklet paths in the cases are file paths inside the container. Mount the booklets and the case
+file, and set `BOOKLET_ROOT` when the paths in the cases are relative (`booklets/2024_11_24_de.pdf`): a
+relative path is then read below `BOOKLET_ROOT`; without it, relative to the working directory `/work`.
+URLs (bk.admin.ch) are downloaded and cached in `/work/.cache`.
+
+```bash
+docker compose build
+docker compose run --rm \
+  -v /abs/path/booklets:/work/booklets:ro -v /abs/path/cases:/work/cases:ro \
+  -e BOOKLET_ROOT=/work \
+  booklint predict --case /work/cases/cases.jsonl -o /work/runs/predictions.jsonl
+```
+
+`LLM_NAME`, `LLM_BASE_URL`, `LLM_API_KEY` come from the environment or `track_2a/.env`; the output lands in
+`track_2a/runs/`. Single cases from the command line:
+
+```bash
+docker compose run --rm booklint predict --booklet <pdf> --claim "…" --vote "…" --id case-0042   # Advanced
+docker compose run --rm booklint predict --reference "…" --claim "…" --id case-0043              # Beginner
+```
+
+`run` and `bench` also accept files in this nested format, but write extended rows (the slide-25 keys plus
+our own fields such as `decision`, `evidence_sentences`, `usage`); only `predict` prints the plain format.
+
+## Other commands
 
 Single claims and own files:
 
@@ -88,7 +125,8 @@ Output per claim (`check --json`, one line per claim in `run`/`bench`/`make run`
   offsets in the booklet text (all chunk texts joined by `"\n\n"`, the same convention as the chunk offsets
   in `evidence`).
 - Neutral: `page` and `evidence_sentence` are `null`, `evidence_sentences` and `evidence` are empty.
-- `evidence` keeps the whole passages (chunks) Apertus cited, with section and proposal.
+- `evidence`: the same spans as `{page, text}` (slide-25 form), or the whole text blocks with
+  `--evidence-unit paragraph`.
 
 The sentence is chosen after the decision without any Apertus call: the cited passages and the other top-5
 BM25 passages are split into sentences, and the sentence that covers most of the (translated) claim wins
@@ -100,8 +138,8 @@ Default pipeline (`--mode retrieval`): find the proposal by its title (or, witho
 no LLM), let Apertus translate cross-lingual claims into the booklet language, retrieve 5 passages with BM25
 (plus neighbours and the recommendation section for recommendation claims), and ask Apertus for evidence and
 label under a strict JSON schema. With the 8B model the prompt carries 3 development examples and unsure
-claims (p < 0.9) are split into atomic statements. Other modes: `baseline` (whole booklet, the comparison OST
-uses), `easy` (gold section from `reference_string`), `ladder`, `pages`, `section`, `full`, `oracle`,
+claims (p < 0.9) are split into atomic statements. Other modes: `baseline` (whole booklet, the baseline OST
+recommends), `easy` (Beginner task: the reference text, in v1.0 `reference_string`), `ladder`, `pages`, `section`, `full`, `oracle`,
 `claim-only`. Optional, off by default: `--crossling parallel` (search the other language version),
 `--cascade apertus-v1.5-70b`, `--rerank yesno`, `--retriever hybrid` (needs `pip install .[dense]`),
 `--calib`, `--numbers hint|rule`. Measurements: `docs/EXPERIMENTS-v1.md`.

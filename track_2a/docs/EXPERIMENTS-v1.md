@@ -16,13 +16,16 @@ Each run stores its full option set, the split seed and the command. Tables are 
   The demo booklet (2026-06-14), used to tune the first prototype, is forced into dev.
   `dev_s` = 450 dev rows, stratified by label × same/cross language; all ablations ran on `dev_s`.
   **`test` was used once, for the final table below; nothing was tuned on it.**
-- **Two tasks** (our assumption until OST's slides are out):
-  _easy_ = the gold section `reference_string` is the context;
-  _hard_ = only the booklet is given, the system finds the passage itself.
+- **Two tasks** (confirmed by OST's slides 22 and 24 of the session on 2026-10-02):
+  _Beginner_ = claim + reference text (`reference.text`; in v1.0 the gold section `reference_string`),
+  classify directly (`--mode easy`);
+  _Advanced_ = booklet PDF (`booklet.path`) + `vote` (title of the proposal) + claim, the system finds the
+  evidence itself (default `--mode retrieval`). OST reports macro-F1 separately for both tasks (slide 28).
 - **Metrics:** macro-F1 with 95 % bootstrap interval, F1 per label, macro-F1 for same-language and
   cross-language rows; tokens per claim = prompt + completion tokens of all Apertus calls (translation,
-  judgement, decomposition) from the API `usage` field; calls per claim; Apertus time per claim (sum of call
-  latencies, 4 parallel requests). For the hard task, _hit@k_ = at least one of the k retrieved chunks lies
+  judgement, decomposition) from the API `usage` field; **input tokens** per claim = prompt tokens only, which
+  is what OST sums (slide 28, counted by OST's proxy); calls per claim; Apertus time per claim (sum of call
+  latencies, 4 parallel requests). For the Advanced task, _hit@k_ = at least one of the k retrieved chunks lies
   inside the gold section (normalised substring match of the chunk against `reference_string`; 95 % of the
   gold section text maps to our chunks).
 - **Models:** `apertus-v1.5-8b`, `apertus-v1.5-70b` on the Hack Apertus endpoint, temperature 0, strict
@@ -30,7 +33,9 @@ Each run stores its full option set, the split seed and the command. Tables are 
 
 ## Baseline: whole booklet
 
-OST's `baseline_score` is described as "Apertus gets the whole booklet". We rebuilt that: the plain text of
+OST recommends the whole booklet as the starting baseline (slide 14). According to oral information from OST
+in the deep-dive session (2026-10-02), `baseline_score` comes from Apertus given the whole booklet; this is not
+documented in the slides. We rebuilt that baseline: the plain text of
 every page (PyMuPDF, `(p. N)` prefix) plus the claim, same NLI prompt as our pipeline. Booklets are
 20 k tokens on average on test (p95 30 k, max 118 k with our chunk prefixes; the endpoint accepts it).
 
@@ -50,8 +55,8 @@ predicted, so OST's baseline macro-F1 cannot be computed from it. It does not tr
 r with our p(predicted label) = −0.03 (8B) / −0.13 (70B), with our p(gold label) −0.12 / −0.14, with our
 correctness −0.12 / −0.11; it is not an e5 cosine between claim and gold section (r = 0.07) or its best
 sentence (r = 0.02). It is slightly higher for contradiction rows (0.897) than for entailment rows (0.862).
-Most likely the confidence of OST's own baseline run for its (unpublished) predicted label; to be confirmed
-by OST.
+Most likely the confidence of OST's own baseline run for its (unpublished) predicted label; unconfirmed, to be
+asked in the Q&A on 2026-10-08.
 
 ## Steps (dev_s, 450 rows)
 
@@ -61,15 +66,15 @@ same-language and 290 cross-language rows.
 | step                                                 | 8B F1     | 8B same / cross | 8B tokens | 70B F1                                      | 70B same / cross | 70B tokens |
 | ---------------------------------------------------- | --------- | --------------- | --------- | ------------------------------------------- | ---------------- | ---------- |
 | Baseline: whole booklet                              | 0.655     | 0.759 / 0.597   | 28,305    | 0.853                                       | 0.857 / 0.852    | 28,302     |
-| Easy task: gold section                              | 0.924     | 0.918 / 0.928   | 2,068     | **0.971**                                   | 0.962 / 0.976    | 2,065      |
-| Easy + 3 examples                                    | **0.959** | 0.962 / 0.958   | 2,644     | 0.948                                       | 0.942 / 0.951    | 2,644      |
-| Hard 1: BM25 top-5 over the whole booklet            | 0.758     | 0.900 / 0.677   | 1,450     | 0.798                                       | 0.956 / 0.709    | 1,448      |
-| Hard 2: proposal first (vote title), then BM25 top-5 | 0.826     | 0.937 / 0.765   | 1,354     | 0.847                                       | 0.962 / 0.782    | 1,353      |
-| Hard 3: + Apertus translates the claim               | 0.909     | 0.937 / 0.893   | 1,650     | **0.949**                                   | 0.962 / 0.941    | 1,656      |
-| Hard 4: + 3 dev examples in the prompt               | 0.942     | 0.968 / 0.927   | 2,228     | 0.930                                       | 0.930 / 0.930    | 2,234      |
-| Hard 5: + decomposition when p < 0.9                 | **0.946** | 0.968 / 0.934   | 2,261     | 0.944 (Hard 3 + decomposition, no examples) | 0.969 / 0.930    | 1,684      |
+| Beginner: gold section                               | 0.924     | 0.918 / 0.928   | 2,068     | **0.971**                                   | 0.962 / 0.976    | 2,065      |
+| Beginner + 3 examples                                | **0.959** | 0.962 / 0.958   | 2,644     | 0.948                                       | 0.942 / 0.951    | 2,644      |
+| Adv. 1: BM25 top-5 over the whole booklet            | 0.758     | 0.900 / 0.677   | 1,450     | 0.798                                       | 0.956 / 0.709    | 1,448      |
+| Adv. 2: proposal first (vote title), then BM25 top-5 | 0.826     | 0.937 / 0.765   | 1,354     | 0.847                                       | 0.962 / 0.782    | 1,353      |
+| Adv. 3: + Apertus translates the claim               | 0.909     | 0.937 / 0.893   | 1,650     | **0.949**                                   | 0.962 / 0.941    | 1,656      |
+| Adv. 4: + 3 dev examples in the prompt               | 0.942     | 0.968 / 0.927   | 2,228     | 0.930                                       | 0.930 / 0.930    | 2,234      |
+| Adv. 5: + decomposition when p < 0.9                 | **0.946** | 0.968 / 0.934   | 2,261     | 0.944 (Adv. 3 + decomposition, no examples) | 0.969 / 0.930    | 1,684      |
 
-Variants of step 3 (8B), each against Hard 3 = 0.909:
+Variants of step 3 (8B), each against Advanced 3 = 0.909:
 
 | variant                                                              | F1                        | tokens                | verdict                                             |
 | -------------------------------------------------------------------- | ------------------------- | --------------------- | --------------------------------------------------- |
@@ -81,7 +86,7 @@ Variants of step 3 (8B), each against Hard 3 = 0.909:
 | decomposition alone (p < 0.9, 25 of 450 claims; 9 with examples)     | 0.915                     | 1,749                 | +0.006, noise level                                 |
 | proposal found from the claim instead of the vote title              | 0.831                     | 1,669                 | vote title matters                                  |
 | _optional:_ parallel language version instead of translation         | 0.922                     | 1,490                 | as good, fewer tokens                               |
-| _optional:_ cascade 8B → 70B when p < 0.9 (on Hard 5)                | 0.944                     | 2,268                 | 6 escalations, no gain                              |
+| _optional:_ cascade 8B → 70B when p < 0.9 (on Adv. 5)                | 0.944                     | 2,268                 | 6 escalations, no gain                              |
 | Apertus yes/no rerank of the top 12 (first 150 rows, all entailment) | acc. 0.953 vs 0.920       | 4,794 vs 1,754        | hit@5 0.927 → 0.987, but 2.7× tokens, 14 calls, 6 s |
 
 ### Retrieval recall (offline, 0 tokens)
@@ -109,9 +114,9 @@ translation; with translation BM25 alone is as good, so dense retrieval stays an
 
 - **Calibration:** label log-offsets for neutral and contradiction, grid −4…4, fitted on dev_s, checked by
   2-fold cross-fitting over voting dates. Apertus is confident (p > 0.9 for 94–98 % of answers). Cross-fitted
-  gains: hard 8B +0.009, hard 70B +0.005, easy 8B +0.024, easy 70B −0.002; the fitted offsets are large and
-  change sign between runs (neutral −3.5 … +1.25). Applied to test with dev_s offsets: hard 8B 0.941 → 0.945,
-  hard 70B 0.951 → 0.952, easy 8B 0.940 → 0.958, easy-with-examples 8B 0.978 → 0.976. Not in the default
+  gains: Advanced 8B +0.009, Advanced 70B +0.005, Beginner 8B +0.024, Beginner 70B −0.002; the fitted offsets are
+  large and change sign between runs (neutral −3.5 … +1.25). Applied to test with dev_s offsets: Advanced 8B
+  0.941 → 0.945, Advanced 70B 0.951 → 0.952, Beginner 8B 0.940 → 0.958, Beginner with examples 8B 0.978 → 0.976. Not in the default
   (unstable, small); available as `--calib '{"neutral": …, "contradiction": …}'`.
 - **Numbers:** amounts, percentages, years and durations of the claim (digits, scale words such as
   Millionen/millions/milioni, a few number words) are matched against the text. Against the gold section,
@@ -124,11 +129,11 @@ translation; with translation BM25 alone is as good, so dense retrieval stays an
 
 | run                   | errors | retrieval miss | E/C without cited passage | wrong judgement on the right passage | main confusions                               |
 | --------------------- | ------ | -------------- | ------------------------- | ------------------------------------ | --------------------------------------------- |
-| Hard 3 (translation)  | 41     | 9              | 8                         | 24                                   | C→N 13, N→C 8, C→E 8, E→C 7                   |
-| Hard 4 (+ 3 examples) | 26     | 6              | 1                         | 19                                   | C→N 12, C→E 8                                 |
-| Easy (gold section)   | 34     | –              | –                         | 34                                   | N→C 19 (unrelated claim called contradiction) |
+| Adv. 3 (translation)  | 41     | 9              | 8                         | 24                                   | C→N 13, N→C 8, C→E 8, E→C 7                   |
+| Adv. 4 (+ 3 examples) | 26     | 6              | 1                         | 19                                   | C→N 12, C→E 8                                 |
+| Beginner (gold sect.) | 34     | –              | –                         | 34                                   | N→C 19 (unrelated claim called contradiction) |
 
-Error rates by claim type (Hard 3): claims about "the summary" (Zusammenfassung / résumé / riassunto)
+Error rates by claim type (Advanced 3): claims about "the summary" (Zusammenfassung / résumé / riassunto)
 19 %, negations 15 %, "the voting text" 12 %, committee claims 10 %, Federal Council claims 0.6 %.
 Typical failures: the committee's argument is judged against the Federal Council's opposite view
 (gold: entailment), invented facts that sound like the booklet are called contradiction (gold: neutral),
@@ -138,33 +143,35 @@ claims about the front-page summary miss the summary passage. The three prompt e
 
 ## Final numbers (test, 497 rows, run once)
 
-| run                                                 | 8B F1 [95 % CI]         | 8B same / cross | 8B tokens | 70B F1 [95 % CI]        | 70B same / cross | 70B tokens |
-| --------------------------------------------------- | ----------------------- | --------------- | --------- | ----------------------- | ---------------- | ---------- |
-| Baseline: whole booklet                             | 0.723 [0.684–0.760]     | 0.801 / 0.685   | 20,182    | 0.890 [0.862–0.917]     | 0.916 / 0.876    | 20,176     |
-| Easy: gold section                                  | 0.940 [0.917–0.961]     | 0.918 / 0.950   | 2,101     | **0.980** [0.968–0.990] | 0.987 / 0.977    | 2,098      |
-| Easy + 3 examples                                   | **0.978** [0.964–0.990] | 0.980 / 0.976   | 2,678     | –                       | –                | –          |
-| Hard: BM25 whole booklet                            | 0.762                   | 0.943 / 0.672   | 1,387     | –                       | –                | –          |
-| Hard: vote proposal + BM25                          | 0.778                   | 0.943 / 0.696   | 1,333     | 0.819                   | 0.974 / 0.741    | 1,331      |
-| Hard: + translation                                 | 0.940 [0.919–0.959]     | 0.943 / 0.938   | 1,683     | **0.951** [0.931–0.970] | 0.974 / 0.940    | 1,675      |
-| Hard: + 3 examples                                  | 0.940                   | 0.980 / 0.922   | 2,260     | –                       | –                | –          |
-| Hard: + 3 examples + decomposition (**8B default**) | **0.941** [0.919–0.960] | 0.980 / 0.922   | 2,302     | –                       | –                | –          |
-| Hard: + decomposition, no examples                  | –                       | –               | –         | 0.955 [0.937–0.972]     | 0.974 / 0.946    | 1,709      |
-| Hard, no vote title (proposal from claim)           | 0.918                   | 0.949 / 0.903   | 2,321     | –                       | –                | –          |
-| _optional:_ parallel version instead of translation | 0.953                   | 0.980 / 0.940   | 2,195     | –                       | –                | –          |
+Tokens = prompt + completion per claim; input = prompt tokens only (what OST sums, slide 28).
+
+| run                                                     | 8B F1 [95 % CI]         | 8B same / cross | 8B tokens | 8B input | 70B F1 [95 % CI]        | 70B same / cross | 70B tokens | 70B input |
+| ------------------------------------------------------- | ----------------------- | --------------- | --------- | -------- | ----------------------- | ---------------- | ---------- | --------- |
+| Baseline: whole booklet                                 | 0.723 [0.684–0.760]     | 0.801 / 0.685   | 20,182    | 20,156   | 0.890 [0.862–0.917]     | 0.916 / 0.876    | 20,176     | 20,156    |
+| Beginner: gold section                                  | 0.940 [0.917–0.961]     | 0.918 / 0.950   | 2,101     | 2,080    | **0.980** [0.968–0.990] | 0.987 / 0.977    | 2,098      | 2,080     |
+| Beginner + 3 examples                                   | **0.978** [0.964–0.990] | 0.980 / 0.976   | 2,678     | 2,662    | –                       | –                | –          | –         |
+| Advanced: BM25 whole booklet                            | 0.762                   | 0.943 / 0.672   | 1,387     | 1,367    | –                       | –                | –          | –         |
+| Advanced: vote proposal + BM25                          | 0.778                   | 0.943 / 0.696   | 1,333     | 1,312    | 0.819                   | 0.974 / 0.741    | 1,331      | 1,312     |
+| Advanced: + translation                                 | 0.940 [0.919–0.959]     | 0.943 / 0.938   | 1,683     | 1,636    | **0.951** [0.931–0.970] | 0.974 / 0.940    | 1,675      | 1,631     |
+| Advanced: + 3 examples                                  | 0.940                   | 0.980 / 0.922   | 2,260     | 2,218    | –                       | –                | –          | –         |
+| Advanced: + 3 examples + decomposition (**8B default**) | **0.941** [0.919–0.960] | 0.980 / 0.922   | 2,302     | 2,258    | –                       | –                | –          | –         |
+| Advanced: + decomposition, no examples                  | –                       | –               | –         | –        | 0.955 [0.937–0.972]     | 0.974 / 0.946    | 1,709      | 1,663     |
+| Advanced, no vote title (proposal from claim)           | 0.918                   | 0.949 / 0.903   | 2,321     | 2,276    | –                       | –                | –          | –         |
+| _optional:_ parallel version instead of translation     | 0.953                   | 0.980 / 0.940   | 2,195     | 2,173    | –                       | –                | –          | –         |
 
 hit@5 on test: 0.928 with translation, 0.718 without, 0.604 over the whole booklet.
 Apertus time per claim on test (mean): 8B default 0.76 s, 70B default 1.69 s (1.67 calls per claim).
 
 **Reading:**
 
-- The hard-task pipeline beats the whole-booklet baseline by **+0.22 (8B)** and **+0.06 (70B)** macro-F1
+- The Advanced-task pipeline beats the whole-booklet baseline by **+0.22 (8B)** and **+0.06 (70B)** macro-F1
   with **8–9 % of the tokens** (1.7–2.3 k instead of 20 k per claim).
 - 8B with our pipeline (0.941) is better than 70B with the whole booklet (0.890).
 - Translation by Apertus is the largest single step on cross-lingual rows (8B cross 0.696 → 0.938).
-- The gain from the three examples on dev_s (+0.033) **did not carry over to test** for the hard task
-  (0.940 → 0.940; same-language +0.04, cross-language −0.02). For the easy task it did (+0.038).
+- The gain from the three examples on dev_s (+0.033) **did not carry over to test** for the Advanced task
+  (0.940 → 0.940; same-language +0.04, cross-language −0.02). For the Beginner task it did (+0.038).
   The examples stay in the 8B default because they never hurt 8B on either split and fix the
-  "no passage cited" errors, but the honest effect on the hard task is about zero at +600 tokens.
+  "no passage cited" errors, but the honest effect on the Advanced task is about zero at +580 input tokens.
 - The 70B choice "no examples, no decomposition" was made on dev_s (0.949 vs 0.944 with decomposition);
   on test the decomposition variant scored 0.955 vs 0.951. Both differences are within 2–3 rows.
 
@@ -179,10 +186,10 @@ sentence); each sentence is scored by the share of the claim and of its translat
 word stems and character 5-grams, so split words such as "Bundes steuer" still match), divided by a mild
 length penalty; sentences of cited passages get a bonus of 1.2. The best sentence is extended by an adjacent
 sentence of the same passage if that one scores at least 70 % of it, and a second span from another passage
-is added under the same rule. In `easy` mode the candidates are the chunks of the gold section, in `baseline`
+is added under the same rule. In `easy` mode (Beginner) the candidates are the chunks of the gold section, in `baseline`
 mode the chunks of the pages Apertus cited.
 
-Choices on dev_s (8B default run, 288 E/C answers; 70B Hard 3, 290): 8B cited passages only 0.70 → plus the other
+Choices on dev_s (8B default run, 288 E/C answers; 70B Advanced 3, 290): 8B cited passages only 0.70 → plus the other
 top-5 passages with bonus 1.0 / **1.2** / 1.5 / 2.0: 0.780 / **0.780** / 0.753 / 0.722 (70B 0.797 / **0.814** /
 0.803 / 0.783); a bonus for matching claim numbers cost 0.014 (contradictions have different numbers) and was
 dropped; the length penalty matters little (±0.01).
@@ -217,6 +224,77 @@ for one of them the sentence is still the deciding one. 5 of the 30 count as mis
 that picks the sentence number itself was planned as a fallback but not built, since the deterministic choice
 is good enough at 0 tokens.
 
+## After the OST session (2026-10-02)
+
+OST's slides fix the input (slide 24: `id`, `booklet.path` or `reference.text`, `vote`, `claim.text`, no language
+fields), the output (slide 25) and the evaluation (slide 28). The checks below run on the test split;
+`python experiments/v1/ost_checks.py replay|nolang|vote|cold|breakdown`, results in `runs/v1/test/ost-checks-*.json`.
+About 400 new Apertus calls in total.
+
+**Replay with the current code** (0 calls): both default runs give the same label on 497/497 rows (8B 0.9406,
+70B 0.9512) and the same evidence sentences. The fallback for an entailment/contradiction answer without any
+matching sentence now takes the first retrieved passage instead of the booklet's first chunk (the cover page);
+it does not fire on any test row.
+
+**Without `claim_language`** (OST's input has no language field): the claim language is detected from the text.
+The old stop-word count was wrong on 19 of 1,495 v1.0 claims (mostly Italian read as French, because `la`, `le`,
+`il`, `un` count for both); on the test split 4 claims, all neutral, whose labels did not change (8B 0.9406,
+70B 0.9512 also with the old detection, 8 extra calls). The new detection (more function words, accented and
+suffix letters, quoted titles ignored) is wrong on 1 of 1,495 claims (an Italian claim that quotes a German law
+title) and on 0 of 497 test claims; it reads all 60 booklets and 1,495 reference sections correctly.
+Default pipeline on test without the language field: **8B 0.9406, 70B 0.9512**, identical to the runs with it,
+0 new calls (`default-nolang`).
+
+**`vote` in another language than the booklet** (slide 24 shows a French `vote` with a German booklet; in v1.0
+`vote` is always in the booklet language). Constructed case: for each test booklet the `vote` titles of the same
+proposals from the other two language versions of the same voting date (108 pairs, proposals matched by their
+order in the booklet). Locating the proposal with the foreign title finds the right one in 76 of 108 (70 %).
+Now a title counts as foreign when less than half of its words occur in the booklet, or less than 90 % and the
+language score points to another language; Apertus then translates the title (one call, ~70 input tokens)
+before the proposal is located. Detected 108/108, right proposal **103/108 (8B) and 106/108 (70B)**; the misses
+are near-identical titles (e.g. "Kündigung wegen Eigenbedarfs" vs. "Untermiete" in the same booklet). On all
+1,495 v1.0 rows the own `vote` never counts as foreign, so no existing number changes.
+
+**Evidence unit** (`--evidence-unit sentence|paragraph`, default `sentence`; replay, 0 calls). Paragraph = the
+whole text block (chunk) around each chosen sentence. Share of entailment/contradiction answers whose first
+evidence item lies inside the gold section `reference_string` (normalised substring match):
+
+| evidence unit       | 8B first item in gold | 8B any item | 8B page of gold | 8B chars (median) | 70B first item in gold | 70B any item | 70B page of gold | 70B chars (median) |
+| ------------------- | --------------------- | ----------- | --------------- | ----------------- | ---------------------- | ------------ | ---------------- | ------------------ |
+| sentence (default)  | 0.786                 | 0.873       | 0.802           | 238               | 0.804                  | 0.877        | 0.823            | 219                |
+| paragraph           | 0.777                 | 0.867       | 0.802           | 629               | 0.798                  | 0.870        | 0.823            | 555                |
+
+Page of gold = the first item's page is a page of a gold chunk; it is the same for both units because the
+paragraph is the block of the chosen sentence. A paragraph that runs past the end of the gold section no longer
+counts as inside, so the paragraph is slightly lower on this proxy while it is 2.5× longer. Which unit scores
+better depends on how OST matches evidence (substring, overlap or same paragraph), which is not yet known;
+the default stays `sentence` until OST answers.
+
+**Cold run, as OST measures** (`cold`: 50 seeded test cases in OST's input format without language, no response
+cache, 1 worker, the booklet parsed before the timed loop; `inference_time_ms` = wall time of one case):
+
+| model | macro-F1 (n = 50) | input tokens mean | input tokens sum | calls / claim | `inference_time_ms` mean | p95   |
+| ----- | ----------------- | ----------------- | ---------------- | ------------- | ------------------------ | ----- |
+| 8B    | 0.982             | 2,205             | 110,250          | 1.72          | 457                      | 819   |
+| 70B   | 1.000             | 1,630             | 81,489           | 1.68          | 1,366                    | 2,119 |
+
+The 50 labels match the stored runs on 50/50 (8B) and 49/50 (70B): the endpoint is not fully deterministic at
+temperature 0. The times include the endpoint's own prefix cache, which we cannot switch off. 50 cases are too
+few for a macro-F1 estimate; the point of this run is time and tokens.
+
+**Breakdown as on slide 28** (test, macro-F1, n in brackets; `ost-checks-slide28.json`). Language = claim
+language or booklet (reference) language; same = claim and booklet in the same language.
+
+| task / run                       | all   | claim DE | claim FR | claim IT | booklet DE | booklet FR | booklet IT | same (166) | cross (331) |
+| -------------------------------- | ----- | -------- | -------- | -------- | ---------- | ---------- | ---------- | ---------- | ----------- |
+| Advanced 8B (default)            | 0.941 | 0.937    | 0.939    | 0.944    | 0.923      | 0.967      | 0.927      | 0.980      | 0.922       |
+| Advanced 70B (default)           | 0.951 | 0.951    | 0.951    | 0.950    | 0.936      | 0.973      | 0.942      | 0.974      | 0.940       |
+| Beginner 8B (3 examples)         | 0.978 | 0.956    | 0.982    | 0.994    | 0.974      | 0.983      | 0.974      | 0.980      | 0.976       |
+| Beginner 70B                     | 0.980 | 0.963    | 0.989    | 0.988    | 0.987      | 0.989      | 0.965      | 0.987      | 0.977       |
+
+Claims per language: DE 166, FR 165, IT 166; booklets: DE 156, FR 186, IT 155 rows. The stored Beginner runs
+did not translate the claim (`easy`, `easy-fs3`); the CLI default for Beginner translates cross-lingual claims.
+
 ## Default of the CLI (`booklint`, `make run`)
 
 `--mode retrieval --scope vote --translate --k 5 --neighbors 1`, BM25, recommendation routing on,
@@ -225,7 +303,10 @@ decomposition when p < 0.9; **70B** → neither. Without a `vote` field the prop
 Not in the default (flags, off): parallel language version (`--crossling parallel`), cascade
 (`--cascade apertus-v1.5-70b`), rerank (`--rerank yesno`), dense/hybrid retrieval (`--retriever hybrid`,
 extra `[dense]`), calibration (`--calib`), number hint/rule (`--numbers`), ladder (`--mode ladder`).
-Only Apertus and the given booklet are used in the default pipeline.
+Only Apertus and the given booklet are used in the default pipeline. Without `claim_language` the claim
+language is detected; a `vote` title in another language than the booklet is translated by Apertus first.
+Evidence is the deciding sentence (`--evidence-unit sentence`); `--evidence-unit paragraph` returns the whole
+text block instead.
 
 `make run` (Docker, test split) reproduces the test rows above from the response cache: 8B 0.9406, 70B 0.9512;
 a live run without cache on 12 rows took 5 s.
@@ -242,6 +323,8 @@ bash experiments/v1/queue3.sh; bash experiments/v1/queue4.sh       # 70B steps, 
 python experiments/v1/analyze.py calib|numbers|errors dev_s apertus-v1.5-8b <run>
 python experiments/v1/baseline_score.py dev_s apertus-v1.5-70b baseline
 python experiments/v1/table.py test
+python experiments/v1/ost_checks.py replay|nolang|vote|breakdown   # checks after the OST session
+CACHE_DIR=<cache without llm/> python experiments/v1/ost_checks.py cold
 ```
 
 ## Draft for the technical report (section "Results on OST v1.0")
@@ -256,18 +339,31 @@ python experiments/v1/table.py test
 > evidence and label under a strict JSON schema. This reaches 0.941 (8B) and 0.951 (70B) with 1.7–2.3 k tokens
 > per claim, i.e. +0.22 and +0.06 macro-F1 at 8–9 % of the baseline's tokens; the 8B pipeline outperforms
 > the 70B baseline. Translation is the decisive step for cross-lingual claims (8B: 0.70 → 0.94).
-> Given the gold section (easy setting), Apertus reaches 0.940 (8B) and 0.980 (70B); three in-context
+> Given the gold section (Beginner task), Apertus reaches 0.940 (8B) and 0.980 (70B); three in-context
 > examples raise 8B to 0.978. Dense retrieval, LLM reranking, a page-window ladder, calibration of the label
 > log-probabilities and deterministic number checks did not pay for their cost; we report them as negative
-> results. Retrieval recall@5 of the gold section is 0.93, so the remaining gap to the easy setting
+> results. Retrieval recall@5 of the gold section is 0.93, so the remaining gap to the Beginner task
 > (0.94 vs 0.98 for 8B) comes mostly from judgement errors on the right passage; about a quarter of the
 > remaining errors are retrieval misses.
 
 ## Open points and risks
 
-- **Easy/hard definitions** are our assumption until OST publishes the slides and recording. If the hard task
-  does not provide `vote`, the claim-located variant applies (8B test 0.918 instead of 0.941).
-- **`baseline_score`** meaning unconfirmed; we compare against our own re-run of the whole-booklet baseline.
+- **Beginner/Advanced** are confirmed by OST's slides 22 and 24; the Advanced input contains `vote`. Should a
+  case come without `vote`, the claim-located variant applies (8B test 0.918 instead of 0.941).
+- **`baseline_score`:** per oral information in the deep-dive session it comes from Apertus given the whole
+  booklet; not documented in the slides and unconfirmed. We compare against our own re-run of the
+  whole-booklet baseline.
+- **Evidence unit:** sentence (default) or paragraph; OST's matching method decides, the default changes only
+  after OST's answer (Q&A 2026-10-08).
+- **Page numbering (open question):** `page` is the 1-based PDF page index. Whether OST means the PDF index
+  (0- or 1-based) or the printed page number is open; for federal booklets they mostly agree, not checked
+  systematically.
+- **Page in the Beginner task (open question):** the reference text has no pages; we return `page: 1` with a
+  sentence of the reference. Whether OST expects a page there is open.
+- **Logprobs and JSON schema through OST's proxy (open question):** the 8B decomposition needs the label
+  confidence from `logprobs`. If OST's token-counting proxy drops `logprobs` or `response_format`, `llm.py`
+  retries without them (one stderr warning), the confidence is `None` and decomposition is skipped silently;
+  on dev_s that cost about 0.004 macro-F1 (Advanced 4 → 5).
 - **Model-aware defaults** (examples/decomposition only for 8B) were chosen on 450 dev rows; differences
   for 70B are within noise.
 - **Rate limit:** with 4–5 parallel requests about 10–17 % of 8B calls got HTTP 429 and were retried after
