@@ -1,0 +1,75 @@
+{
+  "apertus-v1.5-8b": {
+    "pairs": 108,
+    "test_rows_whose_own_vote_counts_as_foreign": 0,
+    "foreign_title_detected": 108,
+    "source_language_right": 107,
+    "right_proposal_without_translation": 76,
+    "right_proposal_with_translation": 103,
+    "input_tokens_per_translation": 69.9,
+    "new_calls": 108,
+    "misses": [
+      {
+        "booklet_lang": "de",
+        "vote": "Initiative populaire « Pour une immigration modérée (initiative de limitation) »",
+        "translation": "Volksinitiative « Für eine moderate Einwanderung (Beschränkungsinitiative) »",
+        "gold_proposal": "Erste Vorlage: Begrenzungsinitiative",
+        "new": "Vierte Vorlage: Vaterschaftsurlaub"
+      },
+      {
+        "booklet_lang": "de",
+        "vote": "Modifica del Codice delle obbligazioni (Diritto di locazione: disdetta per bisogno personale)",
+        "translation": "Änderung des Obligationenrechts (Recht des Mietverhältnisses: Kündigung aus persönlichen Gründen)",
+        "gold_proposal": "Dritte Vorlage: Kündigung wegen Eigenbedarfs",
+        "new": "Zweite Vorlage: Untermiete"
+      },
+      {
+        "booklet_lang": "it",
+        "vote": "Änderung des Obligationenrechts (Mietrecht: Kündigung wegen Eigenbedarfs)",
+        "translation": "Modifica del diritto delle obbligazioni (diritto di locazione: rescissione per necessità personale)",
+        "gold_proposal": "Terzo oggetto: Disdetta per bisogno personale",
+        "new": "Secondo oggetto: Sublocazione"
+      },
+      {
+        "booklet_lang": "it",
+        "vote": "Modification du code des obligations (droit du bail : résiliation pour besoin propre)",
+        "translation": "Modifica del Codice delle obbligazioni (diritto di locazione: rescissione per necessità personale)",
+        "gold_proposal": "Terzo oggetto: Disdetta per bisogno personale",
+        "new": "Secondo oggetto: Sublocazione"
+      },
+      {
+        "booklet_lang": "fr",
+        "vote": "Modifica del Codice delle obbligazioni (Diritto di locazione: disdetta per bisogno personale)",
+        "translation": "Modification du Code des obligations (Droit de location : résiliation pour motif personnel)",
+        "gold_proposal": "Troisième objet : résiliation pour besoin propre",
+        "new": "Deuxième objet : sous-location"
+      }
+    ]
+  },
+  "apertus-v1.5-70b": {
+    "pairs": 108,
+    "test_rows_whose_own_vote_counts_as_foreign": 0,
+    "foreign_title_detected": 108,
+    "source_language_right": 107,
+    "right_proposal_without_translation": 76,
+    "right_proposal_with_translation": 106,
+    "input_tokens_per_translation": 69.9,
+    "new_calls": 108,
+    "misses": [
+      {
+        "booklet_lang": "de",
+        "vote": "Decreto federale sulla Fase di potenziamento 2023 delle strade nazionali",
+        "translation": "Bundesverfassungsgesetz über die Phase der Verstärkung 2023 der Nationalstraßen",
+        "gold_proposal": "Erste Vorlage: Ausbau Nationalstrassen",
+        "new": "Vierte Vorlage: Finanzierung Gesundheitsleistungen"
+      },
+      {
+        "booklet_lang": "it",
+        "vote": "Änderung des Obligationenrechts (Mietrecht: Kündigung wegen Eigenbedarfs)",
+        "translation": "Modifica del Codice delle obbligazioni (diritto di locazione: disdetta per uso proprio)",
+        "gold_proposal": "Terzo oggetto: Disdetta per bisogno personale",
+        "new": "Secondo oggetto: Sublocazione"
+      }
+    ]
+  }
+}

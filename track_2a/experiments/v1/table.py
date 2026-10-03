@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 COLS = [("macro_f1", "F1"), ("ci95", "95% CI"), ("f1_e", "F1 E"), ("f1_n", "F1 N"), ("f1_c", "F1 C"),
         ("macro_f1_same", "F1 same"), ("macro_f1_cross", "F1 cross"), ("recall_hit", "hit@k"),
-        ("tokens_mean", "tokens/claim"), ("llm_calls_mean", "calls/claim"), ("llm_seconds_mean", "s/claim (LLM)"),
+        ("tokens_mean", "tokens/claim"), ("prompt_tokens_mean", "input tokens/claim"), ("llm_calls_mean", "calls/claim"), ("llm_seconds_mean", "s/claim (LLM)"),
         ("errors", "errors")]
 
 

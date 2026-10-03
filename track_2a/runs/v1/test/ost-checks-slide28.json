@@ -1,0 +1,230 @@
+{
+  "advanced apertus-v1.5-8b (default-sentences)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9406
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.937
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9227
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.939
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9665
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.9438
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.9274
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.9801
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9219
+    }
+  },
+  "advanced apertus-v1.5-70b (ret-vote-tr-sentences)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9512
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.9511
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9356
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.9512
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9731
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.9498
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.9418
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.9737
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9397
+    }
+  },
+  "beginner apertus-v1.5-8b (easy-fs3)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9776
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.9562
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9742
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.9824
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9833
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.994
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.974
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.9801
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9761
+    }
+  },
+  "beginner apertus-v1.5-70b (easy)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9799
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.9627
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9873
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.9888
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9887
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.9877
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.9652
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.987
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9765
+    }
+  },
+  "advanced without claim_language apertus-v1.5-8b (default-nolang)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9406
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.937
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9227
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.939
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9665
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.9438
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.9274
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.9801
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9219
+    }
+  },
+  "advanced without claim_language apertus-v1.5-70b (default-nolang)": {
+    "all": {
+      "n": 497,
+      "macro_f1": 0.9512
+    },
+    "claim_de": {
+      "n": 166,
+      "macro_f1": 0.9511
+    },
+    "booklet_de": {
+      "n": 156,
+      "macro_f1": 0.9356
+    },
+    "claim_fr": {
+      "n": 165,
+      "macro_f1": 0.9512
+    },
+    "booklet_fr": {
+      "n": 186,
+      "macro_f1": 0.9731
+    },
+    "claim_it": {
+      "n": 166,
+      "macro_f1": 0.9498
+    },
+    "booklet_it": {
+      "n": 155,
+      "macro_f1": 0.9418
+    },
+    "same_language": {
+      "n": 166,
+      "macro_f1": 0.9737
+    },
+    "cross_lingual": {
+      "n": 331,
+      "macro_f1": 0.9397
+    }
+  }
+}

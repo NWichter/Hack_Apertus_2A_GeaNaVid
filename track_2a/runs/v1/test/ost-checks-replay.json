@@ -1,0 +1,66 @@
+{
+  "apertus-v1.5-8b": {
+    "run": "default-sentences",
+    "sentence": {
+      "macro_f1": 0.9406,
+      "labels_identical_to_stored_run": "497/497",
+      "errors": 0,
+      "uncached_calls": 0,
+      "ec_answers": 323,
+      "first_item_inside_gold": 0.7864,
+      "first_item_first_80_chars_inside_gold": 0.7864,
+      "any_item_inside_gold": 0.8731,
+      "first_item_on_gold_page": 0.8019,
+      "evidence_chars_median": 238,
+      "evidence_chars_mean": 252,
+      "evidence_items_mean": 1.54,
+      "evidence_changed_vs_stored": 0
+    },
+    "paragraph": {
+      "macro_f1": 0.9406,
+      "labels_identical_to_stored_run": "497/497",
+      "errors": 0,
+      "uncached_calls": 0,
+      "ec_answers": 323,
+      "first_item_inside_gold": 0.7771,
+      "first_item_first_80_chars_inside_gold": 0.7833,
+      "any_item_inside_gold": 0.8669,
+      "first_item_on_gold_page": 0.8019,
+      "evidence_chars_median": 629,
+      "evidence_chars_mean": 627,
+      "evidence_items_mean": 1.54
+    }
+  },
+  "apertus-v1.5-70b": {
+    "run": "ret-vote-tr-sentences",
+    "sentence": {
+      "macro_f1": 0.9512,
+      "labels_identical_to_stored_run": "497/497",
+      "errors": 0,
+      "uncached_calls": 0,
+      "ec_answers": 316,
+      "first_item_inside_gold": 0.8038,
+      "first_item_first_80_chars_inside_gold": 0.8038,
+      "any_item_inside_gold": 0.8766,
+      "first_item_on_gold_page": 0.8228,
+      "evidence_chars_median": 219,
+      "evidence_chars_mean": 237,
+      "evidence_items_mean": 1.48,
+      "evidence_changed_vs_stored": 0
+    },
+    "paragraph": {
+      "macro_f1": 0.9512,
+      "labels_identical_to_stored_run": "497/497",
+      "errors": 0,
+      "uncached_calls": 0,
+      "ec_answers": 316,
+      "first_item_inside_gold": 0.7975,
+      "first_item_first_80_chars_inside_gold": 0.8006,
+      "any_item_inside_gold": 0.8703,
+      "first_item_on_gold_page": 0.8228,
+      "evidence_chars_median": 555,
+      "evidence_chars_mean": 615,
+      "evidence_items_mean": 1.48
+    }
+  }
+}

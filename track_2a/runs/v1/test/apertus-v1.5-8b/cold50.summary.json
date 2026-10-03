@@ -1,0 +1,53 @@
+{
+  "n": 50,
+  "macro_f1": 0.982,
+  "ci95": [
+    0.9397,
+    1.0
+  ],
+  "f1_e": 1.0,
+  "f1_n": 0.973,
+  "f1_c": 0.973,
+  "accuracy": 0.98,
+  "confusion": {
+    "0->0": 13,
+    "1->1": 18,
+    "2->1": 1,
+    "2->2": 18
+  },
+  "macro_f1_same": 1.0,
+  "n_same": 16,
+  "macro_f1_cross": 0.9732,
+  "n_cross": 34,
+  "prompt_tokens_mean": 2205.0,
+  "completion_tokens_mean": 42.16,
+  "tokens_mean": 2247.16,
+  "prompt_tokens_p95": 2700,
+  "llm_calls_mean": 1.72,
+  "llm_seconds_mean": 0.385,
+  "llm_seconds_p50": 0.366,
+  "llm_seconds_p95": 0.707,
+  "errors": 0,
+  "steps": {
+    "retrieval": 49,
+    "retrieval+decompose": 1
+  },
+  "input_tokens_sum": 110250,
+  "input_tokens_mean": 2205.0,
+  "inference_ms_mean": 456.8,
+  "inference_ms_p95": 819,
+  "model": "apertus-v1.5-8b",
+  "name": "cold50",
+  "split": "test",
+  "workers": 1,
+  "response_cache": false,
+  "wall_s": 22.8,
+  "preload_s": 10.9,
+  "booklets": 18,
+  "uncached_calls": 86,
+  "retries": {
+    "rate_limit": 0,
+    "other": 0,
+    "bad_request_fallback": 0
+  }
+}

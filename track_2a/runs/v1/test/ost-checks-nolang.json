@@ -1,0 +1,37 @@
+{
+  "claim_language_detection": {
+    "de->de": 166,
+    "fr->fr": 165,
+    "it->it": 166
+  },
+  "apertus-v1.5-8b": {
+    "macro_f1": 0.9406,
+    "ci95": [
+      0.9193,
+      0.9601
+    ],
+    "macro_f1_same": 0.9801,
+    "macro_f1_cross": 0.9219,
+    "tokens_mean": 2301.8571,
+    "input_tokens_mean": 2257.6,
+    "uncached_calls": 0,
+    "labels_changed_vs_with_language": 0,
+    "rows_with_other_claim_language": 0,
+    "errors": 0
+  },
+  "apertus-v1.5-70b": {
+    "macro_f1": 0.9512,
+    "ci95": [
+      0.9314,
+      0.9698
+    ],
+    "macro_f1_same": 0.9737,
+    "macro_f1_cross": 0.9397,
+    "tokens_mean": 1674.5956,
+    "input_tokens_mean": 1630.6,
+    "uncached_calls": 0,
+    "labels_changed_vs_with_language": 0,
+    "rows_with_other_claim_language": 0,
+    "errors": 0
+  }
+}
