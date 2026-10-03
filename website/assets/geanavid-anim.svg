@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>GeaNaVid (Animation)</title>
+  <style>
+    #gnv-logo{animation:gnv-cycle 6.2s linear infinite}
+    #gnv-logo *{animation-duration:6.2s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
+    #gnv-lens{transform-box:view-box;transform-origin:118px 118px;animation-name:gnv-lens}
+    #gnv-hidden-1{animation-name:gnv-out-1}
+    #gnv-field-gea{transform-box:fill-box;transform-origin:center;animation-name:gnv-pop-1}
+    #gnv-mark-gea path{stroke-dasharray:100;animation-name:gnv-draw-1}
+    #gnv-hidden-2{animation-name:gnv-out-2}
+    #gnv-field-na{animation-name:gnv-show-2}
+    #gnv-mark-na path{stroke-dasharray:100;animation-name:gnv-draw-2}
+    #gnv-hidden-3{animation-name:gnv-out-3}
+    #gnv-field-vid{transform-box:fill-box;transform-origin:center;animation-name:gnv-pop-3}
+    @keyframes gnv-cycle{0%{opacity:0}4.84%,93.55%{opacity:1}100%{opacity:0}}
+    @keyframes gnv-lens{0%{transform:translate(-200px,0) scale(.42)}4.84%{transform:translate(-200px,0) scale(0.42)}15.29%{transform:translate(-56px,0) scale(0.42)}19.94%{transform:translate(-56px,0) scale(0.42)}26.9%{transform:translate(0px,0) scale(0.42)}31.55%{transform:translate(0px,0) scale(0.42)}38.52%{transform:translate(56px,0) scale(0.42)}42%{transform:translate(56px,0) scale(0.42)}54.77%{transform:translate(0px,0) scale(1)}62.9%{transform:translate(0px,0) scale(1)}100%{transform:translate(0,0) scale(1)}}
+    @keyframes gnv-out-1{0%,15.87%{opacity:1}18.19%,100%{opacity:0}}
+    @keyframes gnv-pop-1{0%,15.87%{opacity:0;transform:scale(.6)}19.35%,100%{opacity:1;transform:scale(1)}}
+    @keyframes gnv-draw-1{0%,17.03%{stroke-dashoffset:100;opacity:0}17.61%{stroke-dashoffset:100;opacity:1}22.26%,100%{stroke-dashoffset:0;opacity:1}}
+    @keyframes gnv-out-2{0%,27.48%{opacity:1}29.81%,100%{opacity:0}}
+    @keyframes gnv-show-2{0%,27.48%{opacity:0}30.39%,100%{opacity:1}}
+    @keyframes gnv-draw-2{0%,28.65%{stroke-dashoffset:100;opacity:0}29.23%{stroke-dashoffset:100;opacity:1}33.87%,100%{stroke-dashoffset:0;opacity:1}}
+    @keyframes gnv-out-3{0%,39.1%{opacity:1}41.42%,100%{opacity:0}}
+    @keyframes gnv-pop-3{0%,39.1%{opacity:0;transform:scale(.6)}42.58%,100%{opacity:1;transform:scale(1)}}
+    @media (prefers-reduced-motion:reduce){#gnv-logo,#gnv-logo *{animation:none!important}#gnv-hidden{display:none}}
+  </style>
+  <g id="gnv-logo">
+    <g id="gnv-hidden">
+      <g id="gnv-hidden-1"><rect x="42" y="98" width="40" height="40" rx="6" fill="none" stroke="#8A94A3" stroke-width="6"/><circle cx="62" cy="118" r="4.5" fill="#8A94A3"/></g>
+      <g id="gnv-hidden-2"><rect x="98" y="98" width="40" height="40" rx="6" fill="none" stroke="#8A94A3" stroke-width="6"/><circle cx="118" cy="118" r="4.5" fill="#8A94A3"/></g>
+      <g id="gnv-hidden-3"><rect x="154" y="98" width="40" height="40" rx="6" fill="none" stroke="#8A94A3" stroke-width="6"/><circle cx="174" cy="118" r="4.5" fill="#8A94A3"/></g>
+    </g>
+    <g id="gnv-field-gea"><rect x="39" y="95" width="46" height="46" rx="10" fill="#1F2A37"/></g>
+    <g id="gnv-mark-gea"><path pathLength="100" d="M50 119 L59 128 L75 109" fill="none" stroke="#E2A72E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="gnv-field-na"><rect x="99" y="99" width="38" height="38" rx="6" fill="#FFFFFF" stroke="#1F2A37" stroke-width="8"/></g>
+    <g id="gnv-mark-na"><path pathLength="100" d="M110 118 H126" fill="none" stroke="#1F2A37" stroke-width="8" stroke-linecap="round"/></g>
+    <g id="gnv-field-vid"><rect x="155" y="99" width="38" height="38" rx="6" fill="#FFFFFF" stroke="#1F2A37" stroke-width="8"/></g>
+    <g id="gnv-lens">
+      <circle id="gnv-lens-ring" cx="118" cy="118" r="98" fill="none" stroke="#1F2A37" stroke-width="18"/>
+      <path id="gnv-lens-handle" d="M191.5 191.5 L232 232" fill="none" stroke="#1F2A37" stroke-width="26" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

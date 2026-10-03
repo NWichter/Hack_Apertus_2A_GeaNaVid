@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GeaNaVid · Claims checked against the Swiss voting booklet</title>
+    <meta
+      name="description"
+      content="GeaNaVid checks a claim in German, French or Italian against the official Swiss voting booklet and returns Gea, Na or Vid with the passage that decides it. Built on Apertus v1.5 by team Apertool for Hack Apertus 2026."
+    />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#F6F4EF"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#151B23"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href="https://geanavid.skimu.de/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GeaNaVid" />
+    <meta
+      property="og:title"
+      content="GeaNaVid · Every claim checked against the official voting booklet"
+    />
+    <meta
+      property="og:description"
+      content="Claim in, verdict out: entailment, neutral or contradiction, always with the passage from the Swiss voting booklet that decides it. Built on Apertus."
+    />
+    <meta property="og:url" content="https://geanavid.skimu.de/" />
+    <meta property="og:image" content="https://geanavid.skimu.de/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/assets/geanavid-favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap header-row">
+        <a class="brand" href="/">
+          <img
+            src="/assets/geanavid-favicon.svg"
+            alt=""
+            width="28"
+            height="28"
+          />
+          <span>GeaNaVid</span>
+        </a>
+        <nav class="nav" aria-label="Sections">
+          <a href="/demo/">Demo</a>
+          <a href="#approach">Approach</a>
+          <a href="#status">Results</a>
+          <a href="#pitch">Pitch</a>
+          <a href="#report">Report</a>
+          <a href="#team">Team</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Hack Apertus 2026 · Track 2A · OST challenge</p>
+            <h1>
+              Every claim checked against the official voting booklet, with the
+              line that decides it.
+            </h1>
+            <p class="lede">
+              GeaNaVid reads the Swiss Federal Council's voting booklet and a
+              claim in German, French or Italian. It answers
+              <strong>Gea</strong>, <strong>Na</strong> or <strong>Vid</strong>,
+              Romansh for yes, no and empty: the booklet supports the claim,
+              contradicts it, or does not say. Every answer points to the page
+              and passage it rests on.
+            </p>
+            <div class="actions">
+              <a class="button primary" href="/demo/">Try the live demo</a>
+              <a class="button" href="/report.pdf">Read the report (PDF)</a>
+              <a class="button" href="/pitch/">See the pitch</a>
+            </div>
+          </div>
+          <figure class="hero-logo">
+            <picture>
+              <source
+                srcset="/assets/geanavid.svg"
+                media="(prefers-reduced-motion: reduce)"
+              />
+              <img
+                src="/assets/geanavid-anim.svg"
+                alt="GeaNaVid logo: a loupe over three ballot boxes for yes, no and empty"
+                width="256"
+                height="256"
+              />
+            </picture>
+          </figure>
+        </div>
+      </section>
+
+      <section class="band" id="problem" aria-labelledby="problem-title">
+        <div class="wrap two-col">
+          <div>
+            <p class="eyebrow">The problem</p>
+            <h2 id="problem-title">
+              Voters hear the claim. The answer is on page 4 of 40.
+            </h2>
+            <p>
+              Before every federal vote, each household receives the booklet:
+              the proposal, the legal text, the arguments of the committee and
+              the position of the Federal Council and Parliament, in German,
+              French and Italian. During the campaign, claims about it travel
+              fast. Checking one means finding the right paragraph in 40 to 90
+              pages, often in another language than the claim.
+            </p>
+          </div>
+          <article class="example" aria-label="Example verdict">
+            <p class="ex-label">Claim · German</p>
+            <p class="ex-claim">
+              „Gemäss dem Abstimmungstext ist die Bevölkerung seit Einführung
+              der Personenfreizügigkeit im Jahr 2002 um rund 500'000 Personen
+              gewachsen.“
+            </p>
+            <p class="ex-label">Booklet of 14 June 2026 · page 4 · In Kürze</p>
+            <p class="ex-quote">
+              „Seit Einführung der Personenfreizügigkeit im Jahr 2002 ist die
+              Bevölkerung um rund
+              <mark>1,7 Millionen</mark> Personen gewachsen.“
+            </p>
+            <p class="verdict">
+              <span class="mark mark-na" aria-hidden="true"></span
+              ><strong>Na</strong> · contradiction (2)
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="approach" aria-labelledby="approach-title">
+        <div class="wrap">
+          <p class="eyebrow">Approach</p>
+          <h2 id="approach-title">
+            Start with a page. Climb only when unsure.
+          </h2>
+          <p class="section-lede">
+            Sending the whole booklet to the model costs 10,000 to 45,000 tokens
+            per claim. GeaNaVid gives Apertus a handful of passages instead and
+            widens the context only when the verdict is weak.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Read the booklet</h3>
+              <p>
+                The PDF is split into passages with page, proposal, section and
+                author, including the note that a double page was written by the
+                committee. No language model, no tokens, 0.3 s for 40 pages.
+              </p>
+            </li>
+            <li>
+              <h3>Find the passages</h3>
+              <p>
+                BM25 picks the five best passages and their neighbours. A German
+                claim against a French booklet is searched in the German version
+                of the same booklet and mapped back by page layout.
+              </p>
+            </li>
+            <li>
+              <h3>Ask Apertus</h3>
+              <p>
+                One call to Apertus v1.5 with numbered passages. The answer is
+                strict JSON: first the passages that decide, then the label.
+                Evidence is always real booklet text with page and offsets.
+              </p>
+            </li>
+            <li>
+              <h3>Escalate when unsure</h3>
+              <p>
+                A verdict without evidence or with low probability gets one more
+                look with the surrounding pages. Most claims stop after the
+                first step.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="band" id="status" aria-labelledby="status-title">
+        <div class="wrap">
+          <p class="eyebrow">Status · 1 October 2026</p>
+          <h2 id="status-title">First measurements</h2>
+          <p class="section-lede">
+            Official demo of the OST dataset and its cross-lingual variants: 74
+            claim–booklet pairs. Macro-F1 over entailment, neutral and
+            contradiction; input tokens per claim from the API.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Context given to Apertus</th>
+                  <th scope="col">8B</th>
+                  <th scope="col">70B</th>
+                  <th scope="col">Tokens per claim</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>GeaNaVid ladder (passages, escalation)</td>
+                  <td><strong>0.92</strong></td>
+                  <td>0.94</td>
+                  <td>≈ 2,100</td>
+                </tr>
+                <tr>
+                  <td>Retrieved passages only</td>
+                  <td>0.91</td>
+                  <td><strong>0.96</strong></td>
+                  <td>≈ 1,700</td>
+                </tr>
+                <tr>
+                  <td>Whole booklet (baseline)</td>
+                  <td>0.81</td>
+                  <td><strong>0.98</strong></td>
+                  <td>≈ 18,200</td>
+                </tr>
+                <tr>
+                  <td>Claim without booklet (control)</td>
+                  <td>0.09</td>
+                  <td>0.09</td>
+                  <td>≈ 330</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="findings">
+            <li>
+              <strong>Less context helps the small model:</strong> 8B is better
+              with 9 % of the booklet than with all of it.
+            </li>
+            <li>
+              <strong>70B barely needs the whole booklet:</strong> 0.96 against
+              0.98 at a tenth of the tokens.
+            </li>
+            <li>
+              <strong>Cross-lingual retrieval without tokens:</strong> searching
+              the parallel booklet lifts recall@5 from 0.74 to 0.95.
+            </li>
+            <li>
+              <strong>Long booklets break the baseline:</strong> on held-out
+              claims for four longer booklets (40,000 tokens on average), the
+              whole booklet drops to 0.60 (8B) and 0.85 (70B). The ladder keeps
+              0.88 and 0.94 with about 1,800 tokens.
+            </li>
+          </ul>
+          <p class="caveat">
+            Small samples: 23 distinct official claims (95 % intervals about
+            ±0.07) and 221 held-out synthetic pairs whose labels still await a
+            human check.
+          </p>
+          <h3 class="sub">In progress</h3>
+          <ul class="progress">
+            <li>
+              <span class="pill">in progress</span> Judged quality of the cited
+              passages
+            </li>
+            <li>
+              <span class="pill">in progress</span> Human check of the synthetic
+              development data
+            </li>
+            <li>
+              <span class="pill">in progress</span> Apertus translation compared
+              with the parallel-edition search
+            </li>
+            <li>
+              <span class="pill">in progress</span> Scanned booklets before 2000
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="video" aria-labelledby="video-title">
+        <div class="wrap">
+          <p class="eyebrow">Video</p>
+          <h2 id="video-title">Two minutes with GeaNaVid</h2>
+          <div class="video-frame">
+            <p>
+              <span class="pill">in progress</span> The demo video follows once
+              the measurements are final.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" id="pitch" aria-labelledby="pitch-title">
+        <div class="wrap two-col">
+          <div>
+            <p class="eyebrow">Pitch</p>
+            <h2 id="pitch-title">Nine slides, one idea</h2>
+            <p>
+              The pitch deck runs in the browser. Arrow keys move between
+              slides; a PDF version is linked inside.
+            </p>
+            <div class="actions">
+              <a class="button primary" href="/pitch/">Open the pitch</a>
+            </div>
+          </div>
+          <a class="thumb" href="/pitch/">
+            <img
+              src="/pitch/og.png"
+              alt="First slide of the GeaNaVid pitch"
+              width="1200"
+              height="630"
+              loading="lazy"
+            />
+          </a>
+        </div>
+      </section>
+
+      <section id="report" aria-labelledby="report-title">
+        <div class="wrap two-col">
+          <div>
+            <p class="eyebrow">Technical report</p>
+            <h2 id="report-title">How it works, what the numbers say</h2>
+            <p>
+              Architecture, use of Apertus, data, evaluation and limitations,
+              with sources. The current version is a draft from 1 October 2026;
+              open measurements are marked as such.
+            </p>
+            <div class="actions">
+              <a class="button primary" href="/report.pdf"
+                >Download the report (PDF)</a
+              >
+            </div>
+          </div>
+          <ul class="facts">
+            <li><span>Model</span> Apertus v1.5, 8B and 70B</li>
+            <li>
+              <span>Languages</span> German, French, Italian, all nine
+              combinations
+            </li>
+            <li>
+              <span>Output</span> label 0/1/2, passages with page, tokens,
+              seconds
+            </li>
+            <li>
+              <span>Runs</span> Docker, no GPU, any OpenAI-compatible Apertus
+              endpoint
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="band" id="team" aria-labelledby="team-title">
+        <div class="wrap team">
+          <img
+            src="/assets/apertool.svg"
+            alt="Apertool logo"
+            width="96"
+            height="96"
+          />
+          <div>
+            <p class="eyebrow">Team</p>
+            <h2 id="team-title">Built by Apertool</h2>
+            <p>
+              One builder, four tools on Apertus, Switzerland's fully open
+              language model. GeaNaVid is one of them.
+            </p>
+            <div class="actions">
+              <a class="button" href="https://apertool.skimu.de"
+                >Meet Apertool</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-row">
+        <p>
+          GeaNaVid reads the booklet; it does not tell anyone how to vote. Every
+          verdict comes with the passage it rests on.
+        </p>
+        <p>Hack Apertus 2026 · Code Apache-2.0 · Texts CC-BY-4.0</p>
+      </div>
+    </footer>
+  </body>
+</html>

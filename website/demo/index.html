@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GeaNaVid · Interactive NLI Demo · OST Slide 25</title>
+    <meta
+      name="description"
+      content="Live interactive demonstration of GeaNaVid for Swiss voting booklets. Output in the OST format."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇨🇭</text></svg>" />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="wrap header-inner">
+        <div class="brand">
+          <span class="flag">🇨🇭</span>
+          <div class="brand-text">
+            <strong>GeaNaVid Live Terminal</strong>
+            <span class="sub">OST Slide 25 Specification · Track 2A</span>
+          </div>
+        </div>
+        <div class="header-badges">
+          <span class="badge badge-model" id="modelBadge">Model: apertus-v1.5-8b</span>
+          <span class="badge badge-auth">🔒 Basic Auth Protected</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap app-main">
+      <!-- Input Panel -->
+      <section class="panel input-panel">
+        <div class="panel-header">
+          <h2>1. Claim & Context Input</h2>
+          <div class="mode-toggle" role="radiogroup" aria-label="Task Mode">
+            <button type="button" class="btn-toggle active" id="btnModeBeginner" data-mode="beginner">
+              Beginner Task
+            </button>
+            <button type="button" class="btn-toggle" id="btnModeAdvanced" data-mode="advanced">
+              Advanced Task
+            </button>
+          </div>
+        </div>
+
+        <form id="checkForm" class="demo-form">
+          <!-- Preset selector -->
+          <div class="form-group">
+            <label for="presetSelect">
+              <span>Curated Evaluation Cases (Romansh, Traps, Cross-Lingual)</span>
+              <span class="hint">1-click test</span>
+            </label>
+            <select id="presetSelect" class="form-select">
+              <option value="">-- Choose an edge case or type your own below --</option>
+            </select>
+          </div>
+
+          <!-- Claim Text -->
+          <div class="form-group">
+            <label for="claimText">
+              <span>Claim to verify</span>
+              <span class="char-count" id="claimCharCount">0 chars</span>
+            </label>
+            <textarea
+              id="claimText"
+              class="form-textarea"
+              rows="3"
+              required
+              placeholder="e.g. Die elektronische Identität E-ID ist freiwillig und für alle Bürger kostenlos."
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <!-- Claim Language -->
+            <div class="form-group half">
+              <label for="claimLang">Claim Language</label>
+              <select id="claimLang" class="form-select">
+                <option value="auto">Auto-detect</option>
+                <option value="de">German (Deutsch)</option>
+                <option value="fr">French (Français)</option>
+                <option value="it">Italian (Italiano)</option>
+                <option value="rm">Romansh (Rumantsch)</option>
+              </select>
+            </div>
+
+            <!-- Case ID -->
+            <div class="form-group half">
+              <label for="caseId">Case ID</label>
+              <input type="text" id="caseId" class="form-input" value="demo-01" />
+            </div>
+          </div>
+
+          <!-- Dynamic Mode Fields: Beginner (Reference) -->
+          <div id="beginnerFields" class="mode-fields">
+            <div class="form-group">
+              <label for="referenceText">
+                <span>Reference Text Passage (Gold Context)</span>
+                <span class="hint">Beginner task: given claim + reference</span>
+              </label>
+              <textarea
+                id="referenceText"
+                class="form-textarea"
+                rows="5"
+                placeholder="Paste the reference booklet paragraph or section text here..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Dynamic Mode Fields: Advanced (Booklet / Vote) -->
+          <div id="advancedFields" class="mode-fields hidden">
+            <div class="form-group">
+              <label for="bookletSelect">Federal Voting Booklet / Date</label>
+              <select id="bookletSelect" class="form-select">
+                <option value="2024-11-24">2024-11-24 (Mietrecht, Autobahnausbau, EFAS)</option>
+                <option value="2020-09-27">2020-09-27 (Kinderabzug Steuer, Kampfflugzeuge, Jagdgesetz)</option>
+                <option value="2026-06-14">2026-06-14 (Nachhaltigkeitsinitiative 10-Mio)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="voteTitle">Proposal / Vote Title (Optional Filter)</label>
+              <input
+                type="text"
+                id="voteTitle"
+                class="form-input"
+                placeholder="e.g. Mietrecht: Kündigung wegen Eigenbedarfs"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="btnSubmit" class="btn btn-primary">
+              <span class="btn-text">Verify Claim with Apertus</span>
+              <span class="spinner hidden" id="spinner"></span>
+            </button>
+            <button type="button" id="btnReset" class="btn btn-secondary">Clear</button>
+            <span class="shortcut-hint">Tip: Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
+          </div>
+        </form>
+      </section>
+
+      <!-- Terminal Output Panel -->
+      <section class="panel terminal-panel">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="terminal-title">geanavid@apertool: ~/track_2a (OST Slide 25)</div>
+            <div class="terminal-actions">
+              <button type="button" id="btnCopyJson" class="btn-term" title="Copy raw JSON">
+                Copy JSON
+              </button>
+            </div>
+          </div>
+
+          <!-- Virtual CLI invocation prompt -->
+          <div class="terminal-command-line">
+            <span class="prompt-symbol">$</span>
+            <span id="cliCommandText" class="command-text">booklint predict --help</span>
+          </div>
+
+          <!-- Verdict Ribbon -->
+          <div id="verdictRibbon" class="verdict-ribbon hidden">
+            <div class="verdict-main">
+              <span class="verdict-indicator" id="verdictDot"></span>
+              <span class="verdict-title" id="verdictTitle">Gea · Entailment (0)</span>
+            </div>
+            <div class="verdict-metrics" id="verdictMetrics">
+              <span class="metric-item">Tokens: <strong id="metricTokens">-</strong></span>
+              <span class="metric-item">Latency: <strong id="metricLatency">- ms</strong></span>
+            </div>
+          </div>
+
+          <!-- JSON Terminal Output conforming strictly to Slide 25 -->
+          <div class="terminal-body" id="terminalBody">
+            <pre id="jsonOutput" class="json-code"><code>{
+  "status": "ready",
+  "message": "Select an edge-case preset above or enter a claim, then press 'Verify Claim with Apertus'."
+}</code></pre>
+          </div>
+
+          <!-- Slide 25 Conformance Note -->
+          <div class="terminal-footer">
+            <div class="spec-note">
+              <span class="spec-tag">Slide 25 Compliance:</span>
+              <span id="specStatus">Strict root keys {"id", "label", "label_name", "evidence", "metrics"} guaranteed.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="wrap footer-content">
+        <p>
+          GeaNaVid · Multilingual Natural Language Inference over Swiss Voting Booklets ·
+          <strong>OST Challenge Track 2A</strong> · Team Apertool
+        </p>
+        <p class="muted">
+          Endpoint: Apertus v1.5 · Strict Slide 25 Output · Basic Auth Protected Proxy
+        </p>
+      </div>
+    </footer>
+
+    <script src="demo.js"></script>
+  </body>
+</html>

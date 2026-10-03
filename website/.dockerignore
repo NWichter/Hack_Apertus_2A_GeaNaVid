@@ -1,0 +1,7 @@
+README.md
+.env
+.env.*
+!.env.example
+docker-compose.yml
+pitch/render.sh
+pitch/png/

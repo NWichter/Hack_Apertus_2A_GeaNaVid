@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GeaNaVid Pitch</title>
+    <meta
+      name="description"
+      content="GeaNaVid checks a claim against the official Swiss voting booklet in German, French or Italian and returns Gea, Na or Vid with the passage that decides it. Built on Apertus v1.5."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="../assets/geanavid-favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/fonts/fonts.css" />
+    <link rel="stylesheet" href="pitch.css" />
+  </head>
+  <body>
+    <svg class="is-1" width="0" height="0" aria-hidden="true">
+      <symbol id="m-gea" viewBox="0 0 68 68">
+        <rect width="68" height="68" rx="14" fill="#1F2A37" />
+        <path
+          d="M16 35 L29 48 L52 21"
+          fill="none"
+          stroke="#E2A72E"
+          stroke-width="9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </symbol>
+      <symbol id="m-na" viewBox="0 0 68 68">
+        <rect
+          x="5"
+          y="5"
+          width="58"
+          height="58"
+          rx="10"
+          fill="#FFFFFF"
+          stroke="#1F2A37"
+          stroke-width="9"
+        />
+        <path
+          d="M21 34 H47"
+          stroke="#1F2A37"
+          stroke-width="9"
+          stroke-linecap="round"
+        />
+      </symbol>
+      <symbol id="m-vid" viewBox="0 0 68 68">
+        <rect
+          x="5"
+          y="5"
+          width="58"
+          height="58"
+          rx="10"
+          fill="#FFFFFF"
+          stroke="#1F2A37"
+          stroke-width="9"
+        />
+      </symbol>
+    </svg>
+
+    <!-- 1 Title -->
+    <section class="slide dark s-title">
+      <div class="inner">
+      <div>
+        <p class="kicker">Hack Apertus 2026 · Track 2A · Challenge by OST</p>
+        <h1>GeaNaVid</h1>
+        <p class="claim">
+          Every claim checked against the official voting booklet, with the line
+          that decides it.
+        </p>
+        <p class="rm">Gea · Na · Vid — Romansh for Yes · No · Blank</p>
+        <div class="badges">
+          <a class="badge cta" href="#"
+            >▶ Demo video <span class="tbd">[TBD]</span></a
+          >
+          <span class="badge">Built on Apertus v1.5</span>
+          <span class="badge">Team Apertool · solo builder</span>
+        </div>
+      </div>
+      <img
+        class="logo"
+        src="../assets/geanavid.svg"
+        alt="GeaNaVid logo: three ballot boxes, ticked, struck, empty"
+      />
+      </div>
+    </section>
+
+    <!-- 2 Problem -->
+    <section class="slide">
+      <p class="kicker">The problem</p>
+      <h2>Voters hear the claim.<br />The answer is on page 4 of 40.</h2>
+      <div class="pair">
+        <div class="card">
+          <div class="lab">The claim</div>
+          <p class="quote">
+            „… die Bevölkerung seit Einführung der Personenfreizügigkeit im Jahr
+            2002 um rund <mark>500'000</mark> Personen gewachsen ist.“
+          </p>
+          <p class="gloss">
+            “… the population has grown by about 500,000 since free movement
+            began in 2002.”
+          </p>
+        </div>
+        <div class="card booklet">
+          <div class="lab">Official booklet · page 4</div>
+          <div class="lines">
+            <i class="is-2"></i><i class="is-3"></i>
+          </div>
+          <p class="quote hl a-hl">
+            „Seit Einführung der Personenfreizügigkeit im Jahr 2002 ist die
+            Bevölkerung um rund 1,7 Millionen Personen gewachsen.“
+          </p>
+          <div class="lines">
+            <i class="is-4"></i><i class="is-5"></i
+            ><i class="is-6"></i>
+          </div>
+          <div class="stamp a-stamp">
+            <b>Na</b>
+            <span>contradiction</span>
+          </div>
+        </div>
+      </div>
+      <p class="src">
+        Claim–label pair from the OST demo set (MNLIoverSwissVotingBooklets,
+        label 2). Booklet: Federal Council explanations for the vote of 14 June
+        2026, German edition, 40 pages, PDF page 4.
+      </p>
+    </section>
+
+    <!-- 3 Task -->
+    <section class="slide">
+      <p class="kicker">The task</p>
+      <h2>Booklet + claim in, a ballot mark out.</h2>
+      <div class="flow">
+        <div class="inbox">
+          <div class="card">
+            <div class="t">Voting booklet</div>
+            <div class="s">PDF · German, French or Italian</div>
+          </div>
+          <div class="card">
+            <div class="t">Claim</div>
+            <div class="s">one sentence · DE, FR or IT</div>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="engine">
+          <img src="../assets/geanavid.svg" alt="" />
+          <div class="t">GeaNaVid</div>
+          <div class="s">CLI · Apertus v1.5</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="outs">
+          <div class="out">
+            <svg class="mk"><use href="#m-gea" /></svg><b>Gea</b> entailment
+            <small>0</small>
+          </div>
+          <div class="out">
+            <svg class="mk"><use href="#m-na" /></svg><b>Na</b> contradiction
+            <small>2</small>
+          </div>
+          <div class="out">
+            <svg class="mk"><use href="#m-vid" /></svg><b>Vid</b> neutral
+            <small>1</small>
+          </div>
+          <div class="out plus">
+            + the passages it rests on · tokens used · seconds taken
+          </div>
+        </div>
+      </div>
+      <div class="judged">
+        <span class="lab">Judged on</span>
+        <span class="chip main">Macro-F1 on a held-out benchmark</span>
+        <span class="chip">evidence quality</span>
+        <span class="chip">input tokens</span>
+        <span class="chip">inference time</span>
+      </div>
+      <p class="src">
+        All 9 claim/booklet language combinations. Labels 0/1/2 and judging
+        criteria as set by OST in the Hack Apertus challenge brief.
+      </p>
+    </section>
+
+    <!-- 4 Name -->
+    <section class="slide">
+      <p class="kicker">The name</p>
+      <h2>Gea. Na. Vid.</h2>
+      <p class="lede">
+        Romansh, the fourth national language, for Yes, No and Blank. All three
+        words come from the Romansh voting booklets.
+      </p>
+      <div class="words">
+        <div class="word">
+          <div class="head">
+            <svg class="mk"><use href="#m-gea" /></svg><b>Gea</b>
+          </div>
+          <div class="means">Yes <span>→ entailment</span></div>
+          <p class="rmq">
+            „… recumondan cussegl federal e parlament da metter in
+            <mark>Gea</mark> en l'urna …“
+          </p>
+          <p class="en">
+            “… the Federal Council and Parliament recommend putting a Yes in the
+            ballot box …”
+          </p>
+          <div class="when">Booklet of 12 June 1994</div>
+        </div>
+        <div class="word">
+          <div class="head">
+            <svg class="mk"><use href="#m-na" /></svg><b>Na</b>
+          </div>
+          <div class="means">No <span>→ contradiction</span></div>
+          <p class="rmq">
+            „Nus recumandain in <mark>NA</mark> a las chapellinas blaus.“
+          </p>
+          <p class="en">
+            “We recommend a NO to the blue-helmet troops.” (referendum
+            committee)
+          </p>
+          <div class="when">Booklet of 12 June 1994</div>
+        </div>
+        <div class="word">
+          <div class="head">
+            <svg class="mk"><use href="#m-vid" /></svg><b>Vid</b>
+          </div>
+          <div class="means">Blank, empty <span>→ neutral</span></div>
+          <p class="rmq">
+            „… abitaziuns da vacanzas ch'èn savens <mark>vidas</mark> …“
+          </p>
+          <p class="en">“… holiday homes that mostly stand empty …”</p>
+          <div class="when">Booklet of 25 June 1995</div>
+        </div>
+      </div>
+      <p class="src">
+        Romansh text from the aligned corpus VotingBooklets-v1 (Stüssi &amp;
+        Vamvas, SwissText 2026, CC BY 4.0); English glosses ours.
+      </p>
+    </section>
+
+    <!-- 5 Context ladder -->
+    <section class="slide">
+      <p class="kicker">The context ladder</p>
+      <h2>Start with a page. Climb only when unsure.</h2>
+      <div class="rungs">
+        <div class="rung">
+          <div class="n">1</div>
+          <div class="what">
+            <b>Top-5 passages</b>
+            <span>keyword search, in the claim's own language</span>
+          </div>
+          <div class="bar">
+            <i class="w-rung1 a-bar"></i><em>≈ 1,700 tokens</em>
+          </div>
+        </div>
+        <div class="gate">
+          <b>Unsure?</b> low label probability · a verdict without a cited passage
+        </div>
+        <div class="rung">
+          <div class="n">2</div>
+          <div class="what">
+            <b>The pages around the hits</b>
+            <span>one more look, one page before and after</span>
+          </div>
+          <div class="bar">
+            <i class="w-rung2 a-bar"></i><em>+ ≈ 4,100 tokens</em>
+          </div>
+        </div>
+        <div class="rung base">
+          <div class="n">full</div>
+          <div class="what">
+            <b>The whole booklet</b>
+            <span>baseline OST asks for</span>
+          </div>
+          <div class="bar">
+            <i class="w-full a-bar"></i><em>≈ 18,200 tokens</em>
+          </div>
+        </div>
+      </div>
+      <p class="climb">Claims settled on rung 1: 89 % (66 of 74)</p>
+      <p class="src">
+        Prompt tokens per claim as reported by the API, Apertus v1.5 8B, OST demo set and its
+        cross-lingual variants (74 pairs), 1 October 2026.
+      </p>
+    </section>
+
+    <!-- 6 Pareto -->
+    <section class="slide s-pareto">
+      <p class="kicker">The trade-off</p>
+      <h2>4 % of the tokens. Better verdicts.</h2>
+      <div class="wrap">
+        <svg width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Macro-F1 against input tokens per claim on the held-out set: Apertus 8B ladder 0.88 with about 1,900 tokens, whole booklet 0.60 with 40,000 tokens; Apertus 70B ladder 0.94 with about 1,700 tokens, whole booklet 0.85.">
+          <rect x="150" y="30" width="980" height="520" fill="#FFFFFF" stroke="#DCD8CE" stroke-width="2" rx="6" />
+          <g stroke="#ECE9E2" stroke-width="2"><line x1="150" x2="1130" y1="420.0" y2="420.0" /><line x1="150" x2="1130" y1="290.0" y2="290.0" /><line x1="150" x2="1130" y1="160.0" y2="160.0" /></g>
+          <g font-size="24" fill="#5C6675" text-anchor="end"><text x="136" y="38">1.0</text><text x="136" y="168.0">0.75</text><text x="136" y="298.0">0.5</text><text x="136" y="428.0">0.25</text><text x="136" y="558">0</text></g>
+          <text x="40" y="290" font-size="26" font-weight="600" fill="#1F2A37" transform="rotate(-90 40 290)" text-anchor="middle">Macro-F1</text>
+          <line x1="150" x2="1130" y1="459.0" y2="459.0" stroke="#1F2A37" stroke-width="3" stroke-dasharray="10 8" />
+          <text x="1118" y="447.0" font-size="23" fill="#1F2A37" text-anchor="end">always “entailment”: 0.18</text>
+          <polyline points="415.3,91.9 457.4,91.4 976.0,235.9" fill="none" stroke="#E2A72E" stroke-width="5" stroke-linejoin="round" />
+          <circle cx="415.3" cy="91.9" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="457.4" cy="91.4" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="976.0" cy="235.9" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="230.7" cy="61.2" r="11" fill="#FFFFFF" stroke="#E2A72E" stroke-width="5" />
+          <polyline points="415.3,65.9 444.1,60.7 976.0,109.6" fill="none" stroke="#1F2A37" stroke-width="5" stroke-linejoin="round" />
+          <circle cx="415.3" cy="65.9" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="444.1" cy="60.7" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="976.0" cy="109.6" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="230.7" cy="66.4" r="11" fill="#FFFFFF" stroke="#1F2A37" stroke-width="5" />
+          <g font-size="24" font-weight="600" fill="#1F2A37"><text x="230.7" y="35.2" text-anchor="middle">gold passage</text><text x="466.1" y="40.7" text-anchor="start">70B ladder 0.94</text><text x="415" y="186" text-anchor="start">8B ladder 0.88</text><text x="990" y="152" text-anchor="end">70B whole booklet 0.85</text><text x="956.0" y="277.9" text-anchor="end">8B whole booklet 0.60</text></g>
+          <g font-size="24" fill="#5C6675" text-anchor="middle"><text x="236.2" y="586">500</text><text x="353.1" y="586">1k</text><text x="470.0" y="586">2k</text><text x="624.6" y="586">5k</text><text x="741.6" y="586">10k</text><text x="858.5" y="586">20k</text><text x="1013.1" y="586">50k</text><text x="1130.0" y="586">100k</text></g>
+          <text x="640" y="638" font-size="26" font-weight="600" fill="#1F2A37" text-anchor="middle">Input tokens per claim (log scale)</text>
+        </svg>
+        <div class="notes">
+          <div class="note">
+            <b><span class="sw sw-8b"></span>Apertus 8B</b>
+            <span>Ladder 0.88 with 1,856 tokens. Whole booklet 0.60 with 40,149.</span>
+          </div>
+          <div class="note">
+            <b><span class="sw sw-70b"></span>Apertus 70B</b>
+            <span>Ladder 0.94 with 1,715 tokens. Whole booklet 0.85, and 2.8 s instead of 0.9 s.</span>
+          </div>
+          <div class="note">
+            <b><span class="sw sw-ring"></span>Gold passage</b>
+            <span>0.94 and 0.93. Retrieval loses 0.06 with 8B and nothing with 70B.</span>
+          </div>
+        </div>
+      </div>
+      <p class="src">
+        Held-out synthetic test: 101 claims on four booklets (2010, 2016, 2020, 2025), labels by two other
+        LLMs with cross-review, not yet checked by a human. 95 % intervals ±0.05–0.10. Measured 1 October 2026.
+      </p>
+    </section>
+
+    <!-- 7 Cross-lingual -->
+    <section class="slide s-x">
+      <p class="kicker">Across languages</p>
+      <h2>
+        Claim in German, booklet in French.<br />The evidence stays French.
+      </h2>
+      <div class="wrap">
+        <div>
+          <div class="grid3">
+            <div></div>
+            <div class="h">DE</div>
+            <div class="h">FR</div>
+            <div class="h">IT</div>
+            <div class="h row">DE</div>
+            <div class="c same"><span class="tbd">[TBD]</span></div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="h row">FR</div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="c same"><span class="tbd">[TBD]</span></div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="h row">IT</div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="c"><span class="tbd">[TBD]</span></div>
+            <div class="c same"><span class="tbd">[TBD]</span></div>
+          </div>
+          <p class="axis">
+            Macro-F1 per pair. Rows: claim language · columns: booklet language.
+            Framed: same language.
+          </p>
+        </div>
+        <div>
+          <div class="big">31<small> / 48</small></div>
+          <p class="fact">
+            cross-lingual demo pairs where plain keyword search finds the right
+            page in its top 5. Without help, 17 of 48 miss.
+          </p>
+          <div class="fix">
+            So GeaNaVid searches the booklet edition in the claim's language and maps the
+            hits back by page. The right passage is then in the top 5 for 36 of 38 claims,
+            with zero extra tokens.
+          </div>
+        </div>
+      </div>
+      <p class="src">
+        Own probe: BM25 over the three editions of the 14 June 2026 booklet, 24
+        non-neutral demo claims × 2 other languages. Same-language recall@3 on
+        the same claims: 22 / 24.
+      </p>
+    </section>
+
+    <!-- 8 Evidence -->
+    <section class="slide s-ev">
+      <p class="kicker">Evidence</p>
+      <h2>Every verdict points to a line in the booklet.</h2>
+      <div class="wrap">
+        <div class="verdict">
+          <div class="top">
+            <svg class="mk"><use href="#m-na" /></svg><b>Na</b>
+            <span>contradiction · label 2</span>
+          </div>
+          <div class="claimline">
+            Claim: population grew by about 500,000 since 2002
+          </div>
+          <div class="ev">
+            „Seit Einführung der Personenfreizügigkeit im Jahr 2002 ist die
+            Bevölkerung um rund <mark>1,7 Millionen</mark> Personen gewachsen.“
+          </div>
+          <div class="where">
+            14.06.2026 · DE · page 4 · first proposal · “In Kürze”
+          </div>
+          <div class="usage">
+            <span>input tokens <span class="tbd">[TBD]</span></span>
+            <span>time <span class="tbd">[TBD]</span></span>
+            <span>ladder rung <span class="tbd">[TBD]</span></span>
+          </div>
+        </div>
+        <div class="points">
+          <div class="point">
+            <b>Quotes, not paraphrase</b>
+            <span
+              >Evidence is a real text block from the PDF, with page and
+              position. The model picks it; it does not write it.</span
+            >
+          </div>
+          <div class="point">
+            <b>Evidence first, label second</b>
+            <span
+              >Apertus names the passages before it gives the verdict, in strict
+              JSON.</span
+            >
+          </div>
+          <div class="point">
+            <b>Not voting advice</b>
+            <span
+              >GeaNaVid says what the booklet says. It never says how to
+              vote.</span
+            >
+          </div>
+        </div>
+      </div>
+      <p class="src">
+        Output format as designed for the CLI; measured values follow from the
+        benchmark runs.
+      </p>
+    </section>
+
+    <!-- 9 Team + close -->
+    <section class="slide dark s-close">
+      <p class="kicker">Team Apertool</p>
+      <h2>Gea, Na or Vid.<br />Always with the line that decides it.</h2>
+      <div class="wrap">
+        <div>
+          <div class="team">
+            <img
+              src="../assets/apertool.svg"
+              alt="Apertool logo"
+            />
+            <div>
+              <b>Niklas Wichter</b>
+              <span>Team Apertool · solo builder</span>
+            </div>
+          </div>
+          <div class="links">
+            <div><span class="k">Repo</span><span class="tbd">[TBD]</span></div>
+            <div>
+              <span class="k">Video</span><span class="tbd">[TBD]</span>
+            </div>
+            <div>
+              <span class="k">Report</span><span class="tbd">[TBD]</span>
+            </div>
+          </div>
+        </div>
+        <div class="run">
+          <div class="lab">Judges start here</div>
+          git clone <span class="tbd">[TBD]</span><br />
+          cp .env.example .env<br />
+          <span class="c"># set the three LLM_* variables</span><br />
+          make run
+        </div>
+      </div>
+      <p class="src">
+        Hack Apertus 2026, Track 2A, challenge by OST. GeaNaVid is an
+        independent entry, not a product of OST or the Federal Chancellery.
+      </p>
+    </section>
+
+    <div class="ui">
+      <div class="prog"><i></i></div>
+      <nav class="ctl" aria-label="Slides">
+        <button type="button" data-go="-1" aria-label="Previous slide">
+          ‹
+        </button>
+        <span class="cnt">01 / 09</span>
+        <button type="button" data-go="1" aria-label="Next slide">›</button>
+        <a href="pitch.pdf" download>PDF</a>
+        <button type="button" data-fs aria-label="Full screen">
+          Full screen
+        </button>
+      </nav>
+    </div>
+
+    <script src="pitch.js"></script>
+  </body>
+</html>

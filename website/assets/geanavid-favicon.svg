@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 8 242 242" width="256" height="256">
+  <title>GeaNaVid (Favicon)</title>
+  <g id="gnv-logo">
+    <g id="gnv-field-gea"><rect x="44" y="96" width="44" height="44" rx="10" fill="#1F2A37"/></g>
+    <g id="gnv-mark-gea"><path d="M54 119 L63 128 L78 109" fill="none" stroke="#E2A72E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="gnv-field-na"><rect x="101" y="101" width="34" height="34" rx="6" fill="#FFFFFF" stroke="#1F2A37" stroke-width="10"/></g>
+    <g id="gnv-mark-na"><path d="M111 118 H125" fill="none" stroke="#1F2A37" stroke-width="10" stroke-linecap="round"/></g>
+    <g id="gnv-field-vid"><rect x="153" y="101" width="34" height="34" rx="6" fill="#FFFFFF" stroke="#1F2A37" stroke-width="10"/></g>
+    <g id="gnv-lens">
+      <circle id="gnv-lens-ring" cx="118" cy="118" r="94" fill="none" stroke="#1F2A37" stroke-width="24"/>
+      <path id="gnv-lens-handle" d="M188.7 188.7 L228 228" fill="none" stroke="#1F2A37" stroke-width="32" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

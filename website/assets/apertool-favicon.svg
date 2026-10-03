@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 37 192 192" width="256" height="256">
+  <title>Apertool (Favicon)</title>
+  <g id="apt-logo">
+    <g id="apt-saw" class="apt-tool" transform="rotate(-88 60 196)"><circle cx="60" cy="196" r="15" fill="#7D8A99"/><path fill="#7D8A99" d="M60 181L84 188H100L122 174L128 188L150 174L156 188L178 174L184 188H198L210 199L202 210H60Z"/></g>
+    <g id="apt-corkscrew" class="apt-tool" transform="rotate(-64 60 196)"><circle cx="60" cy="196" r="14" fill="#F4A41C"/><path fill="none" stroke="#F4A41C" stroke-width="12" d="M58 196H79.5"/><path fill="none" stroke="#F4A41C" stroke-width="6" stroke-linecap="round" d="M79.5 196L80.4 194.2L81.5 192.4L82.7 190.6L84.1 189L85.7 187.5L87.5 186.1L89.3 184.9L91.3 183.9L93.4 183.1L95.6 182.5L97.8 182.1L100 182M119 210L117.7 209.5L116.7 208.1L116 205.9L115.8 203L116.3 199.6L117.5 196L119.5 192.4L122.1 189L125.5 186.1L129.3 183.9L133.6 182.5L138 182M157 210L155.7 209.5L154.7 208.1L154 205.9L153.8 203L154.3 199.6L155.5 196L157.5 192.4L160.1 189L163.5 186.1L167.3 183.9L171.6 182.5L176 182"/><path fill="none" stroke="#F4A41C" stroke-width="12" stroke-linecap="round" d="M100 182L104.4 182.5L108.7 183.9L112.5 186.1L115.9 189L118.5 192.4L120.5 196L121.7 199.6L122.2 203L122 205.9L121.3 208.1L120.3 209.5L119 210M138 182L142.4 182.5L146.7 183.9L150.5 186.1L153.9 189L156.5 192.4L158.5 196L159.7 199.6L160.2 203L160 205.9L159.3 208.1L158.3 209.5L157 210M176 182L178.2 182.1L180.4 182.5L182.6 183.1L184.7 183.9L186.7 184.9L188.5 186.1L190.3 187.5L191.9 189L193.3 190.6L194.5 192.4L195.6 194.2L196.5 196"/><path fill="#F4A41C" d="M193.5 189L220.5 196L193.5 203Z"/></g>
+    <g id="apt-loupe" class="apt-tool" transform="rotate(-40 60 196)"><circle cx="60" cy="196" r="15" fill="#12857E"/><path fill="#12857E" d="M60 181L84 188H160V204H84L60 211Z"/><circle cx="180" cy="196" r="32" fill="#12857E"/><circle id="apt-lens" cx="180" cy="196" r="19" fill="#FFFFFF"/></g>
+    <g id="apt-knife" class="apt-tool" transform="rotate(-17 60 196)"><circle cx="60" cy="196" r="15" fill="#9ED2CB"/><path fill="#9ED2CB" d="M60 181H172Q202 181 218 177C202 196 184 211 146 211H60Z"/></g>
+    <g id="apt-handle"><rect x="36" y="172" width="184" height="48" rx="24" fill="#1F2A37"/></g>
+    <g id="apt-pivot"><circle cx="60" cy="196" r="9" fill="#FFFFFF"/></g>
+  </g>
+</svg>
