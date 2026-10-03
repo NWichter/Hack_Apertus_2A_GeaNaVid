@@ -1,0 +1,44 @@
+{
+  "n": 450,
+  "macro_f1": 0.6554,
+  "ci95": [
+    0.6066,
+    0.6982
+  ],
+  "f1_e": 0.7083,
+  "f1_n": 0.7397,
+  "f1_c": 0.5182,
+  "accuracy": 0.6689,
+  "confusion": {
+    "0->0": 102,
+    "0->1": 27,
+    "0->2": 22,
+    "1->0": 3,
+    "1->1": 135,
+    "1->2": 10,
+    "2->0": 32,
+    "2->1": 55,
+    "2->2": 64
+  },
+  "macro_f1_same": 0.7593,
+  "n_same": 160,
+  "macro_f1_cross": 0.5967,
+  "n_cross": 290,
+  "prompt_tokens_mean": 28281.2956,
+  "completion_tokens_mean": 23.8956,
+  "tokens_mean": 28305.1911,
+  "prompt_tokens_p95": 68666,
+  "llm_calls_mean": 1.0,
+  "llm_seconds_mean": 0.7557,
+  "llm_seconds_p50": 0.436,
+  "llm_seconds_p95": 2.932,
+  "errors": 0,
+  "steps": {
+    "baseline": 450
+  },
+  "model": "apertus-v1.5-8b",
+  "name": "baseline",
+  "split": "dev_s",
+  "wall_s": 111.6,
+  "uncached_calls": 395
+}

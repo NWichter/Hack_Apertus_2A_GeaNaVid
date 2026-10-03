@@ -1,0 +1,31 @@
+{
+  "rows_ec_pred": 323,
+  "sentence_in_gold": 0.7864,
+  "best_sentence_of_cited_chunks_only_in_gold": 0.6997,
+  "first_sentence_of_first_cited_chunk_in_gold": 0.6254,
+  "first_cited_chunk_in_gold": 0.6161,
+  "any_cited_chunk_in_gold": 0.7523,
+  "sentence_in_gold_given_a_cited_chunk_in_gold": 0.9136,
+  "fallback_no_cited_chunk": 9,
+  "two_spans": 174,
+  "sentence_chars_median": 147,
+  "sentence_chars_p90": 269,
+  "by_label_pair": {
+    "C cross": {
+      "n": 104,
+      "hit": 0.731
+    },
+    "C same": {
+      "n": 41,
+      "hit": 0.78
+    },
+    "E cross": {
+      "n": 115,
+      "hit": 0.791
+    },
+    "E same": {
+      "n": 63,
+      "hit": 0.873
+    }
+  }
+}

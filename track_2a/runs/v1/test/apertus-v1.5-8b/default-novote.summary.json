@@ -1,0 +1,52 @@
+{
+  "n": 497,
+  "macro_f1": 0.918,
+  "ci95": [
+    0.8937,
+    0.9406
+  ],
+  "f1_e": 0.9345,
+  "f1_n": 0.9379,
+  "f1_c": 0.8816,
+  "accuracy": 0.9195,
+  "confusion": {
+    "0->0": 157,
+    "0->1": 2,
+    "0->2": 3,
+    "1->0": 2,
+    "1->1": 166,
+    "1->2": 1,
+    "2->0": 15,
+    "2->1": 17,
+    "2->2": 134
+  },
+  "macro_f1_same": 0.9493,
+  "n_same": 166,
+  "macro_f1_cross": 0.9032,
+  "n_cross": 331,
+  "prompt_tokens_mean": 2276.0543,
+  "completion_tokens_mean": 44.6499,
+  "tokens_mean": 2320.7042,
+  "prompt_tokens_p95": 2775,
+  "llm_calls_mean": 1.7243,
+  "llm_seconds_mean": 0.7719,
+  "llm_seconds_p50": 0.503,
+  "llm_seconds_p95": 2.131,
+  "errors": 0,
+  "steps": {
+    "retrieval": 483,
+    "retrieval+decompose": 14
+  },
+  "recall_hit": 0.6962,
+  "gold_coverage": 0.2853,
+  "retries": {
+    "rate_limit": 6,
+    "other": 0
+  },
+  "workers": 4,
+  "model": "apertus-v1.5-8b",
+  "name": "default-novote",
+  "split": "test",
+  "wall_s": 20.6,
+  "uncached_calls": 106
+}

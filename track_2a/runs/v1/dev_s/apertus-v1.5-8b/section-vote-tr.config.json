@@ -1,0 +1,33 @@
+{
+  "name": "section-vote-tr",
+  "split": "dev_s",
+  "model": "apertus-v1.5-8b",
+  "options": {
+    "mode": "section",
+    "k": 5,
+    "neighbors": 1,
+    "scope": "vote",
+    "retriever": "bm25",
+    "pool": 15,
+    "rerank": "",
+    "translate": true,
+    "crossling": "none",
+    "numbers": "",
+    "decompose": false,
+    "tau_decompose": 0.75,
+    "fewshot": 0,
+    "calib": {},
+    "cascade": "",
+    "tau_cascade": 0.75,
+    "escalate": "pages",
+    "prompt": "nli-v1",
+    "route": true,
+    "tau": 0.75,
+    "neutral_bias": 0.0,
+    "max_evidence": 3
+  },
+  "split_seed": 2026,
+  "rows": 450,
+  "started": "2026-10-02T13:21:52+00:00",
+  "command": "experiments/v1/run.py --workers 5 --split dev_s --model apertus-v1.5-8b --name section-vote-tr --opts {\"mode\":\"section\",\"scope\":\"vote\",\"translate\":true}"
+}

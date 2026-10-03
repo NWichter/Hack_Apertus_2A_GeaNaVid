@@ -1,0 +1,51 @@
+{
+  "n": 450,
+  "macro_f1": 0.8313,
+  "ci95": [
+    0.7932,
+    0.8648
+  ],
+  "f1_e": 0.8866,
+  "f1_n": 0.8224,
+  "f1_c": 0.7847,
+  "accuracy": 0.8311,
+  "confusion": {
+    "0->0": 129,
+    "0->1": 11,
+    "0->2": 11,
+    "1->0": 3,
+    "1->1": 132,
+    "1->2": 13,
+    "2->0": 8,
+    "2->1": 30,
+    "2->2": 113
+  },
+  "macro_f1_same": 0.8568,
+  "n_same": 160,
+  "macro_f1_cross": 0.8171,
+  "n_cross": 290,
+  "prompt_tokens_mean": 1622.7667,
+  "completion_tokens_mean": 46.6511,
+  "tokens_mean": 1669.4178,
+  "prompt_tokens_p95": 2206,
+  "llm_calls_mean": 1.6444,
+  "llm_seconds_mean": 0.6971,
+  "llm_seconds_p50": 0.544,
+  "llm_seconds_p95": 1.698,
+  "errors": 0,
+  "steps": {
+    "retrieval": 450
+  },
+  "recall_hit": 0.6089,
+  "gold_coverage": 0.2124,
+  "retries": {
+    "rate_limit": 17,
+    "other": 0
+  },
+  "workers": 5,
+  "model": "apertus-v1.5-8b",
+  "name": "ret-claim-tr",
+  "split": "dev_s",
+  "wall_s": 29.9,
+  "uncached_calls": 143
+}

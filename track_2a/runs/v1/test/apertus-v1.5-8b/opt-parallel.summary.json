@@ -1,0 +1,50 @@
+{
+  "n": 497,
+  "macro_f1": 0.9529,
+  "ci95": [
+    0.9324,
+    0.9698
+  ],
+  "f1_e": 0.9583,
+  "f1_n": 0.9739,
+  "f1_c": 0.9265,
+  "accuracy": 0.9537,
+  "confusion": {
+    "0->0": 161,
+    "0->2": 1,
+    "1->1": 168,
+    "1->2": 1,
+    "2->0": 13,
+    "2->1": 8,
+    "2->2": 145
+  },
+  "macro_f1_same": 0.9801,
+  "n_same": 166,
+  "macro_f1_cross": 0.94,
+  "n_cross": 331,
+  "prompt_tokens_mean": 2173.2555,
+  "completion_tokens_mean": 21.499,
+  "tokens_mean": 2194.7545,
+  "prompt_tokens_p95": 2864,
+  "llm_calls_mean": 1.0604,
+  "llm_seconds_mean": 0.4541,
+  "llm_seconds_p50": 0.25,
+  "llm_seconds_p95": 1.345,
+  "errors": 0,
+  "steps": {
+    "retrieval": 482,
+    "retrieval+decompose": 15
+  },
+  "recall_hit": 0.8994,
+  "gold_coverage": 0.3491,
+  "retries": {
+    "rate_limit": 21,
+    "other": 0
+  },
+  "workers": 4,
+  "model": "apertus-v1.5-8b",
+  "name": "opt-parallel",
+  "split": "test",
+  "wall_s": 55.4,
+  "uncached_calls": 283
+}

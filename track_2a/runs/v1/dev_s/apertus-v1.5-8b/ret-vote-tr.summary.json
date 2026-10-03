@@ -1,0 +1,50 @@
+{
+  "n": 450,
+  "macro_f1": 0.9088,
+  "ci95": [
+    0.8805,
+    0.9342
+  ],
+  "f1_e": 0.9329,
+  "f1_n": 0.915,
+  "f1_c": 0.8784,
+  "accuracy": 0.9089,
+  "confusion": {
+    "0->0": 139,
+    "0->1": 5,
+    "0->2": 7,
+    "1->1": 140,
+    "1->2": 8,
+    "2->0": 8,
+    "2->1": 13,
+    "2->2": 130
+  },
+  "macro_f1_same": 0.9367,
+  "n_same": 160,
+  "macro_f1_cross": 0.8935,
+  "n_cross": 290,
+  "prompt_tokens_mean": 1603.0244,
+  "completion_tokens_mean": 46.9822,
+  "tokens_mean": 1650.0067,
+  "prompt_tokens_p95": 2177,
+  "llm_calls_mean": 1.6444,
+  "llm_seconds_mean": 0.6507,
+  "llm_seconds_p50": 0.54,
+  "llm_seconds_p95": 1.667,
+  "errors": 0,
+  "steps": {
+    "retrieval": 450
+  },
+  "recall_hit": 0.92,
+  "gold_coverage": 0.2865,
+  "retries": {
+    "rate_limit": 0,
+    "other": 0
+  },
+  "workers": 3,
+  "model": "apertus-v1.5-8b",
+  "name": "ret-vote-tr",
+  "split": "dev_s",
+  "wall_s": 64.6,
+  "uncached_calls": 259
+}

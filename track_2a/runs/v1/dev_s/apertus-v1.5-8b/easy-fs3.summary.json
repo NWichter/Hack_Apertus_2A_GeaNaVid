@@ -1,0 +1,46 @@
+{
+  "n": 450,
+  "macro_f1": 0.9594,
+  "ci95": [
+    0.939,
+    0.9756
+  ],
+  "f1_e": 0.9773,
+  "f1_n": 0.9639,
+  "f1_c": 0.9371,
+  "accuracy": 0.96,
+  "confusion": {
+    "0->0": 151,
+    "1->1": 147,
+    "1->2": 1,
+    "2->0": 7,
+    "2->1": 10,
+    "2->2": 134
+  },
+  "macro_f1_same": 0.9616,
+  "n_same": 160,
+  "macro_f1_cross": 0.9584,
+  "n_cross": 290,
+  "prompt_tokens_mean": 2628.5311,
+  "completion_tokens_mean": 15.7644,
+  "tokens_mean": 2644.2956,
+  "prompt_tokens_p95": 5063,
+  "llm_calls_mean": 1.0,
+  "llm_seconds_mean": 0.3539,
+  "llm_seconds_p50": 0.217,
+  "llm_seconds_p95": 1.285,
+  "errors": 0,
+  "steps": {
+    "easy": 450
+  },
+  "retries": {
+    "rate_limit": 50,
+    "other": 0
+  },
+  "workers": 4,
+  "model": "apertus-v1.5-8b",
+  "name": "easy-fs3",
+  "split": "dev_s",
+  "wall_s": 78.5,
+  "uncached_calls": 400
+}

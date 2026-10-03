@@ -1,0 +1,33 @@
+{
+  "name": "ret-vote-tr-dec",
+  "split": "dev_s",
+  "model": "apertus-v1.5-70b",
+  "options": {
+    "mode": "retrieval",
+    "k": 5,
+    "neighbors": 1,
+    "scope": "vote",
+    "retriever": "bm25",
+    "pool": 15,
+    "rerank": "",
+    "translate": true,
+    "crossling": "none",
+    "numbers": "",
+    "decompose": true,
+    "tau_decompose": 0.9,
+    "fewshot": -1,
+    "calib": {},
+    "cascade": "",
+    "tau_cascade": 0.75,
+    "escalate": "pages",
+    "prompt": "nli-v1",
+    "route": true,
+    "tau": 0.75,
+    "neutral_bias": 0.0,
+    "max_evidence": 3
+  },
+  "split_seed": 2026,
+  "rows": 450,
+  "started": "2026-10-02T13:51:33+00:00",
+  "command": "experiments/v1/run.py --workers 4 --split dev_s --model apertus-v1.5-70b --name default --opts {\"mode\":\"retrieval\",\"scope\":\"vote\",\"translate\":true,\"fewshot\":-1,\"decompose\":true,\"tau_decompose\":0.9}"
+}

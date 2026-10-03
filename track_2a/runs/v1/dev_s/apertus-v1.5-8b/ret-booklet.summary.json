@@ -1,0 +1,46 @@
+{
+  "n": 450,
+  "macro_f1": 0.7584,
+  "ci95": [
+    0.7177,
+    0.7968
+  ],
+  "f1_e": 0.7939,
+  "f1_n": 0.7533,
+  "f1_c": 0.728,
+  "accuracy": 0.7578,
+  "confusion": {
+    "0->0": 104,
+    "0->1": 35,
+    "0->2": 12,
+    "1->0": 3,
+    "1->1": 142,
+    "1->2": 3,
+    "2->0": 4,
+    "2->1": 52,
+    "2->2": 95
+  },
+  "macro_f1_same": 0.8998,
+  "n_same": 160,
+  "macro_f1_cross": 0.6772,
+  "n_cross": 290,
+  "prompt_tokens_mean": 1429.1733,
+  "completion_tokens_mean": 20.5511,
+  "tokens_mean": 1449.7244,
+  "prompt_tokens_p95": 2041,
+  "llm_calls_mean": 1.0,
+  "llm_seconds_mean": 0.3578,
+  "llm_seconds_p50": 0.223,
+  "llm_seconds_p95": 1.319,
+  "errors": 0,
+  "steps": {
+    "retrieval": 450
+  },
+  "recall_hit": 0.5578,
+  "gold_coverage": 0.1691,
+  "model": "apertus-v1.5-8b",
+  "name": "ret-booklet",
+  "split": "dev_s",
+  "wall_s": 78.6,
+  "uncached_calls": 401
+}
