@@ -50,6 +50,32 @@ def percentile(values, q):
     return v[min(len(v) - 1, int(round(q * (len(v) - 1))))]
 
 
+def input_tokens(p):
+    m = p.get("metrics")
+    if isinstance(m, dict) and "input_tokens" in m:
+        return m["input_tokens"]
+    return p.get("usage", {}).get("prompt_tokens", 0)
+
+
+def inference_ms(p):
+    m = p.get("metrics")
+    if isinstance(m, dict) and "inference_time_ms" in m:
+        return m["inference_time_ms"]
+    return round(p.get("latency_s", 0.0) * 1000)
+
+
+def efficiency(preds):
+    """What OST measures (slide 28): input tokens (sum and mean) and inference_time_ms (mean and p95) per claim."""
+    toks = [input_tokens(p) for p in preds]
+    ms = [inference_ms(p) for p in preds]
+    return {
+        "input_tokens_sum": sum(toks),
+        "input_tokens_mean": round(sum(toks) / len(toks), 1) if toks else None,
+        "inference_ms_mean": round(sum(ms) / len(ms), 1) if ms else None,
+        "inference_ms_p95": percentile(ms, 0.95),
+    }
+
+
 def summarize(rows, preds, chunk_text=None):
     gold = [int(r.get("label", r.get("entailment_label", 1))) for r in rows]
     pred = [int(p.get("label", p.get("entailment_label", 1))) for p in preds]
@@ -113,6 +139,7 @@ def summarize(rows, preds, chunk_text=None):
         "by_pair": {
             k: round(macro_f1(g, q)[0], 3) for k, (g, q) in sorted(by_pair.items())
         },
+        **efficiency(preds),
     }
 
 
@@ -158,6 +185,7 @@ def breakdown(rows, preds, gold_ids=None):
         "llm_seconds_p95": percentile([u.get("llm_seconds", 0.0) for u in usage], 0.95),
         "errors": sum("error" in p for p in preds),
         "steps": dict(Counter(p.get("ladder_step") for p in preds)),
+        **efficiency(preds),
     })
     if gold_ids is not None and any(p.get("hits") for p in preds):
         hit = cov = n = 0

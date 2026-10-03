@@ -26,7 +26,7 @@ from .nli import (
 from .proposal import locate
 from .retrieval_eval import gold_chunks
 from .retrieve import Retriever, map_parallel, parallel_url
-from .textnorm import detect_language
+from .textnorm import detect_language, language_scores, tokens
 
 _RECOMMEND_CLAIM = re.compile(
     r"empf[eiä]|recomm|racc?omand|ablehn|annehm|rejet|accept|respin|accett|parole", re.I
@@ -76,6 +76,22 @@ class Options:
     tau: float = 0.75
     neutral_bias: float = 0.0
     max_evidence: int = 3
+    evidence_unit: str = "sentence"
+
+
+def foreign_title(text, booklet_lang, vocabulary):
+    """Source language of a vote title written in another language than the booklet, else None.
+    Titles in the booklet language have all their words in the booklet (1,495 of 1,495 v1.0 rows)."""
+    words = [t for t in tokens(text) if not t[0].isdigit()]
+    if not words:
+        return None
+    coverage = sum(t in vocabulary for t in words) / len(words)
+    scores = language_scores(text)
+    best = max(scores, key=scores.get)
+    if coverage < 0.5 or (coverage < 0.9 and best != booklet_lang):
+        others = {k: v for k, v in scores.items() if k != booklet_lang}
+        return max(others, key=others.get)
+    return None
 
 
 def small_model(model):
@@ -163,11 +179,11 @@ class Pipeline:
             self._booklets[source] = (b, Retriever(b))
         return self._booklets[source]
 
-    def _translate(self, claim, src, dst, usage):
+    def _translate(self, claim, src, dst, usage, purpose="translate"):
         rec = self.llm.chat(
             translate_messages(claim, src, dst),
             usage,
-            "translate",
+            purpose,
             temperature=0,
             max_tokens=200,
         )
@@ -419,9 +435,13 @@ class Pipeline:
 
         region = [c.id for c in chunks]
         proposal = ""
+        vote_translation = None
         if booklet is not None:
             if self.opt.scope == "vote" and vote:
-                region, proposal = locate(booklet, vote)
+                vote_lang = foreign_title(vote, booklet_lang, retriever.bm25.idf) if self.opt.translate else None
+                if vote_lang:
+                    vote_translation = self._translate(vote, vote_lang, booklet_lang, usage, "translate-vote")
+                region, proposal = locate(booklet, vote_translation or vote)
             elif self.opt.scope == "claim" or (self.opt.scope == "vote" and not vote):
                 region, proposal = locate(booklet, " ".join(queries))
 
@@ -620,13 +640,25 @@ class Pipeline:
                 sp.pop("score", None)
 
         evidence = []
-        if lbl_int != 1:  # Non-neutral (entailment or contradiction)
-            if spans:
+        if lbl_int != 1:
+            if spans and self.opt.evidence_unit == "paragraph":
+                seen = []
+                for sp in spans:
+                    if sp["chunk_id"] not in seen:
+                        seen.append(sp["chunk_id"])
+                evidence = [{"page": int(chunks[i].page), "text": str(chunks[i].text)} for i in seen]
+            elif spans:
                 evidence = [{"page": int(s["page"]), "text": str(s["text"])} for s in spans]
             elif cited:
                 evidence = [{"page": int(chunks[i].page), "text": str(chunks[i].text)} for i in cited]
-            elif chunks:
-                evidence = [{"page": int(chunks[0].page), "text": str(chunks[0].text)}]
+            else:
+                fallback = retrieved or hits
+                if not fallback and retriever is not None:
+                    allowed = set(region)
+                    fallback = [i for i in retriever.rank(queries)[0] if i in allowed]
+                fallback = fallback or list(region)
+                if fallback:
+                    evidence = [{"page": int(chunks[fallback[0]].page), "text": str(chunks[fallback[0]].text)}]
 
         u = usage.summary()
         latency_ms = int(round((time.perf_counter() - t0) * 1000))
@@ -657,6 +689,7 @@ class Pipeline:
             "claim_language": claim_lang,
             "booklet_language": booklet_lang,
             "translation": translation,
+            "vote_translation": vote_translation,
             "proposal": proposal,
             "region_size": len(region),
             "hits": hits,

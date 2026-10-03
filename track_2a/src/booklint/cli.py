@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -44,6 +45,7 @@ def options_from(args, mode=None):
         "tau_cascade",
         "neutral_bias",
         "prompt",
+        "evidence_unit",
     )
     kw = {k: getattr(args, k) for k in keys if getattr(args, k, None) is not None}
     for flag in ("translate", "decompose"):
@@ -56,53 +58,65 @@ def options_from(args, mode=None):
     return Options(mode=mode or args.mode or Options.mode, **kw)
 
 
+def failure(cid, exc):
+    """A failed case is answered neutral with an error note, so a batch never stops."""
+    return {
+        "id": cid,
+        "label": 1,
+        "label_name": "neutral",
+        "evidence": [],
+        "metrics": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "inference_time_ms": 0,
+        },
+        "decision": 1,
+        "answer": "blank",
+        "page": None,
+        "evidence_sentence": None,
+        "evidence_sentences": [],
+        "entailment_label": 1,
+        "error": redact(repr(exc))[:300],
+        "retrieved_ids": [],
+        "ladder_step": "error",
+        "confidence": None,
+        "usage": {
+            "llm_calls": 0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "llm_seconds": 0.0,
+        },
+    }
+
+
+def check_case(pipeline, c, claim_lang=None):
+    if not c["claim"] or not (c["booklet"] or c["reference"]):
+        raise ValueError("case needs a claim and a booklet path or a reference text")
+    return pipeline.check(
+        c["claim"],
+        c["booklet"],
+        claim_lang or c["claim_lang"],
+        c["reference"],
+        c["vote"],
+        case_id=c["id"],
+    )
+
+
 def run_rows(pipeline, rows, workers):
     cases = [normalize_case(r) for r in rows]
     for c in cases:
         if c["booklet"]:
-            pipeline.booklet(c["booklet"])
+            try:
+                pipeline.booklet(c["booklet"])
+            except Exception:
+                pass
 
     def one(c):
         cid = c["id"]
         try:
-            if not c["claim"] or not (c["booklet"] or c["reference"]):
-                raise ValueError("case needs a claim and a booklet path or a reference text")
-            out = pipeline.check(
-                c["claim"],
-                c["booklet"],
-                c["claim_lang"],
-                c["reference"],
-                c["vote"],
-                case_id=cid,
-            )
-        except Exception as exc:  # keep the batch alive, count the failure as neutral
-            out = {
-                "id": cid,
-                "label": 1,
-                "label_name": "neutral",
-                "evidence": [],
-                "metrics": {
-                    "input_tokens": 0,
-                    "output_tokens": 0,
-                    "inference_time_ms": 0,
-                },
-                "decision": 1,
-                "answer": "blank",
-                "page": None,
-                "evidence_sentence": None,
-                "evidence_sentences": [],
-                "entailment_label": 1,
-                "error": redact(repr(exc))[:300],
-                "retrieved_ids": [],
-                "ladder_step": "error",
-                "confidence": None,
-                "usage": {
-                    "llm_calls": 0,
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "llm_seconds": 0.0,
-                },
-            }
+            out = check_case(pipeline, c)
+        except Exception as exc:
+            out = failure(cid, exc)
         out["id"] = cid
         return out
 
@@ -155,12 +169,22 @@ def _field(value, key):
     return value.get(key) if isinstance(value, dict) else value
 
 
+def resolve_booklet(path):
+    """Relative booklet paths are read below BOOKLET_ROOT when it is set."""
+    root = os.environ.get("BOOKLET_ROOT")
+    if not path or not root or "://" in path or Path(path).is_absolute():
+        return path
+    return str(Path(root) / path)
+
+
 def normalize_case(r):
     """Flat dataset rows and OST task cases (slide 24: booklet.path, claim.text, reference.text) -> one shape."""
     return {
         "id": str(r.get("id") or ""),
         "claim": _field(r.get("claim"), "text"),
-        "booklet": _field(r.get("booklet"), "path") or r.get("booklet_path") or r.get("booklet_url"),
+        "booklet": resolve_booklet(
+            _field(r.get("booklet"), "path") or r.get("booklet_path") or r.get("booklet_url")
+        ),
         "reference": _field(r.get("reference"), "text") or r.get("reference_string"),
         "vote": r.get("vote"),
         "claim_lang": r.get("claim_language"),
@@ -198,33 +222,30 @@ def cmd_predict(args):
         ]
     llm = LLM(Settings.from_env(args.model), use_cache=not args.no_cache)
     pipelines = {}
-    results = []
-    for c in cases:
-        if not c["claim"] or not (c["booklet"] or c["reference"]):
-            sys.exit(
-                f"Error: case {c['id']!r} needs a claim and a booklet path or a reference text."
-            )
-        mode = args.mode or (None if c["booklet"] else "easy")
-        if mode not in pipelines:
-            pipelines[mode] = Pipeline(llm, options_from(args, mode=mode))
-        out = pipelines[mode].check(
-            c["claim"],
-            c["booklet"],
-            args.claim_lang or c["claim_lang"],
-            gold_reference=None if c["booklet"] else c["reference"],
-            vote=c["vote"],
-            case_id=c["id"],
-        )
-        results.append(format_slide25(out, case_id=c["id"]))
-    if len(results) == 1 and not (args.case and args.case.endswith(".jsonl")):
-        rendered = json.dumps(results[0], ensure_ascii=False, indent=2)
-    else:
-        rendered = "\n".join(json.dumps(r, ensure_ascii=False) for r in results)
+    single = len(cases) == 1 and not (args.case and args.case.endswith(".jsonl"))
     if args.output:
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.output).write_text(rendered + "\n", encoding="utf-8")
+        sink = open(args.output, "w", encoding="utf-8", newline="\n")
     else:
-        print(rendered)
+        sink = sys.stdout
+    try:
+        for c in cases:
+            try:
+                mode = args.mode or (None if c["booklet"] else "easy")
+                if mode not in pipelines:
+                    pipelines[mode] = Pipeline(llm, options_from(args, mode=mode))
+                case = dict(c, reference=None if c["booklet"] else c["reference"])
+                result = format_slide25(check_case(pipelines[mode], case, args.claim_lang), case_id=c["id"])
+            except Exception as exc:
+                failed = failure(c["id"], exc)
+                result = dict(format_slide25(failed, case_id=c["id"]), error=failed["error"])
+                print(f"case {c['id']!r} failed: {failed['error']}", file=sys.stderr)
+            indent = 2 if single else None
+            sink.write(json.dumps(result, ensure_ascii=False, indent=indent) + "\n")
+            sink.flush()
+    finally:
+        if sink is not sys.stdout:
+            sink.close()
 
 
 def cmd_run(args):
@@ -290,8 +311,11 @@ COLUMNS = [
     "macro_f1_cross",
     "recall_hit",
     "tokens_mean",
+    "input_tokens_mean",
     "llm_calls_mean",
     "llm_seconds_p50",
+    "inference_ms_mean",
+    "inference_ms_p95",
     "errors",
 ]
 
@@ -427,6 +451,13 @@ def add_common(p):
         "--no-route",
         action="store_true",
         help="disable the recommendation-section routing",
+    )
+    p.add_argument(
+        "--evidence-unit",
+        dest="evidence_unit",
+        default=None,
+        choices=["sentence", "paragraph"],
+        help="evidence text: the deciding sentence(s) (default) or the whole paragraph(s) around them",
     )
 
 

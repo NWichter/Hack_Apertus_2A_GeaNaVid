@@ -8,6 +8,7 @@ services:
       - LLM_NAME
       - LLM_BASE_URL
       - LLM_API_KEY
+      - BOOKLET_ROOT
     volumes:
       - ./data:/work/data:ro
       - ./runs:/work/runs
