@@ -6,6 +6,11 @@
 > **0.863 / 0.881** (was 0.786 / 0.804), input tokens 2,129 / 1,531 (was 2,258 / 1,631). Round by round, with the
 > rejected ideas: [`ITERATIONS.md`](ITERATIONS.md). The tables below describe the state before that update unless
 > marked otherwise; the section "Default of the CLI" is current.
+>
+> **Update 2026-10-04 (evening):** six more rounds (7–12). Kept for 8B only: a neutral answer is re-checked once,
+> only for a contradiction, and the booklet's word for the committee is restored in claim translations. Test:
+> Advanced **8B 0.957** (was 0.953) at 2,662 input tokens (was 2,129); 70B unchanged at 0.968 (the re-check was
+> worse on test for 70B). Synthetic hold-out 8B 0.874 (was 0.845).
 
 All numbers on this page come from `runs/v1/<split>/<model>/<run>.{jsonl,config.json,summary.json}`.
 Each run stores its full option set, the split seed and the command. Tables are produced with
@@ -312,7 +317,9 @@ did not translate the claim (`easy`, `easy-fs3`); the CLI default for Beginner t
 Current (2026-10-04, `ITERATIONS.md`): as below, plus `--section-boost 1.5` (passages of the section the claim
 names rank higher) and the evidence sentence preferring that section (factor 2.0, 4 extra candidate blocks).
 Beginner (`easy`): no claim translation and no decomposition, 8B with 3 examples (the configuration of the reported
-Beginner runs). Test: Advanced 8B 0.953 / 70B 0.968, Beginner 0.978 / 0.980.
+Beginner runs). Since round 9, 8B also re-checks neutral answers for a contradiction (`--recheck`, p ≥ 0.5) and
+restores "Komitee / comité / comitato" in claim translations (`--committee-terms`); both are off for 70B and in the
+Beginner task. Test: Advanced 8B 0.957 / 70B 0.968, Beginner 0.978 / 0.980.
 
 Before 2026-10-04: `--mode retrieval --scope vote --translate --k 5 --neighbors 1`, BM25, recommendation routing on,
 prompt `nli-v1`, and model-aware extras (`--fewshot -1`, decomposition auto): **8B** → 3 dev examples +
@@ -326,7 +333,7 @@ Evidence is the deciding sentence (`--evidence-unit sentence`); `--evidence-unit
 text block instead. Parsing is deterministic and costs no tokens: a 40-page booklet gives about 200 text
 blocks in 0.3 s. Claims about a recommendation also get the recommendation blocks of the same proposal.
 
-`make run` (Docker, test split) reproduces the test rows from the response cache: before 2026-10-04 8B 0.9406, 70B 0.9512; with the current defaults 8B 0.9531, 70B 0.9677;
+`make run` (Docker, test split) reproduces the test rows from the response cache: before 2026-10-04 8B 0.9406, 70B 0.9512; with the defaults of round 6 8B 0.9531, 70B 0.9677; with the current defaults 8B 0.9573, 70B 0.9677;
 a live run without cache on 12 rows took 5 s.
 
 ## Reproduce

@@ -176,7 +176,9 @@
               <p>
                 One call to Apertus v1.5 with numbered passages. The answer is
                 strict JSON: first the passages that decide, then the label.
-                With 8B, unsure verdicts are re-checked claim part by claim part.
+                With 8B, unsure verdicts are re-checked claim part by claim part,
+                and a neutral verdict is asked once more whether one detail is
+                contradicted.
               </p>
             </li>
             <li>
@@ -216,9 +218,9 @@
               <tbody>
                 <tr>
                   <td>GeaNaVid, Advanced task (booklet PDF + claim)</td>
-                  <td><strong>0.953</strong></td>
+                  <td><strong>0.957</strong></td>
                   <td><strong>0.968</strong></td>
-                  <td>2,129 / 1,531</td>
+                  <td>2,662 / 1,531</td>
                 </tr>
                 <tr>
                   <td>Whole booklet (baseline)</td>
@@ -238,7 +240,7 @@
           <ul class="findings">
             <li>
               <strong>Less context, better verdicts:</strong> 8B with the
-              selected passages (0.953) beats 70B with the whole booklet
+              selected passages (0.957) beats 70B with the whole booklet
               (0.890), at about a tenth of the tokens.
             </li>
             <li>
@@ -252,26 +254,26 @@
               of the answers, on a gold page for 87 % / 89 %.
             </li>
             <li>
-              <strong>All languages:</strong> 0.91 to 0.98 per claim language
+              <strong>All languages:</strong> 0.92 to 0.98 per claim language
               and per booklet language (single pairs 0.86 to 1.00 with 8B,
               0.92 to 1.00 with 70B); detecting the claim language instead of
               reading it from the data changes nothing.
             </li>
             <li>
               <strong>Time as OST measures it:</strong> cold run on 50 test
-              cases, mean / p95 per claim 671 / 871 ms (8B) and 1,344 / 2,200 ms
+              cases, mean / p95 per claim 648 / 1,188 ms (8B) and 1,344 / 2,200 ms
               (70B); 48 ms of it is our own code.
             </li>
             <li>
               <strong>New booklets:</strong> on a synthetic hold-out from three
               voting dates outside OST v1.0 (89 claims, labels checked by two
-              other models) the lead over the whole booklet holds: 0.845 vs
+              other models) the lead over the whole booklet holds: 0.874 vs
               0.665 (8B), 0.932 vs 0.872 (70B).
             </li>
           </ul>
           <p class="caveat">
             95 % intervals about ±0.02. OST v1.0 repeats 122 of the 497 test
-            pairs; without the copies the defaults score 0.952 (8B) and 0.965
+            pairs; without the copies the defaults score 0.955 (8B) and 0.965
             (70B). 8B and 70B do not differ significantly. Every setting was
             chosen on development data and confirmed once on test; the rounds
             are in docs/ITERATIONS.md.

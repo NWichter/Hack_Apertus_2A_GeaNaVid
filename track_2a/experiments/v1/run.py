@@ -26,7 +26,8 @@ from booklint.textnorm import fold  # noqa: E402
 
 # Ablations start from the plain pipeline; the CLI defaults (Options()) are the chosen configuration.
 ABLATION_BASE = {"mode": "ladder", "translate": False, "fewshot": 0, "decompose": False, "tau_decompose": 0.75,
-                 "section_boost": 1.0, "evidence_section": 1.0, "evidence_section_pool": 0}
+                 "section_boost": 1.0, "evidence_section": 1.0, "evidence_section_pool": 0,
+                 "recheck": False, "committee_terms": False}
 
 
 def load(split):

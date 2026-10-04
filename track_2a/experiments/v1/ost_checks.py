@@ -32,10 +32,10 @@ from booklint.textnorm import detect_language, fold  # noqa: E402
 
 TEST = ROOT / "runs" / "v1" / "test"
 DEFAULT_RUNS = {
-    "apertus-v1.5-8b": "r1-secboost",
+    "apertus-v1.5-8b": "final-v2",
     "apertus-v1.5-70b": "r1-secboost",
 }
-COLD_NAME = "cold50-r1"
+COLD_NAME = "cold50-v2"
 BEGINNER_RUNS = {"apertus-v1.5-8b": "easy-fs3", "apertus-v1.5-70b": "easy"}
 
 
@@ -397,9 +397,10 @@ def vote():
     (TEST / "ost-checks-vote.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def cold():
+def cold(name=COLD_NAME, models=None, opts=None):
     """Like `booklint run --no-cache --workers 1` on 50 seeded test cases in OST's input format (no language field).
-    Run it with a CACHE_DIR whose llm/ folder is empty, so the stored answers of the other runs stay untouched."""
+    Run it with a CACHE_DIR whose llm/ folder is empty, so the stored answers of the other runs stay untouched.
+    Optional arguments: cold <name> <model,model> <options as JSON>."""
     import random
 
     rows = load_rows()
@@ -408,9 +409,9 @@ def cold():
     cases = [{"id": r["id"], "booklet": {"path": r["booklet_url"]}, "vote": r["vote"], "claim": {"text": r["claim"]}}
              for r in gold_rows]
     report = {"ids": [r["id"] for r in gold_rows]}
-    for model in DEFAULT_RUNS:
+    for model in (models.split(",") if models else DEFAULT_RUNS):
         RETRIES.update({k: 0 for k in RETRIES})
-        pipeline = Pipeline(LLM(Settings.from_env(model), use_cache=False), Options())
+        pipeline = Pipeline(LLM(Settings.from_env(model), use_cache=False), Options(**json.loads(opts or "{}")))
         t0 = time.perf_counter()
         for c in cases:
             pipeline.booklet(c["booklet"]["path"])
@@ -419,22 +420,22 @@ def cold():
         preds = run_rows(pipeline, cases, 1)
         wall = time.perf_counter() - t1
         summary = breakdown(gold_rows, preds)
-        summary.update({"model": model, "name": COLD_NAME, "split": "test", "workers": 1, "response_cache": False,
+        summary.update({"model": model, "name": name, "split": "test", "workers": 1, "response_cache": False,
                         "wall_s": round(wall, 1), "preload_s": round(t1 - t0, 1),
                         "booklets": len(parse), "uncached_calls": sum(p["usage"].get("llm_calls", 0) for p in preds),
                         "retries": dict(RETRIES), **efficiency(preds)})
         out = TEST / model
-        with (out / f"{COLD_NAME}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
+        with (out / f"{name}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
             for p in preds:
                 fh.write(json.dumps(p, ensure_ascii=False) + "\n")
-        (out / f"{COLD_NAME}.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        (out / f"{name}.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         report[model] = {k: summary.get(k) for k in ("macro_f1", "errors", "input_tokens_mean", "input_tokens_sum",
                                                      "tokens_mean", "llm_calls_mean", "inference_ms_mean",
                                                      "inference_ms_p95", "llm_seconds_mean", "llm_seconds_p95",
                                                      "wall_s", "uncached_calls", "retries")}
         print(model, report[model], flush=True)
-    (TEST / f"ost-checks-{COLD_NAME}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (TEST / f"ost-checks-{name}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
-    {"replay": replay, "nolang": nolang, "breakdown": breakdown28, "vote": vote, "cold": cold}[sys.argv[1]]()
+    {"replay": replay, "nolang": nolang, "breakdown": breakdown28, "vote": vote, "cold": cold}[sys.argv[1]](*sys.argv[2:])

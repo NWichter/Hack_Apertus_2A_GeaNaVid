@@ -11,6 +11,11 @@ from .llm import Usage
 from .nli import (
     PROMPT_VERSION,
     aggregate,
+    contradiction_prob,
+    recheck_messages,
+    recheck_params,
+    translate_passages_messages,
+    translate_passages_params,
     build_messages,
     decompose_messages,
     decompose_params,
@@ -92,6 +97,32 @@ class Options:
     evidence_section_pool: int = 4
     render: str = "full"
     translate_reference: bool = False
+    committee_terms: object = None
+    translate_passages: bool = False
+    recheck: object = None
+    recheck_min_bm25: float = 0.0
+    tau_recheck: float = 0.5
+    recheck_context: str = "all"
+    recheck_entailment: bool = False
+    tau_recheck_entailment: float = 0.5
+
+
+_COMMITTEE = re.compile(r"komitee|comité|comitato", re.I)
+_COMMITTEE_TERMS = {
+    "de": [(r"\b([Dd])er Ausschuss\b", r"\1as Komitee"), (r"\bAusschusses\b", "Komitees"), (r"\bAusschuss\b", "Komitee")],
+    "fr": [(r"\b([Ll])a commission\b", r"\1e comité"), (r"\bcommission\b", "comité")],
+    "it": [(r"\b([Ll])a commissione\b", lambda m: ("I" if m.group(1) == "L" else "i") + "l comitato"), (r"\bcommissione\b", "comitato")],
+}
+
+
+def committee_terms(claim, translation, lang):
+    """Booklets call the initiative or referendum committee Komitee / comité / comitato; Apertus often translates
+    "comitato" as "Ausschuss", which hides the committee pages from retrieval."""
+    if not translation or not _COMMITTEE.search(claim) or _COMMITTEE.search(translation):
+        return translation
+    for pattern, repl in _COMMITTEE_TERMS.get(lang, []):
+        translation = re.sub(pattern, repl, translation)
+    return translation
 
 
 def foreign_title(text, booklet_lang, vocabulary):
@@ -186,7 +217,10 @@ class Pipeline:
         self.opt = options
         self._booklets = {}
         self._kinds = {}
-        self.decompose = options.decompose if options.decompose is not None else small_model(getattr(llm, "model", ""))
+        small = small_model(getattr(llm, "model", ""))
+        self.decompose = options.decompose if options.decompose is not None else small
+        self.recheck = options.recheck if options.recheck is not None else small
+        self.committee_terms = options.committee_terms if options.committee_terms is not None else small
         self.examples = load_examples(fewshot_for(options.fewshot, getattr(llm, "model", "")))
 
     def booklet(self, source):
@@ -275,6 +309,29 @@ class Pipeline:
             "confidence": confidence,
             "step": step,
         }
+
+    def _recheck(self, passages, claim, claim_lang, booklet_lang, translation, usage, first="neutral"):
+        rec = self.llm.chat(
+            recheck_messages(passages, claim, claim_lang, booklet_lang, translation, first),
+            usage,
+            "recheck" if first == "neutral" else "recheck-entailment",
+            **recheck_params(),
+        )
+        try:
+            data = json.loads(rec["content"])
+        except json.JSONDecodeError:
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
+        p = contradiction_prob(rec)
+        if p is None:
+            p = 1.0 if data.get("verdict") == "contradiction" else 0.0
+        try:
+            passage = int(data.get("passage") or 0)
+        except (TypeError, ValueError):
+            passage = 0
+        return {"first": first, "p_contradiction": round(p, 4), "passage": passage,
+                "claim_detail": data.get("claim_detail"), "passage_detail": data.get("passage_detail")}
 
     def _parallel_hits(self, source, booklet, claim, claim_lang, k):
         url = parallel_url(source, claim_lang)
@@ -478,6 +535,8 @@ class Pipeline:
             and (mode != "easy" or self.opt.translate_reference)
         ):
             translation = self._translate(claim, claim_lang, booklet_lang, usage)
+            if self.committee_terms:
+                translation = committee_terms(claim, translation, booklet_lang)
         queries = [claim] + ([translation] if translation else [])
 
         region = [c.id for c in chunks]
@@ -517,12 +576,22 @@ class Pipeline:
         def run(ids, step, model=None):
             passages = self._render(booklet, ids) if booklet is not None else [chunks[i].render() for i in ids]
             chk, note = self._number_note(claim, passages, [chunks[i].text for i in region])
+            judge_lang, judge_translation, judge_passages = booklet_lang, translation, passages
+            if self.opt.translate_passages and claim_lang != booklet_lang and passages:
+                rec = self.llm.chat(translate_passages_messages(passages, booklet_lang, claim_lang), usage,
+                                    "translate-passages", **translate_passages_params(len(passages)))
+                try:
+                    out = json.loads(rec["content"]).get("passages", [])
+                except (json.JSONDecodeError, AttributeError):
+                    out = []
+                if len(out) == len(passages) and all(isinstance(x, str) and x.strip() for x in out):
+                    judge_lang, judge_translation, judge_passages = claim_lang, None, out
             result = self._judge(
-                passages,
+                judge_passages,
                 claim,
                 claim_lang,
-                booklet_lang,
-                translation,
+                judge_lang,
+                judge_translation,
                 usage,
                 step,
                 note,
@@ -627,6 +696,29 @@ class Pipeline:
             )
             if agg:
                 result = dict(result, label=agg, step=result["step"] + "+decompose")
+        recheck = None
+        first = result["label"]
+        if (
+            ((self.recheck and first == "neutral") or (self.opt.recheck_entailment and first == "entailment"))
+            and mode not in ("claim-only", "baseline", "easy", "oracle")
+            and state.get("passages")
+            and best >= self.opt.recheck_min_bm25
+        ):
+            ids, passages = state.get("ids") or [], state["passages"]
+            if self.opt.recheck_context == "hits" and booklet is not None and hits:
+                ids = list(hits)
+                passages = self._render(booklet, ids)
+            recheck = self._recheck(passages, claim, claim_lang, booklet_lang, translation, usage, first)
+            tau = self.opt.tau_recheck if first == "neutral" else self.opt.tau_recheck_entailment
+            if recheck["p_contradiction"] >= tau:
+                n = recheck["passage"]
+                result = dict(
+                    result,
+                    label="contradiction",
+                    step=result["step"] + "+recheck",
+                    confidence=recheck["p_contradiction"],
+                    ids=[ids[n - 1]] if 1 <= n <= len(ids) else [],
+                )
         if (
             self.opt.cascade
             and self.opt.cascade != self.llm.model
@@ -758,6 +850,7 @@ class Pipeline:
             "anchor": anchor,
             "numbers": result.get("numbers"),
             "facts": facts,
+            "recheck": recheck,
             "usage": u,
             "latency_s": round(time.perf_counter() - t0, 3),
             "model": self.llm.model,

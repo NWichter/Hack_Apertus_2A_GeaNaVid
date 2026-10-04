@@ -41,6 +41,7 @@ def options_from(args, mode=None):
         "fewshot",
         "tau",
         "tau_decompose",
+        "tau_recheck",
         "cascade",
         "tau_cascade",
         "neutral_bias",
@@ -50,7 +51,7 @@ def options_from(args, mode=None):
         "render",
     )
     kw = {k: getattr(args, k) for k in keys if getattr(args, k, None) is not None}
-    for flag in ("translate", "decompose"):
+    for flag in ("translate", "decompose", "recheck", "committee_terms"):
         if getattr(args, flag, None) is not None:
             kw[flag] = getattr(args, flag)
     if args.no_route:
@@ -466,6 +467,23 @@ def add_common(p):
     )
     p.add_argument("--no-decompose", dest="decompose", action="store_false")
     p.add_argument("--tau-decompose", dest="tau_decompose", type=float, default=None)
+    p.add_argument(
+        "--recheck",
+        dest="recheck",
+        action="store_true",
+        default=None,
+        help="ask once more, only for a contradiction, when the answer is neutral (default: on for 8B models)",
+    )
+    p.add_argument("--no-recheck", dest="recheck", action="store_false")
+    p.add_argument("--tau-recheck", dest="tau_recheck", type=float, default=None)
+    p.add_argument(
+        "--committee-terms",
+        dest="committee_terms",
+        action="store_true",
+        default=None,
+        help="restore Komitee / comité / comitato in claim translations (default: on for 8B models)",
+    )
+    p.add_argument("--no-committee-terms", dest="committee_terms", action="store_false")
     p.add_argument(
         "--cascade",
         default=None,

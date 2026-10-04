@@ -1,0 +1,56 @@
+{
+  "n": 150,
+  "macro_f1": 0.33,
+  "ci95": [
+    0.3254,
+    1.0
+  ],
+  "f1_e": 0.9899,
+  "f1_n": 0.0,
+  "f1_c": 0.0,
+  "accuracy": 0.98,
+  "confusion": {
+    "0->0": 147,
+    "0->1": 1,
+    "0->2": 2
+  },
+  "macro_f1_same": 1.0,
+  "n_same": 54,
+  "macro_f1_cross": 0.328,
+  "n_cross": 96,
+  "prompt_tokens_mean": 2146.74,
+  "completion_tokens_mean": 53.0733,
+  "tokens_mean": 2199.8133,
+  "prompt_tokens_p95": 2761,
+  "llm_calls_mean": 1.66,
+  "llm_seconds_mean": 0.8904,
+  "llm_seconds_p50": 0.648,
+  "llm_seconds_p95": 2.877,
+  "errors": 0,
+  "steps": {
+    "retrieval": 149,
+    "retrieval+decompose": 1
+  },
+  "input_tokens_sum": 322011,
+  "input_tokens_mean": 2146.7,
+  "inference_ms_mean": 179.0,
+  "inference_ms_p95": 385,
+  "recall_hit": 0.96,
+  "gold_coverage": 0.466,
+  "evidence_n": 149,
+  "evidence_first_in_gold": 0.8859,
+  "evidence_page_gold": 0.8993,
+  "evidence_any_in_gold": 0.9463,
+  "retries": {
+    "rate_limit": 0,
+    "other": 0,
+    "bad_request_fallback": 0,
+    "uncached": 0
+  },
+  "workers": 4,
+  "model": "apertus-v1.5-8b",
+  "name": "r9-terms-150",
+  "split": "dev_s",
+  "wall_s": 10.4,
+  "uncached_calls": 0
+}

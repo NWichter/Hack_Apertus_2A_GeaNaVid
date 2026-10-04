@@ -34,6 +34,7 @@ def main():
         "--mode", default="retrieval", choices=["retrieval", "baseline", "easy"]
     )
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--name", default=None, help="output name (default: the mode)")
     args = ap.parse_args()
     rows = [
         json.loads(x)
@@ -127,10 +128,11 @@ def main():
     }
     out = ROOT / "runs" / "holdout-synth" / args.model
     out.mkdir(parents=True, exist_ok=True)
-    with (out / f"{args.mode}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
+    name = args.name or args.mode
+    with (out / f"{name}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
         for p in preds:
             fh.write(json.dumps(p, ensure_ascii=False) + "\n")
-    (out / f"{args.mode}.summary.json").write_text(
+    (out / f"{name}.summary.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, ensure_ascii=False))

@@ -45,12 +45,22 @@ SYSTEM_V5 = SYSTEM_V4.replace(
     'then "check", one or two short sentences that compare the claim detail by detail with the passages (who says it, numbers, dates, direction), then "label".',
 )
 
+SYSTEM_V6 = SYSTEM.replace(
+    """- contradiction: the passages state something incompatible with the claim, e.g. a different number, date or amount, the opposite direction or recommendation, a negation, a different actor, or a stronger or weaker obligation.
+- neutral: the passages do not cover what the claim says, or cover the topic but neither confirm nor refute the specific statement.""",
+    """- contradiction: the passages make a statement about the same point as the claim, but with a different detail: another number, date, amount or duration, another actor, the opposite position, recommendation or direction, a negation, another scope or condition, or a stronger or weaker obligation.
+- neutral: the passages make no statement about the point of the claim. They may discuss the topic, but they neither confirm nor refute the specific statement.
+
+Most claims restate one statement of the booklet, sometimes with one detail changed. Find the passage with the closest statement and compare it with the claim before you decide.""",
+)
+
 PROMPTS = {
     "nli-v1": SYSTEM,
     "nli-v2": SYSTEM_V2,
     "nli-v3": SYSTEM_V3,
     "nli-v4": SYSTEM_V4,
     "nli-v5": SYSTEM_V5,
+    "nli-v6": SYSTEM_V6,
 }
 
 SCHEMA = {
@@ -311,3 +321,98 @@ def aggregate(verdicts):
     if all(v == "entailment" for v in verdicts):
         return "entailment"
     return "neutral"
+
+
+RECHECK_SYSTEM = """You check one claim against numbered passages from the official Swiss voting booklet. A first reading found that the passages neither confirm nor refute the claim. Look again, only for a contradiction.
+
+A contradiction: the passages speak about the same thing as the claim but state a different detail, e.g. another number, percentage, amount, date or duration; another actor who decides, pays or is responsible; the opposite position or recommendation of the same actor; the opposite direction (more or less, allowed or forbidden, yes or no); another scope or condition.
+Not a contradiction: the passages do not mention the claim's detail at all, or only discuss the topic in general.
+
+Answer in JSON: "claim_detail", the decisive detail of the claim (short); "passage", the number of the passage that speaks about the same thing (0 if none); "passage_detail", what that passage says about it (short, empty if none); then "verdict"."""
+
+RECHECK_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "claim_detail": {"type": "string", "maxLength": 200},
+        "passage": {"type": "integer"},
+        "passage_detail": {"type": "string", "maxLength": 200},
+        "verdict": {"type": "string", "enum": ["contradiction", "no_contradiction"]},
+    },
+    "required": ["claim_detail", "passage", "passage_detail", "verdict"],
+    "additionalProperties": False,
+}
+
+
+RECHECK_ENTAILED_SYSTEM = RECHECK_SYSTEM.replace(
+    "A first reading found that the passages neither confirm nor refute the claim. Look again, only for a contradiction.",
+    "A first reading found that the passages support the claim. Look again, only for a contradiction: check who holds the position, the direction and every detail.",
+)
+
+
+def recheck_messages(passages, claim, claim_lang, booklet_lang, translation=None, first="neutral"):
+    system = RECHECK_ENTAILED_SYSTEM if first == "entailment" else RECHECK_SYSTEM
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user_message(passages, claim, claim_lang, booklet_lang, translation)},
+    ]
+
+
+def recheck_params():
+    return {
+        "temperature": 0,
+        "max_tokens": 200,
+        "logprobs": True,
+        "top_logprobs": 10,
+        "response_format": {"type": "json_schema", "json_schema": {"name": "recheck", "schema": RECHECK_SCHEMA, "strict": True}},
+    }
+
+
+def contradiction_prob(rec):
+    """Probability of "contradiction" from the first token of the verdict value; None without logprobs."""
+    lp = rec.get("logprobs")
+    content = rec.get("content", "")
+    if not lp:
+        return 1.0 if '"verdict": "contradiction"' in content.replace('":"', '": "') else 0.0
+    text, starts = "", []
+    for t in lp:
+        starts.append(len(text))
+        text += t["token"]
+    m = re.search(r'"verdict"\s*:\s*"', text)
+    if not m:
+        return None
+    idx = next((i for i, s in enumerate(starts) if s + len(lp[i]["token"]) > m.end()), None)
+    if idx is None:
+        return None
+    yes = no = 0.0
+    for tok, logprob in lp[idx]["top"]:
+        t = tok.strip().strip('"').lower()
+        if t and "contradiction".startswith(t[:4]) and len(t) >= 2:
+            yes += math.exp(logprob)
+        elif t and "no_contradiction".startswith(t[:2]):
+            no += math.exp(logprob)
+    return yes / (yes + no) if yes + no > 0 else None
+
+
+TRANSLATE_PASSAGES_SYSTEM = "You translate numbered passages of a Swiss voting booklet. Translate every passage completely and keep its number, the text in parentheses at its start, all numbers, names and the meaning exactly. Use the official Swiss terms of the target language."
+
+
+def translate_passages_messages(passages, src, dst):
+    lines = "\n".join(f"[{i}] {p}" for i, p in enumerate(passages, start=1))
+    return [
+        {"role": "system", "content": TRANSLATE_PASSAGES_SYSTEM},
+        {"role": "user", "content": f"Translate from {LANG_NAMES.get(src, src)} to {LANG_NAMES.get(dst, dst)}. Answer in JSON with \"passages\", one translation per passage in the given order.\n\n{lines}"},
+    ]
+
+
+def translate_passages_params(n):
+    schema = {
+        "type": "object",
+        "properties": {"passages": {"type": "array", "items": {"type": "string"}, "minItems": n, "maxItems": n}},
+        "required": ["passages"],
+        "additionalProperties": False,
+    }
+    return {
+        "temperature": 0,
+        "max_tokens": 4000,
+        "response_format": {"type": "json_schema", "json_schema": {"name": "passages", "schema": schema, "strict": True}},
+    }

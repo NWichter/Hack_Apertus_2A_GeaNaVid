@@ -1,0 +1,60 @@
+{
+  "n": 450,
+  "macro_f1": 0.9643,
+  "ci95": [
+    0.9458,
+    0.98
+  ],
+  "f1_e": 0.9769,
+  "f1_n": 0.9669,
+  "f1_c": 0.9492,
+  "accuracy": 0.9644,
+  "confusion": {
+    "0->0": 148,
+    "0->1": 1,
+    "0->2": 2,
+    "1->1": 146,
+    "1->2": 2,
+    "2->0": 4,
+    "2->1": 7,
+    "2->2": 140
+  },
+  "macro_f1_same": 0.9685,
+  "n_same": 160,
+  "macro_f1_cross": 0.9621,
+  "n_cross": 290,
+  "prompt_tokens_mean": 1490.6222,
+  "completion_tokens_mean": 44.8311,
+  "tokens_mean": 1535.4533,
+  "prompt_tokens_p95": 2050,
+  "llm_calls_mean": 1.6444,
+  "llm_seconds_mean": 1.9488,
+  "llm_seconds_p50": 1.982,
+  "llm_seconds_p95": 3.174,
+  "errors": 0,
+  "steps": {
+    "retrieval": 450
+  },
+  "input_tokens_sum": 670780,
+  "input_tokens_mean": 1490.6,
+  "inference_ms_mean": 177.5,
+  "inference_ms_p95": 440,
+  "recall_hit": 0.9444,
+  "gold_coverage": 0.3655,
+  "evidence_n": 296,
+  "evidence_first_in_gold": 0.875,
+  "evidence_page_gold": 0.8919,
+  "evidence_any_in_gold": 0.9223,
+  "retries": {
+    "rate_limit": 0,
+    "other": 0,
+    "bad_request_fallback": 0,
+    "uncached": 0
+  },
+  "workers": 4,
+  "model": "apertus-v1.5-70b",
+  "name": "final-v2",
+  "split": "dev_s",
+  "wall_s": 29.1,
+  "uncached_calls": 0
+}

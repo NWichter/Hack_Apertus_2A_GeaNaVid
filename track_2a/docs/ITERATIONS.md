@@ -11,14 +11,15 @@ from the response cache.
 - **Decisions on development data only.** Every choice in this log (section mapping, factors, k, thresholds) was
   made on `dev` / `dev_s`. The section mapping (claim cue → section type) was read off the gold sections of the
   998 `dev` claims (`experiments/v1/errors.py`, `evidence_variants.py`).
-- **Test only to confirm.** Test evaluations in this log: **3** (round 1 with 8B and 70B, round 2 with 70B).
-  Offline replays of stored runs (0 calls, labels unchanged) are not counted.
+- **Test only to confirm.** Test evaluations in this log: **5** (round 1 with 8B and 70B, round 2 with 70B,
+  rounds 7 + 9 with 8B and 70B). Offline replays of stored runs (0 calls, labels unchanged) are not counted.
 - **Defaults** change only if they are better on `dev_s` **and** `test` for macro-F1 (OST: "the priority is really
   NLI performance").
 - **Reference point:** the whole-booklet baseline (OST slide 14): test 0.723 (8B) / 0.890 (70B) at 20,156 input
   tokens per claim; `dev_s` 0.655 / 0.853.
-- **Budget:** at most 8,000 Apertus calls, at most 4 in parallel. Used: 3,564 for the rounds (last column) and 679
-  for the hold-out, 4,243 in total.
+- **Budget:** first block (rounds 0–6) at most 8,000 Apertus calls: 3,564 for the rounds and 679 for the hold-out,
+  4,243 in total. Second block (rounds 7–12) at most 3,500 calls: 1,941 used (last column; hold-out 34, cold run
+  189). At most 4 in parallel.
 - An independent synthetic hold-out (other booklets, not in OST v1.0) is evaluated once at the very end,
   reported separately and never mixed with OST numbers.
 
@@ -38,6 +39,14 @@ gold section (and on a gold page); input = prompt tokens per claim (what OST sum
 | 5 | faster parsing path (proposal index cached, accent folding cached) | = | = | = | = | = | = | = | = | yes | 0 |
 | 6 | Beginner CLI default aligned with the measured runs | 0.959 | 0.969 | – | 2,629 / 2,047 | 0.978 | 0.980 | – | 2,662 / 2,080 | yes (fix) | 0 |
 | – | cold run as OST measures (50 test cases, no cache) | – | – | – | – | 0.946 | 0.964 | – | 2,116 / 1,564 | – | 168 |
+| 7 | re-check every "neutral" answer once, only for a contradiction (8B p ≥ 0.5, 70B p ≥ 0.999) | **0.969** | **0.973** | 0.838 / 0.871 | 2,564 / 1,943 | see 9 | see 9 | – | – | with 9 | 270 |
+| 7b | same, but only the 5 direct hits as context | 0.964 | 0.971 | – | 2,403 / 1,784 | – | – | – | – | no: worse than 7 for both | 269 |
+| 8 | the same re-check for "entailment" answers | 0.838 (best) | 0.967 (best) | – | 3,048 / 2,431 | – | – | – | – | no: 8B calls 61 of 152 entailments a contradiction even at p ≥ 0.9999 | 264 |
+| 9 | 7 + "Komitee / comité / comitato" restored in claim translations | **0.973** | 0.973 | 0.842 / 0.875 | 2,564 / 1,942 | **0.957** | 0.966 | 0.861 / 0.878 | 2,662 / 2,066 | **8B: yes, default; 70B: no** (test −0.002) | 45 + 277 (test) |
+| 10 | translate the passages into the claim language instead of the claim (pilot, 150 rows, 8B) | 0.987 vs 0.990 (F1 entailment) | – | – | +35 % | – | – | – | – | no: 10× time (p50 6.2 s vs 0.65 s) | 167 |
+| 11 | prompt with a sharper contradiction / neutral definition (8B, on top of 9) | 0.964 | – | – | 2,651 / – | – | – | – | – | no: −0.009 on dev; 70B not run | 426 |
+| 12 | Italian booklets (offline): F1, retrieval and section labels by booklet language | = | = | – | – | – | – | – | – | no change: Italian is not weaker on development data | 0 |
+| – | cold run, 50 test cases, new vs old 8B default in the same session | – | – | – | – | 0.964 vs 0.946 | – | – | 2,761 vs 2,117 | – | 189 |
 
 ### Round 1 – sections the claim names (kept)
 
@@ -100,26 +109,85 @@ and without, 8B) and costs one call. The CLI default now matches the measured ru
 decomposition for Beginner; `translate_reference` and `--decompose` turn them on). Replay from the cache: 8B 0.978,
 70B 0.980 on test, identical to the stored runs, 0 new calls.
 
+### Round 7 – re-check "neutral" answers for a contradiction (kept for 8B, with round 9)
+
+**Error analysis** (`dev_s`, defaults of round 6): 8B 19 errors, 11 of them contradiction → neutral; 70B 16, 7 of
+them. Apertus gives most of these neutral answers p ≥ 0.98, so no probability gate finds them (round 4). A
+deterministic number check does not separate them either: of the 8B neutral answers with a claim number missing
+from the passages, 52 are gold neutral and 1 is a contradiction (offline, 0 calls).
+
+**Change.** After a "neutral" answer, one more Apertus call with the same passages and a narrow question: is a detail
+of the claim contradicted (another number, actor, position, direction, scope)? The answer names the claim detail,
+the passage and what it says, then `contradiction` / `no_contradiction`; the probability of the verdict is read
+from its first token. Run on all neutral answers of `dev_s` (8B 154, 70B 149); thresholds chosen afterwards offline.
+
+**Effect on `dev_s`.** 8B: 5 answers flip, all 5 correct (gold contradiction); 0.958 → 0.969 at p ≥ 0.5 (0.966
+at 0.9–0.99). 70B: the re-check says contradiction far too often (41 flips at p ≥ 0.5, 35 of them gold neutral);
+at p ≥ 0.999 7 flips, 5 correct: 0.964 → 0.973. Only the 5 direct hits as context (7b) is cheaper (+300 instead of
++460 input tokens) but worse for both models. A BM25 score gate did not help.
+
+### Round 8 – the same re-check for "entailment" answers (rejected)
+
+The remaining 8B errors include 4 contradiction → entailment (the committee says no, the claim says it recommends
+yes). Asking the same question after an "entailment" answer: 8B flags 94 of 152 entailments (91 wrongly), 61 even
+at p ≥ 0.9999; 70B 16 (13 wrongly). Worse at every threshold.
+
+### Round 9 – the booklet's word for the committee (kept for 8B, with round 7)
+
+Apertus translates Italian "il comitato" into German as "der Ausschuss" in 15 of 50 cross-lingual committee claims
+of `dev_s` (both models), while German booklets say "Komitee"; BM25 and the passage notes then miss the committee
+pages. When the claim names the committee and the translation lacks the booklet word, "Ausschuss" /
+"commission" / "commissione" are replaced (no call). `dev_s` on top of round 7: 8B 0.969 → 0.973, 70B unchanged.
+
+**Test (once, 8B and 70B, rounds 7 + 9 together):** 8B 0.953 → **0.957**, 70B 0.968 → 0.966. Offline split of the
+test effect: the committee words alone change no test label for either model; the re-check flips 4 8B answers (3
+correct) and 10 70B answers (4 correct; 5 wrong flips are copies of the same claim at p = 0.9992). Kept for 8B
+(better on `dev_s` and test), not for 70B (worse on test). Cost for 8B: 0.35 more calls per claim, input tokens
+2,129 → 2,662 (+25 %), cold time 401 → 648 ms mean and 709 → 1,188 ms p95 (same session, 50 test cases).
+
+### Round 10 – translate the passages instead of the claim (rejected)
+
+Pilot with 8B on the first 150 `dev_s` rows (all of them entailment, the file is sorted by label): one Apertus call
+translates the retrieved passages into the claim language, the judgement then reads claim and passages in the same
+language. F1 on these rows 0.987 vs 0.990, input tokens +35 %, median Apertus time 6.2 s instead of 0.65 s per
+claim. Not continued: the time alone rules it out as a default.
+
+### Round 11 – sharper contradiction / neutral definition in the prompt (rejected)
+
+`nli-v6` defines contradiction as "a statement about the same point with a different detail" and neutral as "no
+statement about the point", and asks to compare the claim with the closest statement first (the three examples
+stay). 8B on `dev_s` on top of round 9: 0.973 → 0.964. 70B was not run.
+
+### Round 12 – Italian booklets (no change)
+
+On test, 8B is weakest on Italian booklets (0.914). This was not analysed on test rows. On development data Italian
+is not weaker: `dev_s` macro-F1 by booklet language, 8B DE / FR / IT, 0.976 / 0.973 / 0.972; same-language
+retrieval on the 998 `dev` claims, hit@5 0.922 / 0.923 / 0.954; share of text blocks without a section type
+2 / 5 / 3 %. Without a development signal there is nothing to fix that would not be fitted to test.
+
 ## Final defaults and numbers
 
 Advanced: `--mode retrieval --scope vote --translate --k 5 --neighbors 1 --section-boost 1.5`, evidence section
-factor 2.0 with 4 extra candidate blocks, prompt `nli-v1`; 8B with three examples and decomposition when p < 0.9.
+factor 2.0 with 4 extra candidate blocks, prompt `nli-v1`; 8B with three examples, decomposition when p < 0.9, a
+contradiction re-check of neutral answers (`--recheck`, p ≥ 0.5) and the committee words (`--committee-terms`).
 Beginner: the reference as context, no translation; 8B with three examples.
 
 | test (497) | macro-F1 [95 % CI] | same / cross | evidence in gold (page) | input tokens | cold time mean / p95 |
 | ---------- | ------------------ | ------------ | ----------------------- | ------------ | -------------------- |
 | Baseline 8B (whole booklet) | 0.723 [0.684–0.760] | 0.801 / 0.685 | – | 20,156 | – |
 | Baseline 70B (whole booklet) | 0.890 [0.862–0.917] | 0.916 / 0.876 | – | 20,156 | – |
-| Advanced 8B | **0.953** [0.934–0.970] | 0.993 / 0.934 | 0.863 (0.872) | 2,129 | 671 / 871 ms |
+| Advanced 8B | **0.957** [0.938–0.975] | 0.987 / 0.943 | 0.861 (0.870) | 2,662 | 648 / 1,188 ms |
 | Advanced 70B | **0.968** [0.951–0.982] | 0.987 / 0.958 | 0.881 (0.890) | 1,531 | 1,344 / 2,200 ms |
 | Beginner 8B | 0.978 [0.964–0.990] | 0.980 / 0.976 | 0.960 | 2,662 | – |
 | Beginner 70B | 0.980 [0.968–0.990] | 0.987 / 0.977 | 0.969 | 2,080 | – |
 
-Cluster bootstrap (copies of a claim resampled together): 8B [0.926–0.975], 70B [0.948–0.984]; without the 122
-copied rows 8B 0.952, 70B 0.965 (`runs/v1/test/duplicates-ci.json`). 70B − 8B: +0.015 [−0.010; +0.042].
+Cluster bootstrap (copies of a claim resampled together): 8B [0.933–0.978], 70B [0.948–0.984]; without the 122
+copied rows 8B 0.955, 70B 0.965 (`runs/v1/test/duplicates-ci.json`). 70B − 8B: +0.010 [−0.012; +0.035].
 
-Cold run (`ost-checks-cold50-r1.json`): 50 seeded test cases in OST's input format, no response cache, one request
-at a time; same labels as the stored runs on 50/50 for both models. The 8B mean time is higher than in the first
+Cold run (`ost-checks-cold50-r1.json`; 8B since round 9 `ost-checks-cold50-v2.json`): 50 seeded test cases in
+OST's input format, no response cache, one request at a time; same labels as the stored runs on 50/50 for both
+models (round 6 defaults). The new 8B default measured 648 / 1,188 ms against 401 / 709 ms for the old one in the
+same session. The 8B mean time is higher than in the first
 cold run (457 ms) at the same number of calls: the Apertus share alone is 0.59 s per claim, so the endpoint was
 slower; the local part is 48 ms.
 
@@ -146,4 +214,8 @@ vs 0.953); the synthetic claims are harder for 8B, mainly contradictions (F1 0.7
 intervals. Evidence: the first sentence lies in the reference section for 78 % (8B) / 81 % (70B), on a page of the
 generator's evidence for 80 % / 84 %.
 
-Apertus calls in this log including the hold-out: 4,243 of 8,000.
+**Hold-out with the round-9 default (evaluated once, 34 calls):** Advanced 8B 0.845 → **0.874** [0.800–0.936],
+contradiction F1 0.735 → 0.793, cross-lingual 0.807 → 0.848, input tokens 2,217 → 2,732; evidence in the reference
+section 0.80. 70B is unchanged (0.932). `runs/holdout-synth/apertus-v1.5-8b/retrieval-v2.summary.json`.
+
+Apertus calls in this log: 4,243 of 8,000 (rounds 0–6 and the first hold-out) and 1,941 of 3,500 (rounds 7–12).
