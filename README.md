@@ -1,59 +1,61 @@
-# Hack Apertus — project template
+# GeaNaVid
 
-Template repository for [Hack Apertus](https://hackapertus.ch/) submissions.
-Every project keeps almost the same layout, so organizers and judges find the
-same things in the same place.
+Hack Apertus 2026 · Track 2A · OST challenge "Multilingual Natural Language Inference over Swiss Official
+Voting Booklets" · Team Apertool.
 
-## Select your track
+GeaNaVid checks a claim in German, French or Italian against a Swiss federal voting booklet and returns
+0 entailment, 1 neutral or 2 contradiction (Romansh *Gea*, *Vid*, *Na*: yes, blank, no), together with the
+booklet sentence and PDF page that decide it, the input/output tokens and the time. Apertus v1.5 (8B or 70B)
+makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
+translated by Apertus, and BM25 picks a few passages, so a claim costs about 1.6–2.3 k instead of 20 k input
+tokens. On the held-out test split of OST v1.0 (497 pairs) the macro-F1 is 0.941 (8B) and 0.951 (70B),
+against 0.723 and 0.890 for the whole booklet.
 
-This repository holds one example project per track:
+The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
-- `track_1a/`
-- `track_1b/`
-- `track_2a/`
-- `track_2b/`
+## Judges start here
 
-Keep the directory for the track you are competing in **exactly as it is** —
-don't rename it or move its files — and delete the other track directories.
-That directory is your project root. Keep the files and directories as shown
-below.
-
-## The structure
-
-| Path | What it is |
-| --- | --- |
-| `README.md` | The challenge description and submission requirements for your track |
-| `technical_report.md` | The deeper write-up: architecture, evaluation, limitations |
-| `Makefile` | `make run` must spin up your project |
-| `src/` | Your code |
-| `data/` | Datasets — `track_1a`, `track_2a` and `track_2b` only; max. 100 MB |
-| `findings/` | Issue files — `track_1a` only |
-| `docs/` | Diagrams, notes, longer write-ups |
-
-## Run it
-
-Judges run `make run` from the root of the project, on a clean checkout:
+Requirements: Docker, an OpenAI-compatible Apertus v1.5 endpoint, no GPU, no local weights.
 
 ```bash
-make run
+cd track_2a
+cp .env.example .env      # LLM_NAME, LLM_BASE_URL, LLM_API_KEY
+make run                  # Docker: default pipeline on the test split data/v1/test.jsonl, table in runs/make-run/
+make run LIMIT=30         # quick check
 ```
 
-`make run` is expected to run the project using Docker, since that
-is how the judges will run it.
-- If you used other local open-weight models, include instructions for running the project in your technical report.
-- Use the following environment variables:
-```
-LLM_NAME — name and version of the model
-LLM_BASE_URL — endpoint base URL
-LLM_API_KEY — your API key
+`make run` also works from the repository root (the root `Makefile` forwards to `track_2a/`).
+
+**OST task format.** `booklint predict --case <file>` reads the cases of slide 24 (Advanced:
+`{"id", "booklet": {"path"}, "vote", "claim": {"text"}}`; Beginner: `{"id", "reference": {"text"},
+"claim": {"text"}}`) as one JSON object, a JSON list or JSONL, and prints exactly the output of slide 25
+(`id`, `label`, `label_name`, `evidence[{page, text}]`, `metrics{input_tokens, output_tokens,
+inference_time_ms}`), one line per case. A failed case is answered neutral with an `error` field; the batch
+never stops.
+
+```bash
+cd track_2a
+docker compose build
+docker compose run --rm -T   -v /abs/path/booklets:/work/booklets:ro -v /abs/path/cases:/work/cases:ro   -e BOOKLET_ROOT=/work   booklint predict --case /work/cases/cases.jsonl -o /work/runs/predictions.jsonl
 ```
 
-## Getting started
+**Mounts and `BOOKLET_ROOT`.** Booklet paths in the cases are paths inside the container. A relative path
+(`booklets/2024_11_24_de.pdf`) is read below `BOOKLET_ROOT` when it is set, otherwise relative to the working
+directory `/work`. If the file is not there, `booklint` also looks below `/work`, `/work/booklets`, `/data`,
+`/booklets` and next to the case file, and finally by file name inside those folders; the path it takes is
+printed on stderr. Output lands in `track_2a/runs/` (mounted at `/work/runs`). Use `-T` when the command runs
+without a terminal.
 
-1. Click **Use this template** to create your own repository.
-2. Delete the other track directories. Don't rename or restructure yours.
-3. Read its `README.md` and fill in `technical_report.md`.
-4. Make `make run` work from the root of the project, on a clean checkout.
+**More.**
+
+- Technical report (4 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
+  source [`track_2a/technical_report.md`](track_2a/technical_report.md)
+- Experiments and all measurements: [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
+- Data, splits and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
+- Web demo (preview behind a password): https://geanavid.apertool.ch/demo/, code in [`track_2a/demo/`](track_2a/demo/)
+- Project page and pitch: https://geanavid.apertool.ch
+
+GeaNaVid reads the booklet; it never tells anyone how to vote.
 
 ## License
 
