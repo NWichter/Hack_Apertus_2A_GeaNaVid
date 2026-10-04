@@ -2,6 +2,20 @@ services:
   web:
     build: .
     restart: unless-stopped
+    depends_on:
+      - demo
     environment:
-      BASIC_AUTH_USER: ${BASIC_AUTH_USER:-}
-      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-}
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:?}
+  demo:
+    build:
+      context: ../track_2a
+      dockerfile: demo/Dockerfile
+    restart: unless-stopped
+    environment:
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:?}
+      LLM_BASE_URL: ${LLM_BASE_URL:?}
+      LLM_API_KEY: ${LLM_API_KEY:?}
+      LLM_NAME: ${LLM_NAME:-apertus-v1.5-8b}
+      TRUST_PROXY: "1"

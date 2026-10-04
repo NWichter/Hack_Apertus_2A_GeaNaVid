@@ -39,11 +39,18 @@ credentials and the LLM key never leaves the server.
   Errors: 400 invalid input, 401, 413 body over 16 KB, 429 rate limit, 502 inference failed,
   503 LLM backend not configured. There is no fallback answer: a failed call is an error, not a label.
 
-## Deployment status
+## Deployment
 
-Not deployed. `website/demo/` holds a copy of the static files (`index.html`, `demo.js`, `demo.css`), but the
-website container is plain nginx: it has no `/api/*` route, so on the website the form cannot get an answer
-(the page shows "The demo API is not reachable"). The website CSP (`style-src 'self'`) also blocks the
-inline `style` attributes the result view uses. Running the demo publicly needs `server.py` as its own
-service (e.g. a second Compose service built from `track_2a/`) and either an nginx `location /api/`
-proxy to it or a separate domain, plus `TRUST_PROXY=1` behind the proxy.
+Online at `https://geanavid.apertool.ch/demo/` behind Basic Auth (preview, `noindex`). `website/docker-compose.yml`
+runs two services: `web` (nginx, static site and `website/demo/`) and `demo` (`server.py`, built from
+`track_2a/` with `demo/Dockerfile`). nginx forwards `/api/` to `demo:8080`; Basic Auth covers the whole site
+including `/api/`, and `server.py` checks the same credentials again. The CSP allows inline styles only under
+`/demo/`. `TRUST_PROXY=1` is set in Compose because nginx always stands in front of the demo service; nginx
+passes on the `X-Forwarded-For` header from the reverse proxy unchanged, so the rate limit counts per client.
+
+Coolify app: base directory `/website`, Compose file `/docker-compose.yml`, environment `BASIC_AUTH_USER`,
+`BASIC_AUTH_PASSWORD`, `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_NAME`. Compose stops with an error if one of the
+required values is missing. The LLM key stays in the `demo` container.
+
+Local test: copy `website/.env.example` to `website/.env`, fill it in, publish a port for `web` in an override
+file and run `docker compose up --build` in `website/`.
