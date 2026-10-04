@@ -34,3 +34,28 @@ def test_edge_cases_not_mixed_into_ost_split():
         for line in (DATA / "v1" / name).read_text(encoding="utf-8").splitlines():
             if line.strip():
                 assert json.loads(line).get("id") not in ids
+
+
+def test_no_stored_run_uses_edge_cases():
+    runs = DATA.parent / "runs" / "v1"
+    ids = {r["id"] for r in _rows()}
+    claims = {r["claim"] for r in _rows()}
+    split_ids = {}
+    for split in ("test", "dev_s"):
+        split_ids[split] = {
+            json.loads(line)["id"]
+            for line in (DATA / "v1" / f"{split}.jsonl").read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        }
+    for path in runs.glob("*/*/*.jsonl"):
+        split = path.parts[-3]
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            assert row.get("id") not in ids, path
+            assert row.get("claim") not in claims, path
+            if split in split_ids:
+                assert row.get("id") in split_ids[split], path
+    for path in runs.glob("*/*/*.config.json"):
+        assert "edge" not in path.read_text(encoding="utf-8"), path

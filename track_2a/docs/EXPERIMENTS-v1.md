@@ -17,7 +17,10 @@ details are here.
   seeded draws for the best balance of size, labels and languages; 13 dev dates (39 booklets, 998 rows).
   The demo booklet (2026-06-14), used to tune the first prototype, is forced into dev.
   `dev_s` = 450 dev rows, stratified by label × same/cross language; all ablations ran on `dev_s`.
-  **`test` was used once, for the final table below; nothing was tuned on it.**
+  **Every configuration ran once on `test` (13 runs with 8B, 8 with 70B, all stored in `runs/v1/test/`), after its
+  settings had been fixed on `dev_s`; no setting was chosen from test results.** The later robustness checks
+  (claim language without a language field, `vote` titles from another language version) used test booklets,
+  but change none of the 497 stored test labels.
 - **Two tasks** (confirmed by OST's slides 22 and 24 of the session on 2026-10-02):
   _Beginner_ = claim + reference text (`reference.text`; in v1.0 the gold section `reference_string`),
   classify directly (`--mode easy`);
@@ -143,7 +146,7 @@ claims about the front-page summary miss the summary passage. The three prompt e
 (`src/booklint/fewshot.json`, dev rows outside dev_s: committee claim → entailment, unrelated claim → neutral,
 "summary says the opposite" → contradiction) target exactly these and almost remove the "no passage cited" errors (8 → 1).
 
-## Final numbers (test, 497 rows, run once)
+## Final numbers (test, 497 rows, each configuration run once)
 
 Tokens = prompt + completion per claim; input = prompt tokens only (what OST sums, slide 28).
 
@@ -334,7 +337,7 @@ CACHE_DIR=<cache without llm/> python experiments/v1/ost_checks.py cold
 
 > We evaluate on OST's v1.0 benchmark (1,495 claims, 60 booklets, two thirds cross-lingual), split by voting
 > date into 998 development and 497 held-out test claims; all design decisions were taken on a 450-claim
-> development subset and the test set was evaluated once. Following OST, the baseline gives Apertus the whole
+> development subset and each configuration was run once on the test set. Following OST, the baseline gives Apertus the whole
 > booklet (20 k tokens per claim on average). It reaches a macro-F1 of 0.723 with Apertus-8B and 0.890 with
 > Apertus-70B. GeaNaVid first restricts the search to the proposal named in the claim's `vote` field
 > (0 tokens; 94 % of the gold section stays inside a quarter of the booklet), lets Apertus translate
@@ -371,5 +374,10 @@ CACHE_DIR=<cache without llm/> python experiments/v1/ost_checks.py cold
   for 70B are within noise.
 - **Rate limit:** with 4–5 parallel requests about 10–17 % of 8B calls got HTTP 429 and were retried after
   1–3 s; with 3 parallel requests none. Wall time did not improve beyond 3–4 parallel requests.
-- `dev_s` duplicates: v1.0 contains repeated (claim, booklet) rows; they are answered from the cache and
-  counted as normal rows.
+- Duplicates: v1.0 contains 335 exact copies of other rows (122 of 497 test rows, 53 of 450 `dev_s` rows);
+  they are answered from the cache and counted as normal rows, so plain bootstrap intervals are slightly too
+  narrow. `experiments/v1/duplicates_ci.py` (stored predictions, no calls) gives for the defaults: without
+  copies 8B 0.931 [0.904–0.955], 70B 0.944 [0.920–0.965]; all rows with each group of copies resampled as one
+  unit 8B 0.941 [0.915–0.963], 70B 0.951 [0.928–0.971]; by proposal (57 units) 8B [0.914–0.962], 70B
+  [0.928–0.971]. 70B − 8B with the cluster bootstrap: +0.011 [−0.011; +0.033]. Output:
+  `runs/v1/test/duplicates-ci.json`.

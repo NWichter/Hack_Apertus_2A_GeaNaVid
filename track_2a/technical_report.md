@@ -94,11 +94,17 @@ free and reproducible.
 (`OSTswiss/MNLIoverSwissVotingBooklets`). Split by
 voting date (seed 2026), so the DE/FR/IT versions of a booklet never cross splits: 998 development pairs
 (13 dates), of which a stratified subset of 450 was used for all ablations, and 497 test pairs (7 dates,
-21 booklets), evaluated once with settings frozen on development data. v1.0 contains exact duplicate rows
-(122 of the 497 test rows; 375 distinct pairs), which we keep as published. All reported numbers use OST
-v1.0 only. Two auxiliary sets written by closed LLMs are used for no reported number: 24 unreviewed edge
-cases for the demo (Gemini 3.8 Flash via the Antigravity CLI) and archived synthetic development sets from
-before v1.0 (Claude Opus 5.5, GPT-5.5); sources and per-row provenance are in `data/README.md`.
+21 booklets); each configuration ran once on test with settings frozen on development data. v1.0
+contains 335 rows that are exact copies of another row (same claim, booklet and label), 122 of them in
+test (375 distinct pairs). We keep them as published; a plain bootstrap then counts copies as independent
+evidence and its intervals are too narrow. Recomputed from the stored predictions (no new calls), the
+defaults score 0.931 (8B) and 0.944 (70B) without copies; resampling each group of copies as one unit
+widens the intervals to [0.915–0.963] and [0.928–0.971] (by proposal: about the same). All reported numbers
+use OST v1.0 only. Two auxiliary sets written by closed LLMs are used for no reported number: 24 unreviewed
+edge cases (Gemini 3.8 Flash via the Antigravity CLI), demo presets only, and never evaluated because 16 of
+them concern proposals of the test dates; and archived synthetic development sets from before v1.0 (Claude
+Opus 5.5, GPT-5.5). A unit test checks that no stored run contains an edge case; sources and per-row
+provenance are in `data/README.md`.
 
 **Metrics** as on OST's slide 28: macro-F1 over the three labels with 95 % bootstrap intervals (1,000
 resamples), separately for Beginner and Advanced and by language; evidence against the gold section
@@ -169,8 +175,8 @@ label on 50/50 (8B) and 49/50 (70B). Commit of the submission: [TBD].
 
 ## 6. Limitations
 
-497 test claims from 7 voting dates: differences below about 0.02 macro-F1 are within the bootstrap
-interval, and the model-aware defaults (examples and decomposition only for 8B) were chosen on 450
+497 test claims (375 distinct) from 7 voting dates: differences below about 0.02–0.03 macro-F1 are within
+the cluster-bootstrap interval (70B − 8B: +0.011 [−0.011; +0.033]), and the model-aware defaults (examples and decomposition only for 8B) were chosen on 450
 development claims. Main error sources are topical but unsupported claims, attribution (committee vs.
 Federal Council) and claims about the front-page summary. Booklets without a text layer are not handled
 (no OCR). Labels and evidence are an automated reading of the booklet, not a voting recommendation.

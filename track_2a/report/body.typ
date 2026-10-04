@@ -125,8 +125,22 @@ from 20 voting dates (2020--2026), 177 proposals, balanced labels and
 Split by voting date (seed 2026), so the DE/FR/IT versions of a booklet
 never cross splits: 998 development pairs (13 dates), of which a
 stratified subset of 450 was used for all ablations, and 497 test pairs
-(7 dates, 21 booklets), evaluated once with settings frozen on
-development data.
+(7 dates, 21 booklets); each configuration ran once on test with
+settings frozen on development data. v1.0 contains 335 rows that are
+exact copies of another row (same claim, booklet and label), 122 of them
+in test (375 distinct pairs). We keep them as published; a plain
+bootstrap then counts copies as independent evidence and its intervals
+are too narrow. Recomputed from the stored predictions (no new calls),
+the defaults score 0.931 (8B) and 0.944 (70B) without copies; resampling
+each group of copies as one unit widens the intervals to
+\[0.915--0.963\] and \[0.928--0.971\] (by proposal: about the same). All
+reported numbers use OST v1.0 only. Two auxiliary sets written by closed
+LLMs are used for no reported number: 24 unreviewed edge cases (Gemini
+3.8 Flash via the Antigravity CLI), demo presets only, and never
+evaluated because 16 of them concern proposals of the test dates; and
+archived synthetic development sets from before v1.0 (Claude Opus 5.5,
+GPT-5.5). A unit test checks that no stored run contains an edge case;
+sources and per-row provenance are in `data/README.md`.
 
 #strong[Metrics] as on OST's slide 28: macro-F1 over the three labels
 with 95 % bootstrap intervals (1,000 resamples), separately for Beginner
@@ -232,14 +246,15 @@ fully deterministic: a cold rerun of 50 cases gave the same label on
 
 = 6. Limitations
 <limitations>
-497 test claims from 7 voting dates: differences below about 0.02
-macro-F1 are within the bootstrap interval, and the model-aware defaults
-(examples and decomposition only for 8B) were chosen on 450 development
-claims. Main error sources are topical but unsupported claims,
-attribution (committee vs. Federal Council) and claims about the
-front-page summary. Booklets without a text layer are not handled (no
-OCR). Labels and evidence are an automated reading of the booklet, not a
-voting recommendation.
+497 test claims (375 distinct) from 7 voting dates: differences below
+about 0.02--0.03 macro-F1 are within the cluster-bootstrap interval (70B
+− 8B: +0.011 \[−0.011; +0.033\]), and the model-aware defaults (examples
+and decomposition only for 8B) were chosen on 450 development claims.
+Main error sources are topical but unsupported claims, attribution
+(committee vs. Federal Council) and claims about the front-page summary.
+Booklets without a text layer are not handled (no OCR). Labels and
+evidence are an automated reading of the booklet, not a voting
+recommendation.
 
 Open questions to OST (Q&A on 2026-10-08): whether `page` is the PDF
 index or the printed page number; which page the Beginner task expects
@@ -280,9 +295,9 @@ scanned booklets @stuessi2026votingbooklets, extend to Romansh.
 <license>
 This report and the documentation: Creative Commons Attribution 4.0
 (CC-BY-4.0). Code: Apache-2.0. Our edge-case set
-(`data/edge_cases.jsonl`): CDLA-Permissive-2.0. The OST benchmark and the
-splits derived from it keep their MIT licence. All HackApertus projects
-are open-sourced.
+(`data/edge_cases.jsonl`): CDLA-Permissive-2.0. The OST benchmark and
+the splits derived from it keep their MIT licence. All HackApertus
+projects are open-sourced.
 
 = References
 <references>

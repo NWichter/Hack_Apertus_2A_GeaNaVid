@@ -48,7 +48,14 @@ invented `metrics` values of the 24 pairs.
   (a 50-franc fee against "free of charge" is a contradiction, not neutral) and noted two doubtful rows and
   one wrong category in `provenance.review_note` (`edge-modal-02`, `edge-rm-02`, `edge-xling-05`).
 - Romansh text was not checked by a native speaker.
-- Use them for demos and qualitative stress tests only; never mix their results with OST v1.0 numbers.
+- **Overlap with the test split.** 16 of the 24 rows are about proposals of test-split voting dates (rent law /
+  personal need, imputed rental value, biodiversity: `edge-modal-02`–`05`, `edge-attrib-03`, `-04`,
+  `edge-num-01`–`04`, `edge-xling-01`–`06`), and 11 of the 20 evidence texts share passages of 40 or more
+  characters with OST test references (6 start with a verbatim copy). They were written after the test runs
+  (2026-10-02) and were never used to choose prompts, examples or thresholds.
+- Use them for demos and qualitative stress tests only; they are never evaluated and no reported number uses
+  them. `tests/test_edge_cases.py` checks that no stored run under `runs/v1/` contains an edge-case id or claim,
+  that every stored test/dev_s run holds only ids of its split, and that no run config refers to them.
 - Evidence for model and date: the Antigravity conversation log of that subagent (every generation step names
   `gemini-3.8-flash`) and its transcript with the original rows; `post_edits` lists every later change per row.
 
@@ -68,8 +75,12 @@ as: OST Ostschweizer Fachhochschule, *MNLIoverSwissVotingBooklets* v1.0, Hugging
 
 **Known properties of OST v1.0.** 335 rows are exact copies of another row (236 groups of identical
 claim, booklet and label; no conflicting labels): 122 of the 497 test rows and 53 of the 450 dev_s rows.
-We keep the rows as published, so the bootstrap intervals treat copies as independent; without copies the test
-split has 375 distinct pairs. 4 claim texts occur in both dev and test (against different booklets).
+We keep the rows as published. A plain bootstrap then treats copies as independent and its intervals are too
+narrow; `experiments/v1/duplicates_ci.py` recomputes them from the stored predictions (no Apertus calls,
+`runs/v1/test/duplicates-ci.json`): without copies (375 distinct pairs) the defaults score 0.931 [0.904–0.955]
+(8B) and 0.944 [0.920–0.965] (70B); resampling each group of copies as one unit gives 0.941 [0.915–0.963] and
+0.951 [0.928–0.971], against [0.919–0.961] and [0.931–0.969] with independent rows. 4 claim texts occur in
+both dev and test (against different booklets).
 
 ## Licences
 
