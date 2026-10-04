@@ -19,7 +19,7 @@ data/
 Claims in German, French and Italian against the official federal voting booklets (20 voting dates
 2020–2026, each in de/fr/it). Fields: `claim`, `claim_language`, `reference_string`, `reference_language`,
 `entailment_label` (0 entailment, 1 neutral, 2 contradiction), `booklet_url`, `booklet_publish_date`,
-`vote`, `baseline_score`; `id` = `v1-NNNN` (line number in `v1.0.jsonl`).
+`vote`, `baseline_score`; `id` = `v1-NNNN` (0-based line index in `v1.0.jsonl`, added by `split.py`; v1.0 itself has no id).
 
 Languages: German, French and Italian only (claims and booklets).
 
@@ -33,10 +33,14 @@ dev, proportional per label × same/cross-language cell.
 
 ## Synthetic edge cases (`edge_cases.jsonl`)
 
-24 stress pairs written by an LLM agent (Antigravity, 2026-10-02): Romansh claims, modal/negation traps,
+24 stress pairs written by an LLM agent: an Antigravity CLI subagent running Gemini 3.8 Flash
+(`gemini-3.8-flash`, a closed model) wrote them as a Python literal in `data/generate_edge_cases.py` on
+2026-10-03 (04:55 UTC); the script was deleted on 2026-10-04. Topics: Romansh claims, modal/negation traps,
 attribution (committee vs. Federal Council), numbers, cross-lingual pairs. Each row carries a `provenance`
-object (`synthetic: true`, `reviewed: false`, generator, date). Seven further pairs appended later with
-invented references and placeholder metrics were removed on 2026-10-04.
+object (`synthetic: true`, `reviewed: false`, `generator`, `generator_model`, `generated_at`, `prompt_version`,
+`generation_trace`, `post_edits`). There was no versioned prompt, only a free-form agent task. Seven further
+pairs appended later with invented references and placeholder metrics were removed on 2026-10-04, as were the
+invented `metrics` values of the 24 pairs.
 
 - The references are paraphrases written by the generator, **not verbatim booklet text**; `evidence.page`
   is a placeholder (1).
@@ -45,6 +49,27 @@ invented references and placeholder metrics were removed on 2026-10-04.
   one wrong category in `provenance.review_note` (`edge-modal-02`, `edge-rm-02`, `edge-xling-05`).
 - Romansh text was not checked by a native speaker.
 - Use them for demos and qualitative stress tests only; never mix their results with OST v1.0 numbers.
+- Evidence for model and date: the Antigravity conversation log of that subagent (every generation step names
+  `gemini-3.8-flash`) and its transcript with the original rows; `post_edits` lists every later change per row.
+
+## Sources and provenance
+
+| Dataset | Source, version | Made by | Per-row provenance fields | Why we use it | Shipped? |
+| --- | --- | --- | --- | --- | --- |
+| `v1/v1.0.jsonl` | [`OSTswiss/MNLIoverSwissVotingBooklets`](https://huggingface.co/datasets/OSTswiss/MNLIoverSwissVotingBooklets) `v1.0.jsonl`, commit `adca9a5ee87e9813cef80b305c3b12e3e8a05959` (2026-10-02), downloaded 2026-10-02; sha256 equals the HF LFS object id | OST (challenge owner); how claims and labels were made is not documented by OST | `booklet_url`, `booklet_publish_date`, `booklet_download_date`; no creator, label source or review fields | the official benchmark of the challenge; the hidden test set follows its format | yes, unchanged copy |
+| `v1/{dev,dev_s,test}.jsonl`, `split.json` | derived from `v1.0.jsonl` by `experiments/v1/split.py` (seed 2026); rerunning the script reproduces all four files byte for byte | us (script) | as v1.0, plus `id` | tuning on dev, final numbers on test | yes |
+| `edge_cases.jsonl` | this repository | Gemini 3.8 Flash via Antigravity CLI (2026-10-03), edited 2026-10-04 | `provenance.*` on all 24 rows | demo presets and qualitative stress tests (Romansh, traps) | yes |
+| `archive/demo-2026-10-01/demo.jsonl` | OST demo `demo_2026_09_28_1130.jsonl`, commit `43f8aa356dc16f5d1c434781749d1118f9503f04` (2026-09-28); rows identical to the HF file apart from the added `id` | OST | `booklet_url`, dates | first prototype before v1.0 existed | yes (archived) |
+| `archive/demo-2026-10-01/demo_crossling.jsonl` | derived from the demo by `src/data_prep/crosslingual.py` (no LLM) | us (script) | `author: ost_demo`, `generator_model` | first cross-lingual tests | yes (archived) |
+| `archive/synthetic-2026-10-01/` | `synthetic-v0` built by `src/data_prep/` | Claude Opus 5.5 and GPT-5.5 (Codex CLI), 2026-10-01, prompt `gen-v1`; cross-lingual copies by script | `author`, `generator_model` (full provenance only in the local `merged.v0.jsonl`) | development before v1.0; superseded | no (gitignored, local only) |
+
+No reported number uses the edge cases or the archived sets. The OST dataset card gives no citation; cite it
+as: OST Ostschweizer Fachhochschule, *MNLIoverSwissVotingBooklets* v1.0, Hugging Face, commit `adca9a5`, 2026.
+
+**Known properties of OST v1.0.** 335 rows are exact copies of another row (236 groups of identical
+claim, booklet and label; no conflicting labels): 122 of the 497 test rows and 53 of the 450 dev_s rows.
+We keep the rows as published, so the bootstrap intervals treat copies as independent; without copies the test
+split has 375 distinct pairs. 4 claim texts occur in both dev and test (against different booklets).
 
 ## Licences
 

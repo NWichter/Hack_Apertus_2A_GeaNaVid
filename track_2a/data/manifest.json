@@ -100,8 +100,8 @@
       "edge_cases.jsonl": {
         "file": "edge_cases.jsonl",
         "records": 24,
-        "sha256": "5ce09dea61185332e340a23abf826ed505e84771a0df6320bdd187a6e9fc748f",
-        "size_bytes": 24753,
+        "sha256": "5163605c0682751be1bc442ebfce5b517b24aef6dbe1df2a2611ba7f2570ef37",
+        "size_bytes": 33765,
         "labels": {
           "0_entailment": 8,
           "1_neutral": 4,
@@ -115,7 +115,7 @@
         },
         "synthetic": true,
         "reviewed": false,
-        "generator": "antigravity-agent (2026-10-02)",
+        "generator": "antigravity-agent, gemini-3.8-flash (2026-10-03)",
         "note": "LLM-written stress pairs; references are paraphrases, not verbatim booklet text; page numbers are placeholders; not part of the OST benchmark"
       }
     }

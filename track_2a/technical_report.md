@@ -94,7 +94,11 @@ free and reproducible.
 (`OSTswiss/MNLIoverSwissVotingBooklets`). Split by
 voting date (seed 2026), so the DE/FR/IT versions of a booklet never cross splits: 998 development pairs
 (13 dates), of which a stratified subset of 450 was used for all ablations, and 497 test pairs (7 dates,
-21 booklets), evaluated once with settings frozen on development data.
+21 booklets), evaluated once with settings frozen on development data. v1.0 contains exact duplicate rows
+(122 of the 497 test rows; 375 distinct pairs), which we keep as published. All reported numbers use OST
+v1.0 only. Two auxiliary sets written by closed LLMs are used for no reported number: 24 unreviewed edge
+cases for the demo (Gemini 3.8 Flash via the Antigravity CLI) and archived synthetic development sets from
+before v1.0 (Claude Opus 5.5, GPT-5.5); sources and per-row provenance are in `data/README.md`.
 
 **Metrics** as on OST's slide 28: macro-F1 over the three labels with 95 % bootstrap intervals (1,000
 resamples), separately for Beginner and Advanced and by language; evidence against the gold section
