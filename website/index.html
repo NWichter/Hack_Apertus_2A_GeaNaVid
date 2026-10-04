@@ -147,12 +147,12 @@
         <div class="wrap">
           <p class="eyebrow">Approach</p>
           <h2 id="approach-title">
-            Start with a page. Climb only when unsure.
+            Narrow first, then let Apertus read.
           </h2>
           <p class="section-lede">
-            Sending the whole booklet to the model costs 10,000 to 45,000 tokens
-            per claim. GeaNaVid gives Apertus a handful of passages instead and
-            widens the context only when the verdict is weak.
+            Sending the whole booklet to the model costs about 20,000 input
+            tokens per claim. GeaNaVid gives Apertus the few passages of the
+            right proposal instead, about 1,600 to 2,300 tokens.
           </p>
           <ol class="steps">
             <li>
@@ -160,15 +160,15 @@
               <p>
                 The PDF is split into passages with page, proposal, section and
                 author, including the note that a double page was written by the
-                committee. No language model, no tokens, 0.3 s for 40 pages.
+                committee. No language model, no tokens.
               </p>
             </li>
             <li>
-              <h3>Find the passages</h3>
+              <h3>Find the proposal and the passages</h3>
               <p>
-                BM25 picks the five best passages and their neighbours. A German
-                claim against a French booklet is searched in the German version
-                of the same booklet and mapped back by page layout.
+                The vote title narrows the booklet to one proposal. A claim in
+                another language is translated by Apertus into the booklet
+                language; BM25 then picks five passages and their neighbours.
               </p>
             </li>
             <li>
@@ -176,15 +176,15 @@
               <p>
                 One call to Apertus v1.5 with numbered passages. The answer is
                 strict JSON: first the passages that decide, then the label.
-                Evidence is always real booklet text with page and offsets.
+                With 8B, unsure verdicts are re-checked claim part by claim part.
               </p>
             </li>
             <li>
-              <h3>Escalate when unsure</h3>
+              <h3>Quote the deciding sentence</h3>
               <p>
-                A verdict without evidence or with low probability gets one more
-                look with the surrounding pages. Most claims stop after the
-                first step.
+                The evidence is the booklet sentence that covers the claim best,
+                verbatim and with its PDF page, chosen without another model
+                call.
               </p>
             </li>
           </ol>
@@ -193,92 +193,87 @@
 
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="wrap">
-          <p class="eyebrow">Status · 1 October 2026</p>
-          <h2 id="status-title">First measurements</h2>
+          <p class="eyebrow">Results · 4 October 2026</p>
+          <h2 id="status-title">OST v1.0, held-out test split</h2>
           <p class="section-lede">
-            Official demo of the OST dataset and its cross-lingual variants: 74
-            claim–booklet pairs. Macro-F1 over entailment, neutral and
-            contradiction; input tokens per claim from the API.
+            OST's benchmark MNLIoverSwissVotingBooklets v1.0, split by voting
+            date: 497 test pairs from 7 voting dates, 21 booklets, two thirds
+            cross-lingual; all settings chosen on development data. Macro-F1
+            over entailment, neutral and contradiction; input tokens per claim
+            from the API.
           </p>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Context given to Apertus</th>
+                  <th scope="col">Setup</th>
                   <th scope="col">8B</th>
                   <th scope="col">70B</th>
-                  <th scope="col">Tokens per claim</th>
+                  <th scope="col">Input tokens per claim</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>GeaNaVid ladder (passages, escalation)</td>
-                  <td><strong>0.92</strong></td>
-                  <td>0.94</td>
-                  <td>≈ 2,100</td>
-                </tr>
-                <tr>
-                  <td>Retrieved passages only</td>
-                  <td>0.91</td>
-                  <td><strong>0.96</strong></td>
-                  <td>≈ 1,700</td>
+                  <td>GeaNaVid, Advanced task (booklet PDF + claim)</td>
+                  <td><strong>0.941</strong></td>
+                  <td><strong>0.951</strong></td>
+                  <td>2,258 / 1,631</td>
                 </tr>
                 <tr>
                   <td>Whole booklet (baseline)</td>
-                  <td>0.81</td>
-                  <td><strong>0.98</strong></td>
-                  <td>≈ 18,200</td>
+                  <td>0.723</td>
+                  <td>0.890</td>
+                  <td>20,156</td>
                 </tr>
                 <tr>
-                  <td>Claim without booklet (control)</td>
-                  <td>0.09</td>
-                  <td>0.09</td>
-                  <td>≈ 330</td>
+                  <td>Beginner task (claim + reference text)</td>
+                  <td>0.978</td>
+                  <td>0.980</td>
+                  <td>2,662 / 2,080</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <ul class="findings">
             <li>
-              <strong>Less context helps the small model:</strong> 8B is better
-              with 9 % of the booklet than with all of it.
+              <strong>Less context, better verdicts:</strong> 8B with the
+              selected passages (0.941) beats 70B with the whole booklet
+              (0.890), at about a tenth of the tokens.
             </li>
             <li>
-              <strong>70B barely needs the whole booklet:</strong> 0.96 against
-              0.98 at a tenth of the tokens.
+              <strong>Translation is the largest step:</strong> cross-lingual
+              claims with 8B rise from 0.70 to 0.94 once Apertus translates them
+              into the booklet language.
             </li>
             <li>
-              <strong>Cross-lingual retrieval without tokens:</strong> searching
-              the parallel booklet lifts recall@5 from 0.74 to 0.95.
+              <strong>All languages:</strong> 0.92 to 0.98 per claim language
+              and per booklet language (single pairs 0.83 to 0.98, 8B);
+              detecting the claim language instead of reading it from the data
+              changes nothing.
             </li>
             <li>
-              <strong>Long booklets break the baseline:</strong> on held-out
-              claims for four longer booklets (40,000 tokens on average), the
-              whole booklet drops to 0.60 (8B) and 0.85 (70B). The ladder keeps
-              0.88 and 0.94 with about 1,800 tokens.
+              <strong>Time as OST measures it:</strong> cold run on 50 test
+              cases, mean / p95 per claim 457 / 819 ms (8B) and 1,366 / 2,119 ms
+              (70B).
             </li>
           </ul>
           <p class="caveat">
-            Small samples: 23 distinct official claims (95 % intervals about
-            ±0.07) and 221 held-out synthetic pairs whose labels still await a
-            human check.
+            95 % intervals about ±0.02 to ±0.025. OST v1.0 repeats 122 of the
+            497 test pairs; without the copies the defaults score 0.931 (8B)
+            and 0.944 (70B). 8B and 70B do not differ significantly.
           </p>
-          <h3 class="sub">In progress</h3>
+          <h3 class="sub">Open</h3>
           <ul class="progress">
             <li>
-              <span class="pill">in progress</span> Judged quality of the cited
-              passages
+              <span class="pill">open</span> How OST matches the evidence:
+              sentence or paragraph (Q&amp;A on 8 October)
             </li>
             <li>
-              <span class="pill">in progress</span> Human check of the synthetic
-              development data
+              <span class="pill">open</span> Token counts of OST's proxy
             </li>
             <li>
-              <span class="pill">in progress</span> Apertus translation compared
-              with the parallel-edition search
-            </li>
-            <li>
-              <span class="pill">in progress</span> Scanned booklets before 2000
+              <span class="pill">open</span> Scanned booklets without a text
+              layer (no OCR yet)
             </li>
           </ul>
         </div>
@@ -329,8 +324,8 @@
             <h2 id="report-title">How it works, what the numbers say</h2>
             <p>
               Architecture, use of Apertus, data, evaluation and limitations,
-              with sources. The current version is a draft from 1 October 2026;
-              open measurements are marked as such.
+              with sources. Draft of 4 October 2026 with the results on OST
+              v1.0; open points are marked as such.
             </p>
             <div class="actions">
               <a class="button primary" href="/report.pdf"

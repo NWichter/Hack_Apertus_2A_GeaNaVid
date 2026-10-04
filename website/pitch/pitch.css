@@ -950,12 +950,12 @@ body.present.idle {
 }
 
 
-/* ladder bars, linear: whole booklet (18,229 tokens) = 700 px */
+/* context bars, linear: whole booklet (20,156 tokens) = 700 px */
 .w-rung1 {
-  width: 66px !important;
+  width: 46px !important;
 }
 .w-rung2 {
-  width: 157px !important;
+  width: 11px !important;
 }
 .w-full {
   width: 700px !important;
