@@ -156,6 +156,7 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 | `data/v1/v1.0.jsonl`                           | OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (HF commit adca9a5), 1,495 claims                                       | MIT           |
 | `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test; ids `v1-NNNN` added | MIT (derived) |
 | `data/archive/demo-2026-10-01/`                | the earlier 28-row demo and its cross-lingual variants (archived)                                                                 | MIT           |
+| `data/edge_cases.jsonl`                        | 24 synthetic stress pairs (ours, not part of the OST benchmark), see `data/README.md`                                             | CDLA-Permissive-2.0 |
 
 The `data/` directory must not exceed 100 MB.
 

@@ -278,7 +278,10 @@ scanned booklets @stuessi2026votingbooklets, extend to Romansh.
 
 = License
 <license>
-Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects
+This report and the documentation: Creative Commons Attribution 4.0
+(CC-BY-4.0). Code: Apache-2.0. Our edge-case set
+(`data/edge_cases.jsonl`): CDLA-Permissive-2.0. The OST benchmark and the
+splits derived from it keep their MIT licence. All HackApertus projects
 are open-sourced.
 
 = References

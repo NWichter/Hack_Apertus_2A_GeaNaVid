@@ -57,4 +57,18 @@ LLM_API_KEY — your API key
 
 ## License
 
-All Hack Apertus projects are open-sourced. Please check our Terms & Conditions for specific licensing details (6. What you build is open source): https://hackapertus.ch/terms-and-conditions
+Licences follow the Hack Apertus Terms & Conditions (6. What you build is open source): https://hackapertus.ch/terms-and-conditions
+
+| Part | License | File |
+| --- | --- | --- |
+| Code: `track_2a/` (package `booklint`, `data_prep`, experiments, tests, demo), `website/` | Apache-2.0 | [`LICENSE`](LICENSE) |
+| Documentation and technical report: README files, `track_2a/docs/`, `track_2a/technical_report.md`, `track_2a/report/`, `track_2a/Apertool_Report.pdf`, pitch slides | CC-BY-4.0 | [`LICENSE-docs`](LICENSE-docs) |
+| Submitted dataset: 24 synthetic edge cases, `track_2a/data/edge_cases.jsonl` | CDLA-Permissive-2.0 | [`track_2a/data/LICENSE-edge_cases`](track_2a/data/LICENSE-edge_cases) |
+
+Third-party material keeps its own licence and is not relicensed:
+
+- OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (`track_2a/data/v1/`), our splits derived from it and the archived kickoff demo (`track_2a/data/archive/demo-2026-10-01/`): MIT, as published by OST.
+- Federal voting booklets (bk.admin.ch): downloaded and cached at run time, not shipped.
+- VotingBooklets-v1 (Stüssi & Vamvas, SwissText 2026): CC BY 4.0; one quoted Romansh sentence on a pitch slide, with attribution; the corpus is not shipped.
+- `intfloat/multilingual-e5-small` (optional dense retrieval): MIT, downloaded on demand, not shipped.
+- Fonts in `website/assets/fonts/`: SIL Open Font License 1.1, see `LICENSE-fonts.txt`.

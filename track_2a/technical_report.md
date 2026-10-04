@@ -199,6 +199,8 @@ Next steps: settle evidence unit and page numbering with OST, OCR for scanned bo
 
 ## License
 
-Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects are open-sourced.
+This report and the documentation: Creative Commons Attribution 4.0 (CC-BY-4.0). Code: Apache-2.0. Our edge-case set
+(`data/edge_cases.jsonl`): CDLA-Permissive-2.0. The OST benchmark and the splits derived from it keep their MIT licence.
+All HackApertus projects are open-sourced.
 
 ## References

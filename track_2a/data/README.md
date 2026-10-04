@@ -8,7 +8,8 @@ data/
 │   ├── dev_s.jsonl          # 450-pair subset of dev for ablations
 │   ├── test.jsonl           # 497 pairs, used only for final numbers
 │   └── split.json           # split definition (seed 2026)
-├── edge_cases.jsonl         # 24 synthetic stress pairs, NOT part of the OST benchmark
+├── edge_cases.jsonl         # 24 synthetic stress pairs, NOT part of the OST benchmark, CDLA-Permissive-2.0
+├── LICENSE-edge_cases       # CDLA-Permissive-2.0 text for edge_cases.jsonl
 ├── manifest.json            # sha256, sizes, label and language counts
 └── archive/demo-2026-10-01/ # the 28-row kickoff demo, superseded by v1.0
 ```
@@ -44,3 +45,9 @@ invented references and placeholder metrics were removed on 2026-10-04.
   one wrong category in `provenance.review_note` (`edge-modal-02`, `edge-rm-02`, `edge-xling-05`).
 - Romansh text was not checked by a native speaker.
 - Use them for demos and qualitative stress tests only; never mix their results with OST v1.0 numbers.
+
+## Licences
+
+- `edge_cases.jsonl` is our submitted dataset: CDLA-Permissive-2.0, see [`LICENSE-edge_cases`](LICENSE-edge_cases).
+- `v1/` and `archive/demo-2026-10-01/` are OST data and splits derived from it: MIT, as published by OST.
+  They are not relicensed.
