@@ -3,7 +3,9 @@
 All numbers on this page come from `runs/v1/<split>/<model>/<run>.{jsonl,config.json,summary.json}`.
 Each run stores its full option set, the split seed and the command. Tables are produced with
 `python experiments/v1/table.py <split>`. Earlier numbers (28-row demo, synthetic sets) are archived in
-`data/archive/` and `runs/archive/` and are superseded by this page.
+`data/archive/` and `runs/archive/` and are superseded by this page. The technical report
+(`technical_report.md`, at most 6 pages) keeps only the main numbers; the full tables, ablations and
+details are here.
 
 ## Data and protocol
 
@@ -306,7 +308,8 @@ extra `[dense]`), calibration (`--calib`), number hint/rule (`--numbers`), ladde
 Only Apertus and the given booklet are used in the default pipeline. Without `claim_language` the claim
 language is detected; a `vote` title in another language than the booklet is translated by Apertus first.
 Evidence is the deciding sentence (`--evidence-unit sentence`); `--evidence-unit paragraph` returns the whole
-text block instead.
+text block instead. Parsing is deterministic and costs no tokens: a 40-page booklet gives about 200 text
+blocks in 0.3 s. Claims about a recommendation also get the recommendation blocks of the same proposal.
 
 `make run` (Docker, test split) reproduces the test rows above from the response cache: 8B 0.9406, 70B 0.9512;
 a live run without cache on 12 rows took 5 s.
