@@ -6,7 +6,7 @@
     <title>GeaNaVid Pitch</title>
     <meta
       name="description"
-      content="GeaNaVid checks a claim against the official Swiss voting booklet in German, French or Italian and returns Gea, Na or Vid with the passage that decides it. Built on Apertus v1.5."
+      content="GeaNaVid checks a claim against the official Swiss voting booklet in German, French or Italian and returns Gea, Na or Vid; a Gea or Na comes with the booklet passage behind it. Built on Apertus v1.5."
     />
     <meta name="robots" content="noindex" />
     <link rel="icon" href="../assets/geanavid-favicon.svg" type="image/svg+xml" />
@@ -65,8 +65,8 @@
         <p class="kicker">Hack Apertus 2026 · Track 2A · Challenge by OST</p>
         <h1>GeaNaVid</h1>
         <p class="claim">
-          Every claim checked against the official voting booklet, with the line
-          that decides it.
+          Every claim checked against the official voting booklet. Each Yes or
+          No comes with the booklet line behind it.
         </p>
         <p class="rm">Gea · Na · Vid — Romansh for Yes · No · Blank</p>
         <div class="badges">
@@ -242,7 +242,7 @@
         <div class="rung">
           <div class="n">1</div>
           <div class="what">
-            <b>Top-5 passages of the right proposal</b>
+            <b>Top-5 passages of the right proposal, with page neighbours</b>
             <span>the vote title narrows the booklet, BM25 picks the passages, the section the claim names first</span>
           </div>
           <div class="bar">
@@ -275,7 +275,7 @@
       </div>
       <p class="climb">Per claim: 1,531 input tokens with 70B, 2,662 with 8B (three worked examples, a second look at neutral answers)</p>
       <p class="src">
-        Mean input tokens per claim as reported by the API, OST v1.0 held-out test split (497 pairs),
+        Mean input tokens per claim as reported by the API, OST v1.0 test split (497 pairs),
         Apertus v1.5, 4 October 2026.
       </p>
     </section>
@@ -320,9 +320,10 @@
         </div>
       </div>
       <p class="src">
-        OST MNLIoverSwissVotingBooklets v1.0, held-out test split: 497 pairs from 7 voting dates, settings chosen
-        on development data. 95 % intervals about ±0.02. Unseen booklets (synthetic
-        hold-out): 0.874 (8B) / 0.932 (70B) vs 0.665 / 0.872 whole booklet. 4 October 2026.
+        OST MNLIoverSwissVotingBooklets v1.0, test split: 497 pairs from 7 voting dates; 95 % cluster intervals
+        0.933–0.978 (8B), 0.948–0.984 (70B). Variants were built on development data, but test scores also decided
+        which were kept, so we add unseen booklets (synthetic hold-out, run once): 0.874 (8B) / 0.932 (70B) vs
+        0.665 / 0.872 whole booklet. 4 October 2026.
       </p>
     </section>
 
@@ -378,7 +379,7 @@
     <!-- 8 Evidence -->
     <section class="slide s-ev">
       <p class="kicker">Evidence</p>
-      <h2>Every verdict points to a line in the booklet.</h2>
+      <h2>Every Yes or No points to a line in the booklet.</h2>
       <div class="wrap">
         <div class="verdict">
           <div class="top">
@@ -397,7 +398,7 @@
           </div>
           <div class="usage">
             <span>input tokens 2,794</span>
-            <span>time 0.8 s</span>
+            <span>output tokens 52</span>
             <span>Apertus 8B</span>
           </div>
         </div>
@@ -405,7 +406,7 @@
           <div class="point">
             <b>Quotes, not paraphrase</b>
             <span
-              >The evidence is the booklet sentence that decides, verbatim, with its
+              >The evidence is a booklet sentence, verbatim, with its
               PDF page, from the section the claim names, chosen after the verdict
               without another model call.</span
             >
@@ -435,7 +436,7 @@
     <!-- 9 Team + close -->
     <section class="slide dark s-close">
       <p class="kicker">Team Apertool</p>
-      <h2>Gea, Na or Vid.<br />Always with the line that decides it.</h2>
+      <h2>Gea, Na or Vid.<br />Yes or No: with the line behind it.</h2>
       <div class="wrap">
         <div>
           <div class="team">

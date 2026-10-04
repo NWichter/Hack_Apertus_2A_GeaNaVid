@@ -6,7 +6,7 @@
     <title>GeaNaVid · Claims checked against the Swiss voting booklet</title>
     <meta
       name="description"
-      content="GeaNaVid checks a claim in German, French or Italian against the official Swiss voting booklet and returns Gea, Na or Vid with the passage that decides it. Built on Apertus v1.5 by team Apertool for Hack Apertus 2026."
+      content="GeaNaVid checks a claim in German, French or Italian against the official Swiss voting booklet and returns Gea, Na or Vid; a Gea or Na comes with the booklet passage behind it. Built on Apertus v1.5 by team Apertool for Hack Apertus 2026."
     />
     <meta name="robots" content="noindex" />
     <meta name="color-scheme" content="light dark" />
@@ -30,7 +30,7 @@
     />
     <meta
       property="og:description"
-      content="Claim in, verdict out: entailment, neutral or contradiction, always with the passage from the Swiss voting booklet that decides it. Built on Apertus."
+      content="Claim in, verdict out: entailment, neutral or contradiction; entailment and contradiction come with the passage from the Swiss voting booklet behind them. Built on Apertus."
     />
     <meta property="og:url" content="https://geanavid.apertool.ch/" />
     <meta property="og:image" content="https://geanavid.apertool.ch/og.png" />
@@ -72,8 +72,8 @@
           <div class="hero-copy">
             <p class="eyebrow">Hack Apertus 2026 · Track 2A · OST challenge</p>
             <h1>
-              Every claim checked against the official voting booklet, with the
-              line that decides it.
+              Every claim checked against the official voting booklet. Each Yes
+              or No comes with the booklet line behind it.
             </h1>
             <p class="lede">
               GeaNaVid reads the Swiss Federal Council's voting booklet and a
@@ -197,11 +197,11 @@
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="wrap">
           <p class="eyebrow">Results · 4 October 2026</p>
-          <h2 id="status-title">OST v1.0, held-out test split</h2>
+          <h2 id="status-title">OST v1.0, test split</h2>
           <p class="section-lede">
             OST's benchmark MNLIoverSwissVotingBooklets v1.0, split by voting
             date: 497 test pairs from 7 voting dates, 21 booklets, two thirds
-            cross-lingual; all settings chosen on development data. Macro-F1
+            cross-lingual. Macro-F1
             over entailment, neutral and contradiction; input tokens per claim
             from the API.
           </p>
@@ -251,7 +251,7 @@
             <li>
               <strong>Evidence where the booklet says it:</strong> the quoted
               sentence lies in OST's gold section for 86 % (8B) and 88 % (70B)
-              of the answers, on a gold page for 87 % / 89 %.
+              of entailment and contradiction answers, on a gold page for 87 % / 89 %.
             </li>
             <li>
               <strong>All languages:</strong> 0.92 to 0.98 per claim language
@@ -272,11 +272,13 @@
             </li>
           </ul>
           <p class="caveat">
-            95 % intervals about ±0.02. OST v1.0 repeats 122 of the 497 test
-            pairs; without the copies the defaults score 0.955 (8B) and 0.965
-            (70B). 8B and 70B do not differ significantly. Every setting was
-            chosen on development data and confirmed once on test; the rounds
-            are in docs/ITERATIONS.md.
+            OST v1.0 repeats 122 of the 497 test pairs, so the 95 % intervals
+            resample copies together: 0.933–0.978 (8B), 0.948–0.984 (70B);
+            without the copies the defaults score 0.955 (8B) and 0.965 (70B).
+            8B and 70B do not differ significantly. Variants were built on
+            development data, but test scores also decided which were kept
+            (five test evaluations); the synthetic hold-out on unseen booklets
+            checks that. The rounds are in docs/ITERATIONS.md.
           </p>
           <h3 class="sub">Open</h3>
           <ul class="progress">
