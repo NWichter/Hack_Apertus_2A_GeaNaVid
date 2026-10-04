@@ -22,8 +22,8 @@ https://hackapertus.notion.site/getting-started-guide-onlinehack
 
 GeaNaVid ships the CLI `booklint`: a voting booklet (PDF path or bk.admin.ch URL), a claim in German,
 French or Italian and optionally the title of the proposal (`vote`) go in; the decision (0 entailment = yes,
-1 neutral = blank, 2 contradiction = no), the page and the sentence of the booklet that decides it, the cited
-passages, token usage and time come out.
+1 neutral = blank, 2 contradiction = no), for yes and no the page and the sentence of the booklet that decides
+it and the cited passages, token usage and time come out.
 
 From `track_2a/`:
 

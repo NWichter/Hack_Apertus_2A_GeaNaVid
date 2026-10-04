@@ -13,8 +13,8 @@ marked [TBD]. Ablations, retrieval recall, calibration, error analysis and the f
 
 Swiss voters meet many claims about federal proposals; the official voting booklet is the authoritative
 source, but it runs to 40–90 pages in three languages. GeaNaVid checks a claim in German, French or
-Italian against a booklet and returns entailment, neutral or contradiction together with the passages
-that decide the label, the token usage and the time. We treat the task as document-level natural
+Italian against a booklet and returns entailment, neutral or contradiction, for entailment and contradiction
+together with the passages that decide the label, plus the token usage and the time. We treat the task as document-level natural
 language inference [@yin2021docnli; @koreeda2021contractnli], close to claim verification with evidence
 [@thorne2018fever], but judged only against the booklet, never against the world.
 
@@ -24,12 +24,14 @@ summary", "the committee", "the voting text"), and asks Apertus v1.5 for a stric
 first and label second. Cross-lingual claims are translated into the booklet language by Apertus before
 retrieval; with 8B, a neutral answer is checked once more, only for a contradiction. On the official OST v1.0
 benchmark (497 held-out test pairs), Apertus 8B reaches a macro-F1 of
-0.957 [95% CI 0.938–0.975] with 2,662 input tokens per claim, against 0.723 for the whole-booklet baseline
-(20,156 input tokens). Apertus 70B reaches 0.968 [0.951–0.982] with 1,531 input tokens, against 0.890. The
+0.957 [95% CI 0.933–0.978, cluster bootstrap] with 2,662 input tokens per claim, against 0.723 for the
+whole-booklet baseline (20,156 input tokens). Apertus 70B reaches 0.968 [0.948–0.984] with 1,531 input tokens,
+against 0.890. The
 evidence sentence lies in OST's gold section for 86 % (8B) and 88 % (70B) of the answers. In the Beginner task
 (gold reference given), 8B reaches 0.978 and 70B 0.980. On a synthetic hold-out from booklets outside OST v1.0
 the gap to the baseline carries over (8B 0.874 vs 0.665, 70B 0.932 vs 0.872).
-The output is never a voting recommendation: every verdict comes with a quote from the booklet.
+The output is never a voting recommendation: every yes or no comes with a quote from the booklet; a neutral
+answer ("blank") cites nothing.
 
 ## 2. System design and architecture
 
@@ -115,7 +117,9 @@ free and reproducible.
 (`OSTswiss/MNLIoverSwissVotingBooklets`). Split by
 voting date (seed 2026), so the DE/FR/IT versions of a booklet never cross splits: 998 development pairs
 (13 dates), of which a stratified subset of 450 was used for all ablations, and 497 test pairs (7 dates,
-21 booklets); each configuration ran once on test with settings frozen on development data. v1.0
+21 booklets). Variants were developed on `dev_s`; a default changed only if it was better on `dev_s` and test
+(five test evaluations, `docs/ITERATIONS.md`), so test is not fully untouched and the synthetic hold-out below
+(0.874 / 0.932) is the independent check. v1.0
 contains 335 rows that are exact copies of another row (same claim, booklet and label), 122 of them in
 test (375 distinct pairs). We keep them as published; a plain bootstrap then counts copies as independent
 evidence and its intervals are too narrow. Recomputed from the stored predictions (no new calls), the
@@ -127,8 +131,8 @@ them concern proposals of the test dates; and archived synthetic development set
 Opus 5.5, GPT-5.5). A unit test checks that no stored run contains an edge case; sources and per-row
 provenance are in `data/README.md`.
 
-**Metrics** as on OST's slide 28: macro-F1 over the three labels with 95 % bootstrap intervals (1,000
-resamples), separately for Beginner and Advanced and by language; evidence against the gold section
+**Metrics** as on OST's slide 28: macro-F1 over the three labels with 95 % bootstrap intervals (2,000
+resamples, each group of copies as one unit, `runs/v1/test/duplicates-ci.json`), separately for Beginner and Advanced and by language; evidence against the gold section
 (`reference_string`) and its page; input tokens per claim (what OST sums); mean and p95 of
 `inference_time_ms`.
 
@@ -148,9 +152,9 @@ resamples), separately for Beginner and Advanced and by language; evidence again
 
 Defaults: 8B the last row (three examples, decomposition, neutral re-check), 70B the row before. The 8B
 pipeline beats the 8B baseline by +0.234 and even the 70B baseline; 70B gains +0.078. Both need 1.5–2.7 k instead
-of 20 k input tokens per claim. Each step was chosen on the 450 development claims and then run once on test; the
+of 20 k input tokens per claim. Each step was developed on the 450 development claims and kept only if test agreed; the
 section step added +0.011 (8B) and +0.015 (70B) on development data and +0.013 / +0.017 on test; the neutral
-re-check with the committee words added +0.016 / +0.009 on development data and +0.004 / −0.002 on test, so 70B does not use it.
+re-check with the committee words added +0.016 / +0.009 on development data and +0.004 / −0.002 on test, so 70B does not use it (a decision that used test).
 
 **By language** (test, macro-F1; claim or booklet language, n in brackets):
 
