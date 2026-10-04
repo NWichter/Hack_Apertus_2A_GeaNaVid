@@ -516,17 +516,15 @@ tbody tr:last-child {
 
 /* video */
 .video-frame {
-  aspect-ratio: 16 / 9;
   max-width: 820px;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 24px;
-  background: var(--paper);
-  border: 1.5px dashed var(--line);
-  border-radius: var(--radius);
-  color: var(--muted);
   margin-top: 24px;
+}
+
+.video-frame video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
 }
 
 /* pitch thumb */

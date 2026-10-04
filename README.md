@@ -56,6 +56,7 @@ without a terminal.
 - Data, splits and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
 - Web demo (preview behind a password): https://geanavid.apertool.ch/demo/, code in [`track_2a/demo/`](track_2a/demo/)
 - Project page and pitch: https://geanavid.apertool.ch
+- Demo video: embedded on the project page (`website/media/video.mp4`, subtitles `website/media/video.vtt`)
 
 GeaNaVid reads the booklet; it never tells anyone how to vote.
 

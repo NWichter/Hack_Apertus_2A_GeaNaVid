@@ -1,0 +1,126 @@
+WEBVTT
+
+1
+00:00:02.238 --> 00:00:04.671
+Swiss voters hear claims like this one:
+
+2
+00:00:04.721 --> 00:00:07.981
+the population has grown
+by half a million since 2002.
+
+3
+00:00:08.031 --> 00:00:10.850
+Is that what the official
+voting booklet says?
+
+4
+00:00:11.600 --> 00:00:13.204
+GeaNaVid checks it.
+
+5
+00:00:13.254 --> 00:00:17.637
+The answer is Gea, Na or Vid –
+Romansh for yes, no and blank:
+
+6
+00:00:17.687 --> 00:00:22.865
+the booklet supports the claim,
+contradicts it, or says nothing about it.
+
+7
+00:00:22.915 --> 00:00:26.967
+Every Gea and Na comes
+with the passage that decides it.
+
+8
+00:00:27.017 --> 00:00:28.952
+It is not voting advice.
+
+9
+00:00:29.702 --> 00:00:33.018
+A German claim against the German booklet.
+
+10
+00:00:33.068 --> 00:00:36.243
+The booklet says 1.7 million, on page 4,
+
+11
+00:00:36.293 --> 00:00:39.749
+so the expected answer is Na:
+contradiction.
+
+12
+00:00:39.799 --> 00:00:43.675
+Every answer also reports
+its tokens and its time.
+
+13
+00:00:44.425 --> 00:00:47.195
+Now the same claim against
+the French edition.
+
+14
+00:00:47.245 --> 00:00:50.069
+Apertus first translates
+the claim into French,
+
+15
+00:00:50.119 --> 00:00:52.672
+then GeaNaVid searches the French booklet.
+
+16
+00:00:52.722 --> 00:00:56.035
+The evidence stays in French,
+straight from the booklet.
+
+17
+00:00:56.785 --> 00:01:00.064
+Most of the work is choosing what to read.
+
+18
+00:01:00.114 --> 00:01:04.156
+GeaNaVid first finds
+the proposal the claim is about,
+
+19
+00:01:04.206 --> 00:01:07.278
+then reads only its five best passages:
+
+20
+00:01:07.328 --> 00:01:10.884
+about 1,500 tokens
+per claim with Apertus 70B,
+
+21
+00:01:10.934 --> 00:01:14.075
+instead of 20,000 for the whole booklet.
+
+22
+00:01:14.825 --> 00:01:23.063
+We confirmed it on 497 held-out claims
+from 21 booklets, with OST's human labels.
+
+23
+00:01:23.113 --> 00:01:29.541
+With the whole booklet,
+Apertus 8B reaches a macro F1 of 0.72.
+
+24
+00:01:29.591 --> 00:01:31.541
+GeaNaVid: 0.96.
+
+25
+00:01:31.591 --> 00:01:37.638
+70B: 0.97, against 0.89, with about
+a tenth of the tokens.
+
+26
+00:01:38.388 --> 00:01:42.179
+GeaNaVid runs on Apertus,
+with one command: make run.
+
+27
+00:01:42.229 --> 00:01:46.019
+Gea, Na or Vid,
+always with the line that decides it.

@@ -7,4 +7,5 @@ COPY index.html 404.html style.css og.png report.pdf /usr/share/nginx/html/
 COPY assets /usr/share/nginx/html/assets
 COPY pitch/index.html pitch/pitch.css pitch/pitch.js pitch/pitch.pdf pitch/og.png /usr/share/nginx/html/pitch/
 COPY demo /usr/share/nginx/html/demo/
+COPY media /usr/share/nginx/html/media
 EXPOSE 80
