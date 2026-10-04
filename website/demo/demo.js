@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const caseId = document.getElementById("caseId");
   const referenceText = document.getElementById("referenceText");
   const bookletSelect = document.getElementById("bookletSelect");
+  const bookletLang = document.getElementById("bookletLang");
+  const voteOptions = document.getElementById("voteOptions");
+  const presetNote = document.getElementById("presetNote");
   const voteTitle = document.getElementById("voteTitle");
 
   const btnSubmit = document.getElementById("btnSubmit");
@@ -34,8 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const specStatus = document.getElementById("specStatus");
   const modelBadge = document.getElementById("modelBadge");
 
+  const LABELS = ["entailment", "neutral", "contradiction"];
   let currentMode = "beginner";
   let presetsData = [];
+  let bookletSources = {};
+  let goldLabel = null;
 
   // Update char count
   claimText.addEventListener("input", () => {
@@ -68,86 +74,84 @@ document.addEventListener("DOMContentLoaded", () => {
   btnModeBeginner.addEventListener("click", () => setMode("beginner"));
   btnModeAdvanced.addEventListener("click", () => setMode("advanced"));
 
-  bookletSelect.addEventListener("change", updateCliPreview);
+  function bookletChanged() {
+    const src = bookletSources[`${bookletSelect.value}_${bookletLang.value}`];
+    voteOptions.innerHTML = "";
+    (src ? src.votes : []).forEach((v) => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      voteOptions.appendChild(opt);
+    });
+    updateCliPreview();
+  }
 
-  // CLI Command Preview
+  bookletSelect.addEventListener("change", bookletChanged);
+  bookletLang.addEventListener("change", bookletChanged);
+
+  function clearGold() {
+    goldLabel = null;
+    presetNote.textContent = "";
+  }
+
+  claimText.addEventListener("input", clearGold);
+  referenceText.addEventListener("input", clearGold);
+  bookletSelect.addEventListener("change", clearGold);
+  bookletLang.addEventListener("change", clearGold);
+  voteTitle.addEventListener("input", clearGold);
+
+  function shellQuote(text) {
+    return "'" + String(text).replace(/'/g, "'\\''") + "'";
+  }
+
+  // The CLI call that runs the same pipeline with the same model as this page.
   function updateCliPreview() {
-    const cid = caseId.value.trim() || "demo-01";
-    const claim = claimText.value.trim() || "[CLAIM]";
-    const lang = claimLang.value !== "auto" ? ` --claim-lang ${claimLang.value}` : "";
-
+    const parts = ["booklint", "predict", "--id", shellQuote(caseId.value.trim() || "demo-01")];
+    parts.push("--claim", shellQuote(claimText.value.trim() || "<claim>"));
     if (currentMode === "beginner") {
-      const refSnippet = referenceText.value.trim()
-        ? `"${referenceText.value.trim().substring(0, 32)}..."`
-        : `"[REFERENCE_TEXT]"`;
-      cliCommandText.textContent = `booklint predict --id "${cid}" --claim "${claim.substring(0, 36)}..." --reference ${refSnippet}${lang}`;
+      parts.push("--reference", shellQuote(referenceText.value.trim() || "<reference text>"));
     } else {
-      const bookletVal = `${bookletSelect.value}_de.pdf`;
-      const voteVal = voteTitle.value.trim() ? ` --vote "${voteTitle.value.trim()}"` : "";
-      cliCommandText.textContent = `booklint predict --id "${cid}" --claim "${claim.substring(0, 36)}..." --booklet "${bookletVal}"${voteVal}${lang}`;
+      const src = bookletSources[`${bookletSelect.value}_${bookletLang.value}`];
+      parts.push("--booklet", src ? src.url : `<${bookletSelect.value}_${bookletLang.value}.pdf>`);
+      if (voteTitle.value.trim()) parts.push("--vote", shellQuote(voteTitle.value.trim()));
     }
+    if (claimLang.value !== "auto") parts.push("--claim-lang", claimLang.value);
+    cliCommandText.textContent = parts.join(" ");
   }
 
   // Load Presets
   async function loadPresets() {
     try {
       const res = await fetch("/api/presets");
-      if (res.ok) {
-        const data = await res.json();
-        presetsData = data.presets || [];
-        populatePresetsDropdown(presetsData);
-      }
+      if (!res.ok) return;
+      const data = await res.json();
+      const ost = (data.ost || []).map((p) => Object.assign({ kind: "ost" }, p));
+      const syn = (data.presets || []).map((p) => Object.assign({ kind: "synthetic" }, p));
+      presetsData = ost.concat(syn);
+      populatePresetsDropdown(ost, syn);
     } catch (err) {
-      console.warn("Could not load presets from server proxy:", err);
-      // Fallback local presets if server endpoint not reachable
-      const fallbackPresets = [
-        {
-          id: "edge-rm-01",
-          claim: "La nova lescha davart l'identitad electronica (E-ID) è facultativa per ils burgais.",
-          claim_language: "rm",
-          reference_string: "Die elektronische Identität E-ID ist freiwillig und für alle Bürgerinnen und Bürger kostenlos.",
-          challenge_type: "romansh_crosslingual",
-          label: 0,
-        },
-        {
-          id: "edge-rm-02",
-          claim: "Il Cussegl federal recumonda d'acceptar l'iniziativa dal pievel «Per ina Svizra da 10 milliuns!».",
-          claim_language: "rm",
-          reference_string: "Bundesrat und Parlament empfehlen Volk und Ständen, die Volksinitiative abzulehnen.",
-          challenge_type: "romansh_crosslingual",
-          label: 2,
-        },
-        {
-          id: "edge-modal-01",
-          claim: "Die Kantone sind gesetzlich verpflichtet, auf sämtlichen Zweitwohnungen eine Sondersteuer einzuführen.",
-          claim_language: "de",
-          reference_string: "Die Verfassungsänderung ermächtigt die Kantone, eine Liegenschaftssteuer auf Zweitliegenschaften zu erheben. Die Einführung bleibt im Ermessen der einzelnen Kantone.",
-          challenge_type: "modal_negation",
-          label: 2,
-        },
-        {
-          id: "edge-attrib-01",
-          claim: "Der Bundesrat warnt in seinen Erläuterungen, dass die Infrastruktur und die Sozialwerke ohne Zuwanderungsstopp kollabieren.",
-          claim_language: "de",
-          reference_string: "Argumente des Initiativkomitees: Die ungebremste Zuwanderung führt dazu, dass unsere Infrastruktur und Sozialwerke unweigerlich kollabieren.",
-          challenge_type: "attribution_trap",
-          label: 2,
-        },
-      ];
-      populatePresetsDropdown(fallbackPresets);
+      console.warn("Could not load the examples:", err);
     }
   }
 
-  function populatePresetsDropdown(presets) {
-    presetSelect.innerHTML = '<option value="">-- Choose an edge case or type your own below --</option>';
-    presets.forEach((p, idx) => {
+  function addGroup(label, items, offset) {
+    if (!items.length) return;
+    const group = document.createElement("optgroup");
+    group.label = label;
+    items.forEach((p, idx) => {
       const opt = document.createElement("option");
-      opt.value = idx;
-      const typeBadge = `[synthetic${p.challenge_type ? ", " + p.challenge_type : ""}] `;
-      const langBadge = p.claim_language ? `(${p.claim_language}) ` : "";
-      opt.textContent = `${typeBadge}${langBadge}${p.claim.substring(0, 68)}...`;
-      presetSelect.appendChild(opt);
+      opt.value = offset + idx;
+      const lang = p.kind === "ost" ? `${p.claim_language} → ${p.booklet_lang}` : p.claim_language || "";
+      const cut = p.claim.length > 68 ? `${p.claim.substring(0, 68)}…` : p.claim;
+      opt.textContent = `(${lang}) ${cut}`;
+      group.appendChild(opt);
     });
+    presetSelect.appendChild(group);
+  }
+
+  function populatePresetsDropdown(ost, syn) {
+    presetSelect.innerHTML = '<option value="">-- Choose an example or type your own below --</option>';
+    addGroup("OST v1.0 benchmark (real cases, development split), Advanced task", ost, 0);
+    addGroup("Synthetic edge cases (LLM-written, not reviewed, never evaluated), Beginner task", syn, ost.length);
   }
 
   presetSelect.addEventListener("change", () => {
@@ -159,19 +163,25 @@ document.addEventListener("DOMContentLoaded", () => {
     claimCharCount.textContent = `${claimText.value.length} chars`;
     caseId.value = p.id || `preset-${idx}`;
 
-    if (p.claim_language) {
-      claimLang.value = p.claim_language;
-    } else {
+    if (p.kind === "ost") {
       claimLang.value = "auto";
-    }
-
-    if (p.reference_string) {
-      setMode("beginner");
-      referenceText.value = p.reference_string;
-    } else if (p.booklet_url || p.vote) {
       setMode("advanced");
-      if (p.vote) voteTitle.value = p.vote;
+      bookletSelect.value = p.booklet;
+      bookletLang.value = p.booklet_lang;
+      bookletChanged();
+      voteTitle.value = p.vote || "";
+      referenceText.value = "";
+    } else {
+      claimLang.value = p.claim_language || "auto";
+      setMode("beginner");
+      referenceText.value = p.reference_string || "";
+      voteTitle.value = "";
     }
+    goldLabel = typeof p.label === "number" ? p.label : null;
+    presetNote.textContent =
+      p.kind === "ost"
+        ? `OST v1.0 ${p.id}, gold label: ${LABELS[p.label]}. The claim language is detected, as in OST's input.`
+        : `Synthetic ${p.challenge_type || "edge case"}, unreviewed label: ${LABELS[p.label]}. Demo only.`;
 
     updateCliPreview();
   });
@@ -185,6 +195,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data.model) {
           modelBadge.textContent = `Model: ${data.model}`;
         }
+        bookletSources = data.booklet_sources || {};
+        if (data.booklets && data.booklets.length) {
+          const keep = bookletSelect.value;
+          bookletSelect.innerHTML = "";
+          data.booklets
+            .slice()
+            .reverse()
+            .forEach((d) => {
+              const opt = document.createElement("option");
+              opt.value = d;
+              opt.textContent = d;
+              bookletSelect.appendChild(opt);
+            });
+          if (data.booklets.includes(keep)) bookletSelect.value = keep;
+        }
+        bookletChanged();
       }
     } catch (e) {
       // Ignore
@@ -209,6 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
       claim_lang: claimLang.value !== "auto" ? claimLang.value : null,
       reference: currentMode === "beginner" ? referenceText.value.trim() : "",
       booklet: currentMode === "advanced" ? bookletSelect.value : "",
+      booklet_lang: currentMode === "advanced" ? bookletLang.value : "",
       vote: currentMode === "advanced" ? voteTitle.value.trim() : "",
     };
 
@@ -265,6 +292,10 @@ document.addEventListener("DOMContentLoaded", () => {
       specStatus.innerHTML = `<span style="color: #4ade80;">✓ OST output format</span> (id, label, label_name, evidence, metrics)`;
     } else {
       specStatus.innerHTML = `<span style="color: #ff7b72;">⚠ Schema Warning</span>`;
+    }
+    if (goldLabel !== null) {
+      const ok = data.label === goldLabel;
+      specStatus.innerHTML += ` · gold: ${LABELS[goldLabel]} <span style="color: ${ok ? "#4ade80" : "#ff7b72"};">${ok ? "✓" : "✗"}</span>`;
     }
 
     // Verdict styling
@@ -336,6 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkForm.reset();
     claimCharCount.textContent = "0 chars";
     presetSelect.value = "";
+    clearGold();
     updateCliPreview();
     verdictRibbon.classList.add("hidden");
     jsonOutput.innerHTML = `<code>{\n  "status": "ready"\n}</code>`;

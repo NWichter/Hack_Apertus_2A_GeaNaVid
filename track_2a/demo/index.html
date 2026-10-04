@@ -47,12 +47,13 @@
           <!-- Preset selector -->
           <div class="form-group">
             <label for="presetSelect">
-              <span>Curated Evaluation Cases (Romansh, Traps, Cross-Lingual)</span>
-              <span class="hint">1-click test</span>
+              <span>Examples</span>
+              <span class="hint">real OST v1.0 cases, or synthetic edge cases (never evaluated)</span>
             </label>
             <select id="presetSelect" class="form-select">
-              <option value="">-- Choose an edge case or type your own below --</option>
+              <option value="">-- Choose an example or type your own below --</option>
             </select>
+            <p class="field-note" id="presetNote"></p>
           </div>
 
           <!-- Claim Text -->
@@ -108,22 +109,32 @@
 
           <!-- Dynamic Mode Fields: Advanced (Booklet / Vote) -->
           <div id="advancedFields" class="mode-fields hidden">
-            <div class="form-group">
-              <label for="bookletSelect">Federal Voting Booklet / Date</label>
-              <select id="bookletSelect" class="form-select">
-                <option value="2024-11-24">2024-11-24 (Mietrecht, Autobahnausbau, EFAS)</option>
-                <option value="2020-09-27">2020-09-27 (Kinderabzug Steuer, Kampfflugzeuge, Jagdgesetz)</option>
-                <option value="2026-06-14">2026-06-14 (Nachhaltigkeitsinitiative 10-Mio)</option>
-              </select>
+            <div class="form-row">
+              <div class="form-group half">
+                <label for="bookletSelect">Voting booklet (date)</label>
+                <select id="bookletSelect" class="form-select">
+                  <option value="2024-11-24">2024-11-24</option>
+                </select>
+              </div>
+              <div class="form-group half">
+                <label for="bookletLang">Booklet language</label>
+                <select id="bookletLang" class="form-select">
+                  <option value="de">German (de)</option>
+                  <option value="fr">French (fr)</option>
+                  <option value="it">Italian (it)</option>
+                </select>
+              </div>
             </div>
             <div class="form-group">
-              <label for="voteTitle">Proposal / Vote Title (Optional Filter)</label>
+              <label for="voteTitle"><span>Proposal title (vote, optional)</span></label>
               <input
                 type="text"
                 id="voteTitle"
                 class="form-input"
+                list="voteOptions"
                 placeholder="e.g. Mietrecht: Kündigung wegen Eigenbedarfs"
               />
+              <datalist id="voteOptions"></datalist>
             </div>
           </div>
 
@@ -177,7 +188,7 @@
           <div class="terminal-body" id="terminalBody">
             <pre id="jsonOutput" class="json-code"><code>{
   "status": "ready",
-  "message": "Select an edge-case preset above or enter a claim, then press 'Verify Claim with Apertus'."
+  "message": "Choose an example or enter a claim, then press 'Verify Claim with Apertus'."
 }</code></pre>
           </div>
 

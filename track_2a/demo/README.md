@@ -7,8 +7,12 @@ for neutral) and `metrics` (`input_tokens`, `output_tokens`, `inference_time_ms`
 - **Beginner task:** claim + reference passage (classify directly).
 - **Advanced task:** claim + one of the official booklets of the OST v1.0 dataset (by date, `de`/`fr`/`it`)
   + optional vote title (retrieve, then classify). Arbitrary URLs or paths are not accepted.
-- **Presets:** the 24 synthetic edge cases from `data/edge_cases.jsonl` (LLM-written, not reviewed, not part
-  of the OST benchmark).
+- **Examples:** six real OST v1.0 cases from the development split (Advanced task: E, C and N, de/fr/it,
+  four cross-lingual; ids in `OST_EXAMPLE_IDS` in `server.py`), and the 24 synthetic edge cases from
+  `data/edge_cases.jsonl` (LLM-written, not reviewed, not part of the OST benchmark, never evaluated).
+- **Same answer as the CLI:** the page shows the `booklint predict` call that runs the same pipeline
+  (default options, model from `LLM_NAME`). Checked on 2026-10-04 for v1-0161, v1-1484 and v1-0696:
+  same labels and evidence as the CLI with `--no-cache`.
 
 ## Run locally
 

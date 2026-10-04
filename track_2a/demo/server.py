@@ -73,30 +73,65 @@ def check_rate_limit(client_ip):
         return allowed
 
 
-def booklet_urls():
-    """Official booklet URLs of the OST v1.0 dataset, keyed by (date, language). Nothing else may be fetched."""
-    urls = {}
-    if DATASET_FILE.is_file():
-        for line in DATASET_FILE.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            url, date = row.get("booklet_url"), row.get("booklet_publish_date")
-            if url and date:
-                lang = (
-                    "de"
-                    if "/dam/de/" in url
-                    else "fr"
-                    if "/dam/fr/" in url
-                    else "it"
-                    if "/dam/it/" in url
-                    else ""
-                )
-                urls[(date, lang)] = url
-    return urls
+OST_EXAMPLE_IDS = ("v1-0161", "v1-1484", "v1-0696", "v1-1179", "v1-0632", "v1-0316")
 
 
-BOOKLETS = booklet_urls()
+def dataset_rows():
+    if not DATASET_FILE.is_file():
+        return []
+    return [
+        dict(json.loads(line), id=f"v1-{i:04d}")
+        for i, line in enumerate(DATASET_FILE.read_text(encoding="utf-8").splitlines())
+        if line.strip()
+    ]
+
+
+def url_lang(url):
+    for lang in ("de", "fr", "it"):
+        if f"/dam/{lang}/" in url:
+            return lang
+    return ""
+
+
+def booklet_index(rows):
+    """Official booklet URLs of the OST v1.0 dataset, keyed by (date, language), and the vote titles per booklet.
+    Nothing else may be fetched."""
+    urls, votes = {}, defaultdict(set)
+    for row in rows:
+        url, date = row.get("booklet_url"), row.get("booklet_publish_date")
+        if url and date:
+            urls[(date, url_lang(url))] = url
+            if row.get("vote"):
+                votes[(date, url_lang(url))].add(row["vote"].strip())
+    return urls, votes
+
+
+def ost_examples(rows):
+    by_id = {r["id"]: r for r in rows}
+    out = []
+    for i in OST_EXAMPLE_IDS:
+        r = by_id.get(i)
+        if not r:
+            continue
+        out.append(
+            {
+                "id": i,
+                "claim": r["claim"],
+                "claim_language": r["claim_language"],
+                "booklet": r["booklet_publish_date"],
+                "booklet_lang": url_lang(r["booklet_url"]),
+                "vote": r["vote"],
+                "label": r["entailment_label"],
+                "source": "OST v1.0, development split",
+            }
+        )
+    return out
+
+
+_ROWS = dataset_rows()
+BOOKLETS, VOTES = booklet_index(_ROWS)
+OST_EXAMPLES = ost_examples(_ROWS)
+del _ROWS
 
 
 def get_pipeline():
@@ -207,7 +242,13 @@ class DemoHandler(SimpleHTTPRequestHandler):
         if path == "/api/presets":
             presets = load_presets()
             self._send_json(
-                200, {"presets": presets, "count": len(presets), "synthetic": True}
+                200,
+                {
+                    "ost": OST_EXAMPLES,
+                    "presets": presets,
+                    "count": len(presets),
+                    "synthetic": True,
+                },
             )
             return
         if path == "/api/info":
@@ -218,6 +259,10 @@ class DemoHandler(SimpleHTTPRequestHandler):
                     "model": pipe.llm.model if pipe else None,
                     "labels": {"0": "entailment", "1": "neutral", "2": "contradiction"},
                     "booklets": sorted({d for d, _ in BOOKLETS}),
+                    "booklet_sources": {
+                        f"{d}_{lang}": {"url": url, "votes": sorted(VOTES.get((d, lang), ()))}
+                        for (d, lang), url in sorted(BOOKLETS.items())
+                    },
                     "rate_limit": f"{RATE_LIMIT_MAX_REQUESTS} requests / {RATE_LIMIT_WINDOW_SECONDS} s",
                 },
             )
