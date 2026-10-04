@@ -71,7 +71,10 @@ located.
 **Docker.** Booklet paths in the cases are file paths inside the container. Mount the booklets and the case
 file, and set `BOOKLET_ROOT` when the paths in the cases are relative (`booklets/2024_11_24_de.pdf`): a
 relative path is then read below `BOOKLET_ROOT`; without it, relative to the working directory `/work`.
-URLs (bk.admin.ch) are downloaded and cached in `/work/.cache`.
+A path that does not exist there is also looked up below `/work`, `/work/booklets`, `/data`, `/booklets` and
+next to the case file, then by file name inside those folders; the path taken is printed on stderr
+(`booklet '…' not found at '…', using '…'`). URLs (bk.admin.ch) are downloaded and cached in `/work/.cache`.
+Add `-T` to `docker compose run` when it runs without a terminal.
 
 ```bash
 docker compose build

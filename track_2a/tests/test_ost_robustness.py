@@ -3,6 +3,7 @@
 import io
 import json
 import sys
+from pathlib import Path
 from unittest.mock import patch
 
 from booklint import pipeline as pipeline_module
@@ -288,3 +289,58 @@ def test_efficiency_reports_input_tokens_and_p95():
     assert e["inference_ms_p95"] == 190
     legacy = efficiency([{"usage": {"prompt_tokens": 7}, "latency_s": 0.25}])
     assert legacy["input_tokens_mean"] == 7 and legacy["inference_ms_mean"] == 250
+
+
+def _fallback_env(monkeypatch, tmp_path, dirs):
+    import booklint.cli as cli
+
+    monkeypatch.setattr(cli, "FALLBACK_DIRS", tuple(str(d) for d in dirs))
+    monkeypatch.setattr(cli, "_resolved", {})
+    monkeypatch.delenv("BOOKLET_ROOT", raising=False)
+    monkeypatch.chdir(tmp_path)
+
+
+def test_missing_booklet_found_below_mount_point(monkeypatch, tmp_path, capsys):
+    mount = tmp_path / "mnt" / "booklets"
+    mount.mkdir(parents=True)
+    pdf = mount / "2024_11_24_de.pdf"
+    pdf.write_bytes(b"%PDF")
+    _fallback_env(monkeypatch, tmp_path, [tmp_path / "mnt"])
+    case = normalize_case({"booklet": {"path": "booklets/2024_11_24_de.pdf"}, "claim": {"text": "x"}})
+    assert Path(case["booklet"]) == pdf
+    assert "using" in capsys.readouterr().err
+
+
+def test_missing_booklet_found_next_to_case_file(monkeypatch, tmp_path, capsys):
+    from booklint.cli import read_cases
+
+    cases = tmp_path / "cases"
+    (cases / "booklets").mkdir(parents=True)
+    pdf = cases / "booklets" / "a.pdf"
+    pdf.write_bytes(b"%PDF")
+    (cases / "c.json").write_text(json.dumps({"id": "c", "booklet": {"path": "booklets/a.pdf"}, "claim": {"text": "x"}}), encoding="utf-8")
+    (tmp_path / "elsewhere").mkdir()
+    _fallback_env(monkeypatch, tmp_path / "elsewhere", [])
+    assert Path(read_cases(str(cases / "c.json"))[0]["booklet"]) == pdf
+    err = capsys.readouterr().err
+    assert "using" in err and "cases" in err
+
+
+def test_missing_booklet_found_by_file_name(monkeypatch, tmp_path, capsys):
+    deep = tmp_path / "data" / "2024" / "november"
+    deep.mkdir(parents=True)
+    pdf = deep / "2024_11_24_de.pdf"
+    pdf.write_bytes(b"%PDF")
+    _fallback_env(monkeypatch, tmp_path, [tmp_path / "data"])
+    case = normalize_case({"booklet": {"path": "booklets/2024_11_24_de.pdf"}, "claim": {"text": "x"}})
+    assert Path(case["booklet"]) == pdf
+    assert "using" in capsys.readouterr().err
+
+
+def test_existing_and_unfound_booklets_unchanged(monkeypatch, tmp_path, capsys):
+    (tmp_path / "booklets").mkdir()
+    (tmp_path / "booklets" / "a.pdf").write_bytes(b"%PDF")
+    _fallback_env(monkeypatch, tmp_path, [tmp_path / "nothing"])
+    assert normalize_case({"booklet": {"path": "booklets/a.pdf"}, "claim": "x"})["booklet"] == "booklets/a.pdf"
+    assert normalize_case({"booklet": {"path": "booklets/b.pdf"}, "claim": "x"})["booklet"] == "booklets/b.pdf"
+    assert capsys.readouterr().err == ""

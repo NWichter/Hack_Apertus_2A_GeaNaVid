@@ -169,21 +169,53 @@ def _field(value, key):
     return value.get(key) if isinstance(value, dict) else value
 
 
-def resolve_booklet(path):
-    """Relative booklet paths are read below BOOKLET_ROOT when it is set."""
+FALLBACK_DIRS = ("/work", "/work/booklets", "/data", "/booklets")
+_resolved = {}
+
+
+def _booklet_candidates(path, case_dir):
+    rel = Path(path)
     root = os.environ.get("BOOKLET_ROOT")
-    if not path or not root or "://" in path or Path(path).is_absolute():
+    dirs = [root] if root else []
+    dirs += [None, *FALLBACK_DIRS]
+    if case_dir:
+        dirs.append(case_dir)
+    for d in dirs:
+        yield rel if d is None else Path(d) / rel
+    name_dirs = [d for d in (root, case_dir, *FALLBACK_DIRS) if d]
+    for d in name_dirs:
+        base = Path(d)
+        if base.is_dir():
+            yield from sorted(base.rglob(rel.name))
+
+
+def resolve_booklet(path, case_dir=None):
+    """Booklet path as given; a relative path is read below BOOKLET_ROOT when it is set. A path that does not
+    exist is also looked up below the usual mount points, next to the case file and by file name; the path
+    taken is reported on stderr."""
+    if not path or "://" in path:
         return path
-    return str(Path(root) / path)
+    root = os.environ.get("BOOKLET_ROOT")
+    primary = path if Path(path).is_absolute() or not root else str(Path(root) / path)
+    if Path(primary).is_file():
+        return primary
+    key = (path, root, str(case_dir or ""))
+    if key not in _resolved:
+        found = next((c for c in _booklet_candidates(path, case_dir) if c.is_file()), None)
+        _resolved[key] = str(found) if found else primary
+        if found:
+            print(f"booklet {path!r} not found at {primary!r}, using {str(found)!r}", file=sys.stderr)
+    return _resolved[key]
 
 
-def normalize_case(r):
+def normalize_case(r, case_dir=None):
     """Flat dataset rows and OST task cases (slide 24: booklet.path, claim.text, reference.text) -> one shape."""
     return {
         "id": str(r.get("id") or ""),
         "claim": _field(r.get("claim"), "text"),
         "booklet": resolve_booklet(
-            _field(r.get("booklet"), "path") or r.get("booklet_path") or r.get("booklet_url")
+            _field(r.get("booklet"), "path") or r.get("booklet_path") or r.get("booklet_url"),
+            case_dir,
         ),
         "reference": _field(r.get("reference"), "text") or r.get("reference_string"),
         "vote": r.get("vote"),
@@ -199,7 +231,8 @@ def read_cases(path):
         items = data if isinstance(data, list) else [data]
     except json.JSONDecodeError:
         items = [json.loads(line) for line in raw.splitlines() if line.strip()]
-    return [normalize_case(c) for c in items]
+    case_dir = None if path == "-" else str(Path(path).resolve().parent)
+    return [normalize_case(c, case_dir) for c in items]
 
 
 def cmd_predict(args):
