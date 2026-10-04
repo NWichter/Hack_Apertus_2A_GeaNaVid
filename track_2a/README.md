@@ -131,21 +131,25 @@ Output per claim (`check --json`, one line per claim in `run`/`bench`/`make run`
 - `evidence`: the same spans as `{page, text}` (slide-25 form), or the whole text blocks with
   `--evidence-unit paragraph`.
 
-The sentence is chosen after the decision without any Apertus call: the cited passages and the other top-5
-BM25 passages are split into sentences, and the sentence that covers most of the (translated) claim wins
-(idf-weighted word stems plus character 5-grams, so split words still match; cited passages get a 1.2 bonus).
-On the test split the chosen sentence lies in OST's gold section for 79 % (8B) and 80 % (70B) of the
-entailment/contradiction answers (`docs/EXPERIMENTS-v1.md`).
+The sentence is chosen after the decision without any Apertus call: the cited passages, the other top-5
+BM25 passages and the 4 best blocks of the section the claim names are split into sentences, and the sentence
+that covers most of the (translated) claim wins (idf-weighted word stems plus character 5-grams, so split words
+still match; cited passages get a 1.2 bonus, sentences of the named section a factor 2). On the test split the
+chosen sentence lies in OST's gold section for 86 % (8B) and 88 % (70B) of the entailment/contradiction answers,
+and on a gold page for 87 % / 89 % (`docs/ITERATIONS.md`).
 
 Default pipeline (`--mode retrieval`): find the proposal by its title (or, without a title, from the claim;
 no LLM), let Apertus translate cross-lingual claims into the booklet language, retrieve 5 passages with BM25
-(plus neighbours and the recommendation section for recommendation claims), and ask Apertus for evidence and
-label under a strict JSON schema. With the 8B model the prompt carries 3 development examples and unsure
+(plus neighbours and the recommendation section for recommendation claims; passages of the section the claim
+names, such as "the summary", "the committee" or "the voting text", rank higher: `--section-boost 1.5`), and ask
+Apertus for evidence and label under a strict JSON schema. With the 8B model the prompt carries 3 development examples and unsure
 claims (p < 0.9) are split into atomic statements. Other modes: `baseline` (whole booklet, the baseline OST
 recommends), `easy` (Beginner task: the reference text, in v1.0 `reference_string`), `ladder`, `pages`, `section`, `full`, `oracle`,
 `claim-only`. Optional, off by default: `--crossling parallel` (search the other language version),
 `--cascade apertus-v1.5-70b`, `--rerank yesno`, `--retriever hybrid` (needs `pip install .[dense]`),
-`--calib`, `--numbers hint|rule`. Measurements: `docs/EXPERIMENTS-v1.md`.
+`--calib`, `--numbers hint|rule`, `--render compact` (shorter passage headers, about −7 % tokens).
+Beginner (`easy`): the reference is the context, the claim is not translated; 8B with the same 3 examples.
+Measurements: `docs/EXPERIMENTS-v1.md`; how the defaults improved round by round: `docs/ITERATIONS.md`.
 
 Requirements: Docker; network access to bk.admin.ch (booklets are downloaded and cached, not
 shipped); an OpenAI-compatible endpoint serving Apertus v1.5 (8B or 70B). No GPU and no local

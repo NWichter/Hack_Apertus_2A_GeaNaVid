@@ -21,15 +21,42 @@ from booklint.llm import LLM, RETRIES, redact  # noqa: E402
 from booklint.metrics import breakdown  # noqa: E402
 from booklint.pipeline import Options, Pipeline  # noqa: E402
 from booklint.retrieval_eval import gold_chunks  # noqa: E402
+from booklint.textnorm import fold  # noqa: E402
 
 
 # Ablations start from the plain pipeline; the CLI defaults (Options()) are the chosen configuration.
-ABLATION_BASE = {"mode": "ladder", "translate": False, "fewshot": 0, "decompose": False, "tau_decompose": 0.75}
+ABLATION_BASE = {"mode": "ladder", "translate": False, "fewshot": 0, "decompose": False, "tau_decompose": 0.75,
+                 "section_boost": 1.0, "evidence_section": 1.0, "evidence_section_pool": 0}
 
 
 def load(split):
     path = ROOT / "data" / "v1" / f"{split}.jsonl"
     return [json.loads(line) for line in path.open(encoding="utf-8")]
+
+
+def _norm(text):
+    import re
+
+    return re.sub(r"[^0-9a-z]+", "", fold(text or ""))
+
+
+def evidence_scores(pipeline, rows, preds, gold):
+    """E/C answers: first evidence item inside the gold section (normalised substring), its page a gold page,
+    any item inside the gold section (the proxies for OST's evidence check, slide 28)."""
+    n = first = page = any_ = 0
+    for r, p, g in zip(rows, preds, gold):
+        if int(p.get("entailment_label", 1)) == 1 or not p.get("evidence"):
+            continue
+        b = pipeline.booklet(r["booklet_url"])[0]
+        ref = _norm(r["reference_string"])
+        pages = {b.chunks[i].page for i in g}
+        inside = [len(_norm(e["text"])) >= 10 and _norm(e["text"]) in ref for e in p["evidence"]]
+        n += 1
+        first += inside[0]
+        page += p["evidence"][0].get("page") in pages
+        any_ += any(inside)
+    return {"evidence_n": n, "evidence_first_in_gold": round(first / n, 4) if n else None,
+            "evidence_page_gold": round(page / n, 4) if n else None, "evidence_any_in_gold": round(any_ / n, 4) if n else None}
 
 
 def predict(pipeline, rows, workers):
@@ -59,16 +86,26 @@ def main():
     ap.add_argument("--opts", default="{}")
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--base", default="ablation", choices=["ablation", "default"],
+                    help="option base: the plain ablation pipeline or the CLI default (Options())")
+    ap.add_argument("--offline", action="store_true", help="answer from the response cache only; a miss is an error")
     args = ap.parse_args()
     rows = load(args.split)[: args.limit or None]
-    opts = Options(**{**ABLATION_BASE, **json.loads(args.opts)})
+    base = ABLATION_BASE if args.base == "ablation" else {}
+    opts = Options(**{**base, **json.loads(args.opts)})
     llm = LLM(Settings.from_env(args.model))
+    if args.offline:
+        def refuse(**_):
+            raise RuntimeError("cache miss in an offline replay")
+
+        llm.client.chat.completions.create = refuse
     pipeline = Pipeline(llm, opts)
     t0 = time.perf_counter()
     preds = predict(pipeline, rows, args.workers)
     wall = time.perf_counter() - t0
     gold = [gold_chunks(pipeline.booklet(r["booklet_url"])[0], r["reference_string"]) for r in rows]
     summary = breakdown(rows, preds, gold)
+    summary.update(evidence_scores(pipeline, rows, preds, gold))
     summary.update({"retries": dict(RETRIES), "workers": args.workers, "model": args.model, "name": args.name, "split": args.split, "wall_s": round(wall, 1),
                     "uncached_calls": sum(p["usage"].get("llm_calls", 0) - p["usage"].get("cached_calls", 0) for p in preds)})
     out = ROOT / "runs" / "v1" / args.split / args.model
@@ -81,7 +118,7 @@ def main():
               "command": " ".join(sys.argv)}
     (out / f"{args.name}.config.json").write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (out / f"{args.name}.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    keys = ["macro_f1", "ci95", "f1_e", "f1_n", "f1_c", "macro_f1_same", "macro_f1_cross", "recall_hit",
+    keys = ["macro_f1", "ci95", "evidence_first_in_gold", "evidence_page_gold", "input_tokens_mean", "f1_e", "f1_n", "f1_c", "macro_f1_same", "macro_f1_cross", "recall_hit",
             "tokens_mean", "llm_calls_mean", "llm_seconds_p50", "errors", "uncached_calls", "wall_s", "retries"]
     print(args.split, args.model, args.name, {k: summary.get(k) for k in keys}, flush=True)
 

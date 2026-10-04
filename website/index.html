@@ -184,7 +184,8 @@
               <p>
                 The evidence is the booklet sentence that covers the claim best,
                 verbatim and with its PDF page, chosen without another model
-                call.
+                call. A claim that names its source ("the summary says", "the
+                committee thinks") is answered from that section.
               </p>
             </li>
           </ol>
@@ -215,9 +216,9 @@
               <tbody>
                 <tr>
                   <td>GeaNaVid, Advanced task (booklet PDF + claim)</td>
-                  <td><strong>0.941</strong></td>
-                  <td><strong>0.951</strong></td>
-                  <td>2,258 / 1,631</td>
+                  <td><strong>0.953</strong></td>
+                  <td><strong>0.968</strong></td>
+                  <td>2,129 / 1,531</td>
                 </tr>
                 <tr>
                   <td>Whole booklet (baseline)</td>
@@ -237,7 +238,7 @@
           <ul class="findings">
             <li>
               <strong>Less context, better verdicts:</strong> 8B with the
-              selected passages (0.941) beats 70B with the whole booklet
+              selected passages (0.953) beats 70B with the whole booklet
               (0.890), at about a tenth of the tokens.
             </li>
             <li>
@@ -246,21 +247,34 @@
               into the booklet language.
             </li>
             <li>
-              <strong>All languages:</strong> 0.92 to 0.98 per claim language
-              and per booklet language (single pairs 0.83 to 0.98, 8B);
-              detecting the claim language instead of reading it from the data
-              changes nothing.
+              <strong>Evidence where the booklet says it:</strong> the quoted
+              sentence lies in OST's gold section for 86 % (8B) and 88 % (70B)
+              of the answers, on a gold page for 87 % / 89 %.
+            </li>
+            <li>
+              <strong>All languages:</strong> 0.91 to 0.98 per claim language
+              and per booklet language (single pairs 0.86 to 1.00 with 8B,
+              0.92 to 1.00 with 70B); detecting the claim language instead of
+              reading it from the data changes nothing.
             </li>
             <li>
               <strong>Time as OST measures it:</strong> cold run on 50 test
-              cases, mean / p95 per claim 457 / 819 ms (8B) and 1,366 / 2,119 ms
-              (70B).
+              cases, mean / p95 per claim 671 / 871 ms (8B) and 1,344 / 2,200 ms
+              (70B); 48 ms of it is our own code.
+            </li>
+            <li>
+              <strong>New booklets:</strong> on a synthetic hold-out from three
+              voting dates outside OST v1.0 (89 claims, labels checked by two
+              other models) the lead over the whole booklet holds: 0.845 vs
+              0.665 (8B), 0.932 vs 0.872 (70B).
             </li>
           </ul>
           <p class="caveat">
-            95 % intervals about ±0.02 to ±0.025. OST v1.0 repeats 122 of the
-            497 test pairs; without the copies the defaults score 0.931 (8B)
-            and 0.944 (70B). 8B and 70B do not differ significantly.
+            95 % intervals about ±0.02. OST v1.0 repeats 122 of the 497 test
+            pairs; without the copies the defaults score 0.952 (8B) and 0.965
+            (70B). 8B and 70B do not differ significantly. Every setting was
+            chosen on development data and confirmed once on test; the rounds
+            are in docs/ITERATIONS.md.
           </p>
           <h3 class="sub">Open</h3>
           <ul class="progress">
@@ -270,10 +284,6 @@
             </li>
             <li>
               <span class="pill">open</span> Token counts of OST's proxy
-            </li>
-            <li>
-              <span class="pill">open</span> Scanned booklets without a text
-              layer (no OCR yet)
             </li>
           </ul>
         </div>

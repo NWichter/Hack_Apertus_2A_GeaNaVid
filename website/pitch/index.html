@@ -245,7 +245,7 @@
           <div class="n">1</div>
           <div class="what">
             <b>Top-5 passages of the right proposal</b>
-            <span>the vote title narrows the booklet, BM25 picks the passages</span>
+            <span>the vote title narrows the booklet, BM25 picks the passages, the section the claim names first</span>
           </div>
           <div class="bar">
             <i class="w-rung1 a-bar"></i><em>≈ 1,300 tokens</em>
@@ -275,7 +275,7 @@
           </div>
         </div>
       </div>
-      <p class="climb">Per claim: 1,631 input tokens with 70B, 2,258 with 8B (three worked examples)</p>
+      <p class="climb">Per claim: 1,531 input tokens with 70B, 2,129 with 8B (three worked examples)</p>
       <p class="src">
         Mean input tokens per claim as reported by the API, OST v1.0 held-out test split (497 pairs),
         Apertus v1.5, 4 October 2026.
@@ -287,33 +287,33 @@
       <p class="kicker">The trade-off</p>
       <h2>A tenth of the tokens. Better verdicts.</h2>
       <div class="wrap">
-        <svg width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Macro-F1 against input tokens per claim on the OST v1.0 test split: Apertus 8B GeaNaVid 0.941 with 2,258 tokens, whole booklet 0.723 with 20,156 tokens; Apertus 70B GeaNaVid 0.951 with 1,631 tokens, whole booklet 0.890; without translation 0.778 and 0.819 with 1,312 tokens.">
+        <svg width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Macro-F1 against input tokens per claim on the OST v1.0 test split: Apertus 8B GeaNaVid 0.953 with 2,129 tokens, whole booklet 0.723 with 20,156 tokens; Apertus 70B GeaNaVid 0.968 with 1,531 tokens, whole booklet 0.890; without translation 0.778 and 0.819 with 1,312 tokens.">
           <rect x="150" y="30" width="980" height="520" fill="#FFFFFF" stroke="#DCD8CE" stroke-width="2" rx="6" />
           <g stroke="#ECE9E2" stroke-width="2"><line x1="150" x2="1130" y1="420.0" y2="420.0" /><line x1="150" x2="1130" y1="290.0" y2="290.0" /><line x1="150" x2="1130" y1="160.0" y2="160.0" /></g>
           <g font-size="24" fill="#5C6675" text-anchor="end"><text x="136" y="38">1.0</text><text x="136" y="168.0">0.75</text><text x="136" y="298.0">0.5</text><text x="136" y="428.0">0.25</text><text x="136" y="558">0</text></g>
           <text x="40" y="290" font-size="26" font-weight="600" fill="#1F2A37" transform="rotate(-90 40 290)" text-anchor="middle">Macro-F1</text>
           <line x1="150" x2="1130" y1="463.3" y2="463.3" stroke="#1F2A37" stroke-width="3" stroke-dasharray="10 8" />
           <text x="1118" y="451.3" font-size="23" fill="#1F2A37" text-anchor="end">always one label: 0.17</text>
-          <polyline points="398.9,145.4 490.5,60.7 859.6,174.0" fill="none" stroke="#E2A72E" stroke-width="5" stroke-linejoin="round" />
+          <polyline points="398.9,145.4 480.5,54.4 859.6,174.0" fill="none" stroke="#E2A72E" stroke-width="5" stroke-linejoin="round" />
           <circle cx="398.9" cy="145.4" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
-          <circle cx="490.5" cy="60.7" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="480.5" cy="54.4" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
           <circle cx="859.6" cy="174.0" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
-          <polyline points="398.9,124.1 435.6,55.5 859.6,87.2" fill="none" stroke="#1F2A37" stroke-width="5" stroke-linejoin="round" />
+          <polyline points="398.9,124.1 424.9,46.6 859.6,87.2" fill="none" stroke="#1F2A37" stroke-width="5" stroke-linejoin="round" />
           <circle cx="398.9" cy="124.1" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
-          <circle cx="435.6" cy="55.5" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="424.9" cy="46.6" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
           <circle cx="859.6" cy="87.2" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
-          <g font-size="24" font-weight="600" fill="#1F2A37"><text x="420" y="22" text-anchor="end">70B 0.951</text><text x="505" y="22" text-anchor="start">8B 0.941</text><text x="380" y="190" text-anchor="start">without translation 0.82 / 0.78</text><text x="882" y="84" text-anchor="start">70B 0.890</text><text x="882" y="110" text-anchor="start" font-weight="400">whole booklet</text><text x="882" y="171" text-anchor="start">8B 0.723</text><text x="882" y="197" text-anchor="start" font-weight="400">whole booklet</text></g>
+          <g font-size="24" font-weight="600" fill="#1F2A37"><text x="412" y="22" text-anchor="end">70B 0.968</text><text x="497" y="22" text-anchor="start">8B 0.953</text><text x="380" y="190" text-anchor="start">without translation 0.82 / 0.78</text><text x="882" y="84" text-anchor="start">70B 0.890</text><text x="882" y="110" text-anchor="start" font-weight="400">whole booklet</text><text x="882" y="171" text-anchor="start">8B 0.723</text><text x="882" y="197" text-anchor="start" font-weight="400">whole booklet</text></g>
           <g font-size="24" fill="#5C6675" text-anchor="middle"><text x="236.2" y="586">500</text><text x="353.1" y="586">1k</text><text x="470.0" y="586">2k</text><text x="624.6" y="586">5k</text><text x="741.6" y="586">10k</text><text x="858.5" y="586">20k</text><text x="1013.1" y="586">50k</text><text x="1130.0" y="586">100k</text></g>
           <text x="640" y="638" font-size="26" font-weight="600" fill="#1F2A37" text-anchor="middle">Input tokens per claim (log scale)</text>
         </svg>
         <div class="notes">
           <div class="note">
             <b><span class="sw sw-8b"></span>Apertus 8B</b>
-            <span>GeaNaVid 0.941 with 2,258 tokens. Whole booklet 0.723 with 20,156.</span>
+            <span>GeaNaVid 0.953 with 2,129 tokens. Whole booklet 0.723 with 20,156.</span>
           </div>
           <div class="note">
             <b><span class="sw sw-70b"></span>Apertus 70B</b>
-            <span>GeaNaVid 0.951 with 1,631 tokens. Whole booklet 0.890.</span>
+            <span>GeaNaVid 0.968 with 1,531 tokens. Whole booklet 0.890.</span>
           </div>
           <div class="note">
             <b>Beginner task</b>
@@ -343,15 +343,15 @@
             <div class="h row">DE</div>
             <div class="c same">0.98</div>
             <div class="c">0.94</div>
-            <div class="c">0.88</div>
+            <div class="c">0.87</div>
             <div class="h row">FR</div>
-            <div class="c">0.91</div>
-            <div class="c same">0.98</div>
-            <div class="c">0.92</div>
+            <div class="c">0.96</div>
+            <div class="c same">1.00</div>
+            <div class="c">0.86</div>
             <div class="h row">IT</div>
-            <div class="c">0.83</div>
             <div class="c">0.97</div>
-            <div class="c same">0.98</div>
+            <div class="c">0.96</div>
+            <div class="c same">1.00</div>
           </div>
           <p class="axis">
             Macro-F1 per pair, Apertus 8B. Rows: claim language · columns: booklet language.
@@ -372,7 +372,7 @@
       </div>
       <p class="src">
         OST v1.0 test split, 39 to 74 claims per pair, so single cells vary by about ±0.05. Same-language
-        0.980, cross-lingual 0.922 (8B); 70B 0.974 and 0.940.
+        0.993, cross-lingual 0.934 (8B); 70B 0.987 and 0.958.
       </p>
     </section>
 
@@ -397,7 +397,7 @@
             25.09.2022 · DE · page 28 · AHV 21: additional financing by VAT
           </div>
           <div class="usage">
-            <span>input tokens 2,721</span>
+            <span>input tokens 2,794</span>
             <span>time 0.8 s</span>
             <span>Apertus 8B</span>
           </div>
@@ -407,7 +407,8 @@
             <b>Quotes, not paraphrase</b>
             <span
               >The evidence is the booklet sentence that decides, verbatim, with its
-              PDF page, chosen after the verdict without another model call.</span
+              PDF page, from the section the claim names, chosen after the verdict
+              without another model call.</span
             >
           </div>
           <div class="point">
@@ -428,7 +429,7 @@
       </div>
       <p class="src">
         OST v1.0 case v1-1484 (development split), live demo, 4 October 2026. On the test split the quoted
-        sentence lies in OST's gold section for 79 % (8B) and 80 % (70B) of entailment/contradiction answers.
+        sentence lies in OST's gold section for 86 % (8B) and 88 % (70B) of entailment/contradiction answers.
       </p>
     </section>
 

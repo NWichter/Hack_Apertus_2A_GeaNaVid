@@ -26,6 +26,7 @@ from .nli import (
 from .proposal import locate
 from .retrieval_eval import gold_chunks
 from .retrieve import Retriever, map_parallel, parallel_url
+from .sections import PREFER, claim_cue, classify, factors
 from .textnorm import detect_language, language_scores, tokens
 
 _RECOMMEND_CLAIM = re.compile(
@@ -49,6 +50,15 @@ MODES = (
 )
 FEWSHOT_FILE = Path(__file__).with_name("fewshot.json")
 ANSWERS = {"entailment": "yes", "neutral": "blank", "contradiction": "no"}
+SECTION_NAMES = {
+    "committee": "text of the committee",
+    "authorities": "arguments of the Federal Council and Parliament",
+    "recommendation": "question, recommendations and votes",
+    "legal": "voting text (legal text)",
+    "debate": "debate in Parliament",
+    "overview": "overview",
+    "context": "explanation",
+}
 
 
 @dataclass
@@ -77,6 +87,11 @@ class Options:
     neutral_bias: float = 0.0
     max_evidence: int = 3
     evidence_unit: str = "sentence"
+    section_boost: float = 1.5
+    evidence_section: float = 2.0
+    evidence_section_pool: int = 4
+    render: str = "full"
+    translate_reference: bool = False
 
 
 def foreign_title(text, booklet_lang, vocabulary):
@@ -170,6 +185,7 @@ class Pipeline:
         self.llm = llm
         self.opt = options
         self._booklets = {}
+        self._kinds = {}
         self.decompose = options.decompose if options.decompose is not None else small_model(getattr(llm, "model", ""))
         self.examples = load_examples(fewshot_for(options.fewshot, getattr(llm, "model", "")))
 
@@ -178,6 +194,31 @@ class Pipeline:
             b = ingest(source)
             self._booklets[source] = (b, Retriever(b))
         return self._booklets[source]
+
+    def kinds(self, booklet):
+        if booklet.source not in self._kinds:
+            self._kinds[booklet.source] = classify(booklet)
+        return self._kinds[booklet.source]
+
+    def _render(self, booklet, ids):
+        """Passages for the prompt. "compact": the proposal title only when it changes, the section type instead of
+        the page note (which repeats a whole sentence on every committee passage)."""
+        if self.opt.render != "compact":
+            return [booklet.chunks[i].render() for i in ids]
+        kinds = self.kinds(booklet)
+        out, last = [], None
+        for i in ids:
+            c = booklet.chunks[i]
+            parts = [f"p. {c.page}"]
+            if c.group and c.group != last:
+                parts.append(c.group)
+            last = c.group
+            if c.heading:
+                parts.append(c.heading)
+            if SECTION_NAMES.get(kinds[i]):
+                parts.append(SECTION_NAMES[kinds[i]])
+            out.append(f"({'; '.join(parts)}) {c.text}")
+        return out
 
     def _translate(self, claim, src, dst, usage, purpose="translate"):
         rec = self.llm.chat(
@@ -297,6 +338,11 @@ class Pipeline:
         k = self.opt.k
         anchor = "direct"
         ranked, best = self._rank(booklet, retriever, queries, region)
+        if self.opt.section_boost != 1.0:
+            want = PREFER.get(claim_cue(*queries), set())
+            kinds = self.kinds(booklet)
+            score = {i: (self.opt.section_boost if kinds[i] in want else 1.0) / (60 + r) for r, i in enumerate(ranked)}
+            ranked = sorted(ranked, key=lambda i: -score[i])
         if claim_lang != booklet.language and self.opt.crossling in (
             "parallel",
             "both",
@@ -429,6 +475,7 @@ class Pipeline:
             self.opt.translate
             and claim_lang != booklet_lang
             and mode != "claim-only"
+            and (mode != "easy" or self.opt.translate_reference)
         ):
             translation = self._translate(claim, claim_lang, booklet_lang, usage)
         queries = [claim] + ([translation] if translation else [])
@@ -468,7 +515,7 @@ class Pipeline:
         state = {}
 
         def run(ids, step, model=None):
-            passages = [chunks[i].render() for i in ids]
+            passages = self._render(booklet, ids) if booklet is not None else [chunks[i].render() for i in ids]
             chk, note = self._number_note(claim, passages, [chunks[i].text for i in region])
             result = self._judge(
                 passages,
@@ -570,6 +617,7 @@ class Pipeline:
         facts = None
         if (
             self.decompose
+            and (mode != "easy" or self.opt.decompose is True)
             and result["confidence"] is not None
             and result["confidence"] < self.opt.tau_decompose
             and mode != "claim-only"
@@ -629,12 +677,24 @@ class Pipeline:
                 else:
                     pool = [c.id for c in chunks]
             idf = retriever.bm25.idf if retriever is not None else None
+            boost = {}
+            if booklet is not None and mode not in ("easy", "oracle") and (
+                self.opt.evidence_section != 1.0 or self.opt.evidence_section_pool
+            ):
+                kinds = self.kinds(booklet)
+                cue = claim_cue(claim, translation)
+                if self.opt.evidence_section_pool:
+                    want, allowed = PREFER.get(cue, set()), set(region)
+                    extra = [i for i in retriever.rank(queries)[0] if i in allowed and kinds[i] in want]
+                    pool += [i for i in extra[: self.opt.evidence_section_pool] if i not in pool]
+                boost = factors(kinds, cue, pool, self.opt.evidence_section)
             spans = sentences.select(
                 [chunks[i] for i in pool if i < len(chunks)],
                 ([translation] if translation else []) + [claim],
                 idf,
                 preferred=cited,
                 bonus=self.opt.evidence_bonus,
+                factors=boost,
             )
             for sp in spans:
                 sp.pop("score", None)

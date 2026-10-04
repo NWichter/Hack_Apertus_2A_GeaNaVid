@@ -1,4 +1,5 @@
 import hashlib
+import os
 import json
 import random
 import re
@@ -12,7 +13,7 @@ from openai import APIConnectionError, APITimeoutError, BadRequestError, Interna
 _SECRET = re.compile(r"(sk-|key[ _-]?hash|hash)[\w:=\"' -]*[A-Za-z0-9_-]{12,}|[A-Za-z0-9_-]{32,}", re.I)
 
 
-RETRIES = {"rate_limit": 0, "other": 0, "bad_request_fallback": 0}
+RETRIES = {"rate_limit": 0, "other": 0, "bad_request_fallback": 0, "uncached": 0}
 
 
 def redact(text):
@@ -82,6 +83,10 @@ class LLM:
                 )
             )
             return rec
+        limit = int(os.environ.get("BOOKLINT_MAX_CALLS", "0") or 0)
+        if limit and RETRIES["uncached"] >= limit:
+            raise RuntimeError(f"call budget of {limit} uncached Apertus calls reached")
+        RETRIES["uncached"] += 1
         for attempt in range(10):
             t0 = time.perf_counter()
             try:

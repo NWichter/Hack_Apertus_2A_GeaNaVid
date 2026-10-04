@@ -1,5 +1,12 @@
 # Experiments on OST v1.0 (2026-10-02)
 
+> **Update 2026-10-04 (afternoon):** the defaults changed after six further rounds on `dev_s`, confirmed on test:
+> passages and evidence sentences from the section the claim names (summary, committee, voting text, Federal
+> Council). Test: Advanced **8B 0.953, 70B 0.968** (was 0.941 / 0.951), evidence sentence in the gold section
+> **0.863 / 0.881** (was 0.786 / 0.804), input tokens 2,129 / 1,531 (was 2,258 / 1,631). Round by round, with the
+> rejected ideas: [`ITERATIONS.md`](ITERATIONS.md). The tables below describe the state before that update unless
+> marked otherwise; the section "Default of the CLI" is current.
+
 All numbers on this page come from `runs/v1/<split>/<model>/<run>.{jsonl,config.json,summary.json}`.
 Each run stores its full option set, the split seed and the command. Tables are produced with
 `python experiments/v1/table.py <split>`. Earlier numbers (28-row demo, synthetic sets) are archived in
@@ -302,7 +309,12 @@ did not translate the claim (`easy`, `easy-fs3`); the CLI default for Beginner t
 
 ## Default of the CLI (`booklint`, `make run`)
 
-`--mode retrieval --scope vote --translate --k 5 --neighbors 1`, BM25, recommendation routing on,
+Current (2026-10-04, `ITERATIONS.md`): as below, plus `--section-boost 1.5` (passages of the section the claim
+names rank higher) and the evidence sentence preferring that section (factor 2.0, 4 extra candidate blocks).
+Beginner (`easy`): no claim translation and no decomposition, 8B with 3 examples (the configuration of the reported
+Beginner runs). Test: Advanced 8B 0.953 / 70B 0.968, Beginner 0.978 / 0.980.
+
+Before 2026-10-04: `--mode retrieval --scope vote --translate --k 5 --neighbors 1`, BM25, recommendation routing on,
 prompt `nli-v1`, and model-aware extras (`--fewshot -1`, decomposition auto): **8B** → 3 dev examples +
 decomposition when p < 0.9; **70B** → neither. Without a `vote` field the proposal is located from the claim.
 Not in the default (flags, off): parallel language version (`--crossling parallel`), cascade
@@ -314,7 +326,7 @@ Evidence is the deciding sentence (`--evidence-unit sentence`); `--evidence-unit
 text block instead. Parsing is deterministic and costs no tokens: a 40-page booklet gives about 200 text
 blocks in 0.3 s. Claims about a recommendation also get the recommendation blocks of the same proposal.
 
-`make run` (Docker, test split) reproduces the test rows above from the response cache: 8B 0.9406, 70B 0.9512;
+`make run` (Docker, test split) reproduces the test rows from the response cache: before 2026-10-04 8B 0.9406, 70B 0.9512; with the current defaults 8B 0.9531, 70B 0.9677;
 a live run without cache on 12 rows took 5 s.
 
 ## Reproduce

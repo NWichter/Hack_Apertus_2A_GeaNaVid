@@ -8,6 +8,7 @@ data/
 │   ├── dev_s.jsonl          # 450-pair subset of dev for ablations
 │   ├── test.jsonl           # 497 pairs, used only for final numbers
 │   └── split.json           # split definition (seed 2026)
+├── holdout-synth/           # 89 synthetic hold-out pairs from 2018/2019 booklets, NOT OST, evaluated once (README there)
 ├── edge_cases.jsonl         # 24 synthetic stress pairs, NOT part of the OST benchmark, CDLA-Permissive-2.0
 ├── LICENSE-edge_cases       # CDLA-Permissive-2.0 text for edge_cases.jsonl
 ├── manifest.json            # sha256, sizes, label and language counts
@@ -77,9 +78,10 @@ as: OST Ostschweizer Fachhochschule, *MNLIoverSwissVotingBooklets* v1.0, Hugging
 claim, booklet and label; no conflicting labels): 122 of the 497 test rows and 53 of the 450 dev_s rows.
 We keep the rows as published. A plain bootstrap then treats copies as independent and its intervals are too
 narrow; `experiments/v1/duplicates_ci.py` recomputes them from the stored predictions (no Apertus calls,
-`runs/v1/test/duplicates-ci.json`): without copies (375 distinct pairs) the defaults score 0.931 [0.904–0.955]
-(8B) and 0.944 [0.920–0.965] (70B); resampling each group of copies as one unit gives 0.941 [0.915–0.963] and
-0.951 [0.928–0.971], against [0.919–0.961] and [0.931–0.969] with independent rows. 4 claim texts occur in
+`runs/v1/test/duplicates-ci.json`): without copies (375 distinct pairs) the current defaults score 0.952
+[0.929–0.973] (8B) and 0.965 [0.946–0.982] (70B); resampling each group of copies as one unit gives 0.953
+[0.926–0.975] and 0.968 [0.948–0.984], against [0.933–0.971] and [0.951–0.982] with independent rows (first
+defaults of 2026-10-04 05:00: 0.931 / 0.944 without copies). 4 claim texts occur in
 both dev and test (against different booklets).
 
 ## Licences

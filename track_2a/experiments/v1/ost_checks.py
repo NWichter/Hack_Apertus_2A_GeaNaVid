@@ -32,9 +32,10 @@ from booklint.textnorm import detect_language, fold  # noqa: E402
 
 TEST = ROOT / "runs" / "v1" / "test"
 DEFAULT_RUNS = {
-    "apertus-v1.5-8b": "default-sentences",
-    "apertus-v1.5-70b": "ret-vote-tr-sentences",
+    "apertus-v1.5-8b": "r1-secboost",
+    "apertus-v1.5-70b": "r1-secboost",
 }
+COLD_NAME = "cold50-r1"
 BEGINNER_RUNS = {"apertus-v1.5-8b": "easy-fs3", "apertus-v1.5-70b": "easy"}
 
 
@@ -418,21 +419,21 @@ def cold():
         preds = run_rows(pipeline, cases, 1)
         wall = time.perf_counter() - t1
         summary = breakdown(gold_rows, preds)
-        summary.update({"model": model, "name": "cold50", "split": "test", "workers": 1, "response_cache": False,
+        summary.update({"model": model, "name": COLD_NAME, "split": "test", "workers": 1, "response_cache": False,
                         "wall_s": round(wall, 1), "preload_s": round(t1 - t0, 1),
                         "booklets": len(parse), "uncached_calls": sum(p["usage"].get("llm_calls", 0) for p in preds),
                         "retries": dict(RETRIES), **efficiency(preds)})
         out = TEST / model
-        with (out / "cold50.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
+        with (out / f"{COLD_NAME}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
             for p in preds:
                 fh.write(json.dumps(p, ensure_ascii=False) + "\n")
-        (out / "cold50.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        (out / f"{COLD_NAME}.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         report[model] = {k: summary.get(k) for k in ("macro_f1", "errors", "input_tokens_mean", "input_tokens_sum",
                                                      "tokens_mean", "llm_calls_mean", "inference_ms_mean",
                                                      "inference_ms_p95", "llm_seconds_mean", "llm_seconds_p95",
                                                      "wall_s", "uncached_calls", "retries")}
         print(model, report[model], flush=True)
-    (TEST / "ost-checks-cold.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (TEST / f"ost-checks-{COLD_NAME}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

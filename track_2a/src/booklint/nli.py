@@ -186,7 +186,12 @@ def parse(rec, n_passages):
         data = json.loads(content)
     except json.JSONDecodeError:
         m = re.search(r"\{.*\}", content, re.S)
-        data = json.loads(m.group(0)) if m else {}
+        try:
+            data = json.loads(m.group(0)) if m else {}
+        except json.JSONDecodeError:
+            data = {}
+    if not isinstance(data, dict):
+        data = {}
     label = data.get("label")
     if label not in ("entailment", "neutral", "contradiction"):
         low = content.lower()

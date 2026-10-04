@@ -33,3 +33,5 @@ runs/*
 runs/v1/*.log
 data/dev/
 data/archive/synthetic-*/
+data/holdout-synth/booklets/
+!runs/holdout-synth/

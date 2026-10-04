@@ -21,6 +21,7 @@ TEST = ROOT / "runs" / "v1" / "test"
 B, SEED = 2000, 13
 RUNS = {
     "apertus-v1.5-8b": [
+        "r1-secboost",
         "default",
         "baseline",
         "easy-fs3",
@@ -29,6 +30,7 @@ RUNS = {
         "ret-vote-tr",
     ],
     "apertus-v1.5-70b": [
+        "r1-secboost",
         "ret-vote-tr",
         "baseline",
         "easy",
@@ -114,11 +116,11 @@ def main():
             }
     pa = {
         p["id"]: p["entailment_label"]
-        for p in rj(TEST / "apertus-v1.5-8b" / "default.jsonl")
+        for p in rj(TEST / "apertus-v1.5-8b" / "r1-secboost.jsonl")
     }
     pb = {
         p["id"]: p["entailment_label"]
-        for p in rj(TEST / "apertus-v1.5-70b" / "ret-vote-tr.jsonl")
+        for p in rj(TEST / "apertus-v1.5-70b" / "r1-secboost.jsonl")
     }
     rng = random.Random(SEED)
     units = list(groups.values())

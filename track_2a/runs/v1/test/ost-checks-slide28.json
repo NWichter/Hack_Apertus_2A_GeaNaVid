@@ -1,78 +1,78 @@
 {
-  "advanced apertus-v1.5-8b (default-sentences)": {
+  "advanced apertus-v1.5-8b (r1-secboost)": {
     "all": {
       "n": 497,
-      "macro_f1": 0.9406
+      "macro_f1": 0.9531
     },
     "claim_de": {
       "n": 166,
-      "macro_f1": 0.937
+      "macro_f1": 0.9383
     },
     "booklet_de": {
       "n": 156,
-      "macro_f1": 0.9227
+      "macro_f1": 0.9742
     },
     "claim_fr": {
       "n": 165,
-      "macro_f1": 0.939
+      "macro_f1": 0.9453
     },
     "booklet_fr": {
       "n": 186,
-      "macro_f1": 0.9665
+      "macro_f1": 0.9663
     },
     "claim_it": {
       "n": 166,
-      "macro_f1": 0.9438
+      "macro_f1": 0.9754
     },
     "booklet_it": {
       "n": 155,
-      "macro_f1": 0.9274
+      "macro_f1": 0.9137
     },
     "same_language": {
       "n": 166,
-      "macro_f1": 0.9801
+      "macro_f1": 0.9934
     },
     "cross_lingual": {
       "n": 331,
-      "macro_f1": 0.9219
+      "macro_f1": 0.9337
     }
   },
-  "advanced apertus-v1.5-70b (ret-vote-tr-sentences)": {
+  "advanced apertus-v1.5-70b (r1-secboost)": {
     "all": {
       "n": 497,
-      "macro_f1": 0.9512
+      "macro_f1": 0.9677
     },
     "claim_de": {
       "n": 166,
-      "macro_f1": 0.9511
+      "macro_f1": 0.9636
     },
     "booklet_de": {
       "n": 156,
-      "macro_f1": 0.9356
+      "macro_f1": 0.9617
     },
     "claim_fr": {
       "n": 165,
-      "macro_f1": 0.9512
+      "macro_f1": 0.9575
     },
     "booklet_fr": {
       "n": 186,
-      "macro_f1": 0.9731
+      "macro_f1": 0.9827
     },
     "claim_it": {
       "n": 166,
-      "macro_f1": 0.9498
+      "macro_f1": 0.9813
     },
     "booklet_it": {
       "n": 155,
-      "macro_f1": 0.9418
+      "macro_f1": 0.9511
     },
     "same_language": {
       "n": 166,
-      "macro_f1": 0.9737
+      "macro_f1": 0.9868
     },
     "cross_lingual": {
       "n": 331,
-      "macro_f1": 0.9397
+      "macro_f1": 0.9577
     }
   },
   "beginner apertus-v1.5-8b (easy-fs3)": {

@@ -46,6 +46,8 @@ def options_from(args, mode=None):
         "neutral_bias",
         "prompt",
         "evidence_unit",
+        "section_boost",
+        "render",
     )
     kw = {k: getattr(args, k) for k in keys if getattr(args, k, None) is not None}
     for flag in ("translate", "decompose"):
@@ -491,6 +493,19 @@ def add_common(p):
         default=None,
         choices=["sentence", "paragraph"],
         help="evidence text: the deciding sentence(s) (default) or the whole paragraph(s) around them",
+    )
+    p.add_argument(
+        "--section-boost",
+        dest="section_boost",
+        type=float,
+        default=None,
+        help="ranking factor for passages of the section the claim names (summary, committee, voting text, ...); 1 = off, default 1.5",
+    )
+    p.add_argument(
+        "--render",
+        default=None,
+        choices=["full", "compact"],
+        help="passage headers: full (default) or compact (proposal title once, section type instead of the page note)",
     )
 
 

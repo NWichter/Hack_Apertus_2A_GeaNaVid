@@ -1,5 +1,6 @@
 import re
 import unicodedata
+from functools import lru_cache
 
 _NUM_GROUP = re.compile(r"(?<=\d)['’   ](?=\d{3}\b)")
 _TOKEN = re.compile(r"\d+(?:[.,]\d+)*|[^\W\d_]+", re.UNICODE)
@@ -67,9 +68,15 @@ def detect_language(text):
     return max(scores, key=scores.get)
 
 
+@lru_cache(maxsize=None)
+def _fold_char(c):
+    return "".join(x for x in unicodedata.normalize("NFKD", c) if not unicodedata.combining(x))
+
+
 def fold(text):
-    text = unicodedata.normalize("NFKD", text.lower())
-    return "".join(c for c in text if not unicodedata.combining(c))
+    """Lower case without accents (NFKD, combining marks dropped), character by character with a cache."""
+    text = text.lower()
+    return text if text.isascii() else "".join(map(_fold_char, text))
 
 
 def tokens(text, stem=6):

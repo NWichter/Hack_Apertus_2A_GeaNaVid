@@ -1,0 +1,27 @@
+{
+  "set": "holdout-synth (synthetic, not OST)",
+  "model": "apertus-v1.5-8b",
+  "mode": "easy",
+  "n": 89,
+  "macro_f1": 0.8551,
+  "ci95": [
+    0.7814,
+    0.9232
+  ],
+  "f1_e": 0.9231,
+  "f1_n": 0.8923,
+  "f1_c": 0.75,
+  "macro_f1_same": 0.8872,
+  "n_same": 29,
+  "macro_f1_cross": 0.84,
+  "n_cross": 60,
+  "evidence_ec": 53,
+  "evidence_first_in_reference": 1.0,
+  "evidence_first_on_gold_page": null,
+  "errors": 0,
+  "uncached_calls": 89,
+  "input_tokens_sum": 127026,
+  "input_tokens_mean": 1427.3,
+  "inference_ms_mean": 778.3,
+  "inference_ms_p95": 3545
+}

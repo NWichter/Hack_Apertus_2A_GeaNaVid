@@ -7,9 +7,10 @@ GeaNaVid checks a claim in German, French or Italian against a Swiss federal vot
 0 entailment, 1 neutral or 2 contradiction (Romansh *Gea*, *Vid*, *Na*: yes, blank, no), together with the
 booklet sentence and PDF page that decide it, the input/output tokens and the time. Apertus v1.5 (8B or 70B)
 makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
-translated by Apertus, and BM25 picks a few passages, so a claim costs about 1.6–2.3 k instead of 20 k input
-tokens. On the held-out test split of OST v1.0 (497 pairs) the macro-F1 is 0.941 (8B) and 0.951 (70B),
-against 0.723 and 0.890 for the whole booklet.
+translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
+committee, voting text, Federal Council), so a claim costs about 1.5–2.1 k instead of 20 k input tokens. On the
+held-out test split of OST v1.0 (497 pairs) the macro-F1 is 0.953 (8B) and 0.968 (70B), against 0.723 and 0.890
+for the whole booklet; the evidence sentence lies in OST's gold section for 86–88 % of the answers.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
@@ -51,6 +52,7 @@ without a terminal.
 - Technical report (4 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
   source [`track_2a/technical_report.md`](track_2a/technical_report.md)
 - Experiments and all measurements: [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
+- How the numbers improved, round by round: [`track_2a/docs/ITERATIONS.md`](track_2a/docs/ITERATIONS.md)
 - Data, splits and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
 - Web demo (preview behind a password): https://geanavid.apertool.ch/demo/, code in [`track_2a/demo/`](track_2a/demo/)
 - Project page and pitch: https://geanavid.apertool.ch
