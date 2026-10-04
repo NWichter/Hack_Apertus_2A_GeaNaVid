@@ -733,6 +733,24 @@ mark {
 .s-close h2 {
   font-size: 92px;
 }
+.qr-card {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 36px 36px 26px;
+  text-align: center;
+  justify-self: center;
+}
+.qr-card svg {
+  display: block;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+.qr-card .u {
+  margin: 18px 0 0;
+  font: 600 32px/1.2 var(--mono);
+  color: var(--ink);
+}
 .run {
   background: #0e131a;
   border: 2px solid #2b3545;
