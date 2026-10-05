@@ -102,29 +102,29 @@ per claim with Apertus 70B,
 instead of 20,000 for the whole booklet.
 
 23
-00:01:20.775 --> 00:01:29.013
-We confirmed it on 497 held-out claims
+00:01:20.775 --> 00:01:28.513
+We measured it on 497 test claims
 from 21 booklets, with OST's human labels.
 
 24
-00:01:29.063 --> 00:01:35.491
+00:01:28.563 --> 00:01:34.972
 With the whole booklet,
 Apertus 8B reaches a macro F1 of 0.72.
 
 25
-00:01:35.541 --> 00:01:37.491
+00:01:35.022 --> 00:01:36.966
 GeaNaVid: 0.96.
 
 26
-00:01:37.541 --> 00:01:43.588
+00:01:37.016 --> 00:01:43.045
 70B: 0.97, against 0.89, with about
 a tenth of the tokens.
 
 27
-00:01:44.338 --> 00:01:46.382
+00:01:43.795 --> 00:01:45.576
 GeaNaVid runs on Apertus.
 
 28
-00:01:46.432 --> 00:01:50.368
-Gea, Na or Vid,
-always with the line that decides it.
+00:01:45.626 --> 00:01:49.415
+Every Gea and every Na comes
+with the line that decides it.
