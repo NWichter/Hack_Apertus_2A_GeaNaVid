@@ -55,6 +55,8 @@ def score(rows, preds):
         first += bool(hits and hits[0])
         items += len(ev)
         chars += sum(len(e["text"]) for e in ev)
+    if not n:
+        return {"gold_ec_cases": 0, "ost_evidence_score": None}
     return {
         "gold_ec_cases": n,
         "ost_evidence_score": round(found / n, 4),

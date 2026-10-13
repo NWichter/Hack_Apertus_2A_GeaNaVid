@@ -52,7 +52,7 @@ def test_nested_and_flat_cases_give_the_same_shape():
         )
 
 
-def test_beginner_variants_language_page_and_int_id():
+def test_beginner_variants_language_and_int_id():
     c = normalize_case(
         {
             "id": 7,
@@ -60,12 +60,7 @@ def test_beginner_variants_language_page_and_int_id():
             "claim": {"text": "Claim.", "language": "FR"},
         }
     )
-    assert (c["id"], c["reference"], c["reference_page"], c["claim_lang"]) == (
-        "7",
-        "Referenz.",
-        12,
-        "fr",
-    )
+    assert (c["id"], c["reference"], c["claim_lang"]) == ("7", "Referenz.", "fr")
     c = normalize_case(
         {
             "id": "b",
@@ -73,9 +68,7 @@ def test_beginner_variants_language_page_and_int_id():
             "claim": "Claim.",
         }
     )
-    assert (
-        c["reference"] == "Absatz eins.\n\nAbsatz zwei." and c["reference_page"] is None
-    )
+    assert c["reference"] == "Absatz eins.\n\nAbsatz zwei."
     assert (
         normalize_case(
             {"id": "c", "reference_string": "R.", "claim": "C.", "claim_language": "xx"}
@@ -160,7 +153,7 @@ def test_predict_output_is_jsonl_slide25_for_every_variant(monkeypatch, tmp_path
             set(e) == {"page", "text"} and (e["page"] is None or isinstance(e["page"], int)) and e["text"]
             for e in r["evidence"]
         )
-    assert rows[0]["label"] == 0 and {e["page"] for e in rows[0]["evidence"]} == {4}
+    assert rows[0]["label"] == 0 and {e["page"] for e in rows[0]["evidence"]} == {None}
     # task B without a page on the reference: "page": null, as OST's Solution API Guide asks
     assert rows[1]["evidence"] and all(e["page"] is None for e in rows[1]["evidence"])
     assert rows[3]["label"] == 1 and rows[3]["evidence"] == [] and "error" in rows[3]

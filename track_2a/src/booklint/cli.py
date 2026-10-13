@@ -107,11 +107,10 @@ def check_case(pipeline, c, claim_lang=None):
         case_id=c["id"],
     )
     if not c["booklet"]:
-        # Reference task (B): no PDF page; OST asks for "page": null unless the reference names its page.
-        page = c.get("reference_page")
+        # Reference task (B): OST asks for "page": null on its evidence.
         for item in out.get("evidence", []) + out.get("evidence_sentences", []):
-            item["page"] = page
-        out["page"] = page if out.get("evidence") else None
+            item["page"] = None
+        out["page"] = None
     return out
 
 
@@ -255,18 +254,10 @@ def _lang(*values):
     return None
 
 
-def _page(value):
-    try:
-        page = int(value)
-    except (TypeError, ValueError):
-        return None
-    return page if page > 0 else None
-
-
 def normalize_case(r, case_dir=None):
-    """Flat dataset rows and OST task cases (slide 24: booklet.path, claim.text, reference.text) -> one shape.
-    Also accepted: plain strings instead of the nested objects, `url`/`file` for the booklet, `title` for a
-    nested vote, `hypothesis`/`premise`, a language next to the claim and a page next to the reference."""
+    """Flat dataset rows and OST task cases (slide 24 / Solution API Guide: booklet.path, claim.text,
+    reference.text) -> one shape. Also accepted: plain strings instead of the nested objects, `url`/`file` for
+    the booklet, `title` for a nested vote, `hypothesis`/`premise` and a language next to the claim."""
     if not isinstance(r, dict):
         r = {"_error": f"case is a {type(r).__name__}, not a JSON object"}
     claim = _first(r, "claim", "hypothesis", "claim_text", "statement")
@@ -299,9 +290,6 @@ def normalize_case(r, case_dir=None):
             case_dir,
         ),
         "reference": _text(reference, "text", "reference_string", "passage"),
-        "reference_page": _page(_first(reference, "page", "page_number", "pdf_page"))
-        if isinstance(reference, dict)
-        else _page(r.get("reference_page")),
         "vote": _text(vote, "title", "text", "name", "vote"),
         "claim_lang": _lang(
             r.get("claim_language"),
