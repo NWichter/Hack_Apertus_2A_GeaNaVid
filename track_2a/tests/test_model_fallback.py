@@ -18,7 +18,8 @@ ANSWER = '{"evidence": [1], "label": "entailment"}'
 
 
 class Endpoint:
-    def __init__(self, served, list_models=True, unknown_status=404):
+    def __init__(self, served, list_models=True, unknown_status=404, reject_schema=False):
+        self.reject_schema = reject_schema
         self.served, self.list_models, self.unknown_status = (
             set(served),
             list_models,
@@ -58,6 +59,9 @@ class Endpoint:
                 body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
                 model = body.get("model")
                 endpoint.asked.append(model)
+                if endpoint.reject_schema and ("response_format" in body or "logprobs" in body):
+                    self._send(400, {"error": {"message": "response_format is not supported"}})
+                    return
                 if model not in endpoint.served:
                     self._send(
                         endpoint.unknown_status,
@@ -244,5 +248,24 @@ def test_cli_end_to_end_failure_is_neutral_but_loud(monkeypatch, tmp_path, stder
         assert row["label"] == 1 and row["evidence"] == [] and "error" in row
         err = stderr.getvalue()
         assert "no Apertus model name works" in err and "1 of 1 cases failed" in err
+    finally:
+        ep.close()
+
+
+def test_rejected_schema_and_logprobs_are_dropped_for_all_later_calls(monkeypatch, tmp_path, stderr):
+    from booklint.config import Settings
+    from booklint.llm import LLM, Usage
+
+    monkeypatch.setenv("BOOKLINT_RESOLVE_MODEL", "0")
+    monkeypatch.setattr(llm_module, "UNSUPPORTED", set())
+    ep = Endpoint(["apertus-v1.5-8b"], reject_schema=True)
+    try:
+        llm = LLM(Settings("apertus-v1.5-8b", ep.url, "k", tmp_path), use_cache=False)
+        params = {"response_format": {"type": "json_object"}, "logprobs": True, "top_logprobs": 5, "temperature": 0}
+        for i in range(3):
+            rec = llm.chat([{"role": "user", "content": f"q{i}"}], Usage(), "nli", **dict(params))
+            assert rec["content"] == ANSWER
+        assert len(ep.asked) == 4  # one rejected request, then three plain ones
+        assert llm_module.UNSUPPORTED == {"response_format", "logprobs", "top_logprobs"}
     finally:
         ep.close()

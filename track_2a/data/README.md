@@ -6,9 +6,9 @@ data/
 │   ├── v1.0.jsonl           # 1,495 pairs, OSTswiss/MNLIoverSwissVotingBooklets, HF commit adca9a5, MIT
 │   ├── dev.jsonl            # 998 pairs: prompts, few-shot examples, thresholds
 │   ├── dev_s.jsonl          # 450-pair subset of dev for ablations
-│   ├── test.jsonl           # 497 pairs, used only for final numbers
+│   ├── test.jsonl           # 497 pairs (test_v11.jsonl: 493, OST v1.1); looked at for 22 configurations
 │   └── split.json           # split definition (seed 2026)
-├── holdout-synth/           # 89 synthetic hold-out pairs from 2018/2019 booklets, NOT OST, evaluated once (README there)
+├── holdout-synth/           # 89 synthetic hold-out pairs from 2018/2019 booklets, NOT OST, evaluated after the defaults were fixed (README there)
 ├── edge_cases.jsonl         # 24 synthetic stress pairs, NOT part of the OST benchmark, CDLA-Permissive-2.0
 ├── LICENSE-edge_cases       # CDLA-Permissive-2.0 text for edge_cases.jsonl
 ├── manifest.json            # sha256, sizes, label and language counts

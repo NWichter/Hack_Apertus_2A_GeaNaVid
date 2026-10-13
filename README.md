@@ -9,9 +9,10 @@ booklet sentence and PDF page that decide it, the input/output tokens and the ti
 makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
 translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
 committee, voting text, Federal Council), so a claim costs about 1.5–2.7 k instead of 20 k input tokens. On the
-held-out test split of OST v1.1 (493 pairs) the macro-F1 is 0.957 (8B) and 0.967 (70B), against 0.720 and 0.889
-for the whole booklet; by the rule of OST's evaluation script, one of our five quoted sentences lies in the gold
-passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
+test split of OST v1.1 (493 pairs) the macro-F1 is 0.957 (8B) and 0.967 (70B), against 0.720 and 0.889 for the
+whole booklet. The test split was looked at for 22 configurations; 546 development claims outside the tuning
+subset give a second check (0.971 / 0.965). By the rule of OST's evaluation script, one of our five quoted
+sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
@@ -43,7 +44,7 @@ and exits with 0. Checked on 13 October from a fresh clone with 80 OST-format ca
 ```bash
 cd track_2a
 cp .env.example .env      # LLM_NAME, LLM_BASE_URL, LLM_API_KEY
-make run                  # Docker: default pipeline on the test split data/v1/test.jsonl, table in runs/make-run/
+make run                  # Docker: default pipeline on the test split data/v1/test_v11.jsonl (493), table in runs/make-run/
 make run LIMIT=30         # quick check
 ```
 

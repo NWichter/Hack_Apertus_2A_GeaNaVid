@@ -29,7 +29,7 @@ From `track_2a/`:
 
 ```bash
 cp .env.example .env          # set LLM_NAME, LLM_BASE_URL, LLM_API_KEY (OpenAI-compatible Apertus endpoint)
-make run                      # Docker: default pipeline on the held-out split data/v1/test.jsonl (497 claims of v1.0)
+make run                      # Docker: default pipeline on the test split data/v1/test_v11.jsonl (493 claims, OST v1.1)
 make run LIMIT=30             # quick check
 make run MODES=retrieval,baseline   # plus the whole-booklet baseline (~20 k tokens per claim)
 ```
@@ -192,7 +192,7 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 | File                                           | Content                                                                                                                           | Licence       |
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | `data/v1/v1.0.jsonl`                           | OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (HF commit adca9a5), 1,495 claims; v1.1 (6 Oct.) drops the 7 rows in `data/v1/v1.1-removed.json`, splits with suffix `_v11` in `experiments/v1/run.py` | MIT           |
-| `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test; ids `v1-NNNN` added | MIT (derived) |
+| `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test (493 in v1.1, `test_v11.jsonl`); ids `v1-NNNN` added | MIT (derived) |
 | `data/archive/demo-2026-10-01/`                | the earlier 28-row demo and its cross-lingual variants (archived)                                                                 | MIT           |
 | `data/edge_cases.jsonl`                        | 24 synthetic stress pairs (ours, written by Gemini 3.8 Flash via Antigravity, not reviewed by a person, not part of the OST benchmark), see `data/README.md` | CDLA-Permissive-2.0 |
 

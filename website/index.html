@@ -80,7 +80,7 @@
               claim in German, French or Italian. It answers
               <strong>Gea</strong>, <strong>Na</strong> or <strong>Vid</strong>,
               Romansh for yes, no and empty: the booklet supports the claim,
-              contradicts it, or does not say. Every answer points to the page
+              contradicts it, or does not say. Every Gea and every Na points to the page
               and passage it rests on.
             </p>
             <div class="actions">
@@ -152,7 +152,7 @@
           <p class="section-lede">
             Sending the whole booklet to the model costs about 20,000 input
             tokens per claim. GeaNaVid gives Apertus the few passages of the
-            right proposal instead, about 1,600 to 2,300 tokens.
+            right proposal instead, about 1,500 to 2,700 input tokens per claim.
           </p>
           <ol class="steps">
             <li>
@@ -255,7 +255,7 @@
               OST's own evaluation script.
             </li>
             <li>
-              <strong>Claims nobody tuned on:</strong> 546 development claims
+              <strong>Claims outside the tuning subset:</strong> 546 development claims
               that no option was chosen on give 0.971 (8B) and 0.965 (70B).
             </li>
             <li>
@@ -276,7 +276,7 @@
             without the copies the defaults score 0.955 (8B) and 0.965 (70B).
             8B and 70B do not differ significantly. Variants were built on
             development data, but test scores were looked at for 22
-            configurations and decided some of them, so the untouched
+            configurations and decided some of them, so the 546
             development claims and the synthetic hold-out are the honest
             checks. The rounds are in docs/ITERATIONS.md.
           </p>

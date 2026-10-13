@@ -2,14 +2,14 @@
   Voting Booklets
 - #strong[Event:] Online
 - #strong[Team:] Apertool --- Niklas Wichter
-- #strong[Demo:] \[TBD: video link\] · `make run` in `track_2a/`
+- #strong[Demo:] \[\[NIKLAS: video link\]\] · `make run` in `track_2a/`
 
-#emph[Draft of 13 October 2026. All numbers are on OST v1.1 (v1.0
+#emph[State of 14 October 2026. All numbers are on OST v1.1 (v1.0
 without the 7 faulty rows OST removed on 6 October) and come from runs
-stored in `runs/v1/`\; open measurements are marked \[TBD\]. Ablations,
-retrieval recall, calibration, error analysis and the full tables are in
-`docs/EXPERIMENTS-v1.md`\; the improvement rounds, including the
-rejected ones, in `docs/ITERATIONS.md`.]
+stored in `runs/v1/`. Ablations, retrieval recall, calibration, error
+analysis and the full tables are in `docs/EXPERIMENTS-v1.md`\; the
+improvement rounds, including the rejected ones, in
+`docs/ITERATIONS.md`.]
 
 = 1. Summary
 <summary>
@@ -39,7 +39,7 @@ Apertus 70B reaches 0.967 \[0.947--0.984\] with 1,532 input tokens,
 against 0.889. With OST's own evidence rule (one of the first five
 quotes inside the gold passage), our quotes score 0.969 (8B) and 0.960
 (70B). In the Beginner task (gold reference given), 8B reaches 0.977 and
-70B 0.980. On 546 development claims that no option was chosen on, the
+70B 0.980. On 546 development claims outside the tuning subset, the
 defaults reach 0.971 / 0.965, and on a synthetic hold-out from booklets
 outside OST v1.1 the gap to the baseline carries over (8B 0.874 vs
 0.665, 70B 0.932 vs 0.872). The output is never a voting recommendation:
@@ -152,9 +152,10 @@ the neutral re-check did not pay on test for 70B
   selection, the translation of cross-lingual claims and of foreign
   `vote` titles, and (8B) the split of unsure claims into atomic
   statements and the contradiction re-check of neutral verdicts.
-- #strong[Where it runs:] the Hack Apertus OpenAI-compatible endpoint,
-  selected through `LLM_NAME`, `LLM_BASE_URL`, `LLM_API_KEY`\;
-  temperature 0, JSON schema, `logprobs` with 10 alternatives.
+- #strong[Where it runs:] any OpenAI-compatible Apertus endpoint:
+  `BASE_URL` and `API_KEY` (as OST injects them; `LLM_BASE_URL` /
+  `LLM_API_KEY` for our own runs), model `LLM_NAME`\; temperature 0,
+  JSON schema, `logprobs` with 10 alternatives.
 
 The label probability is read from the first token of the label value.
 No other model takes part in the default path. Other models only
@@ -191,10 +192,11 @@ is therefore not untouched. Two checks that did not steer any option:
 development claims), evaluated once with the final defaults:
 #strong[0.971 (8B) / 0.965 (70B)], 0.965 / 0.968 without claims that
 also occur in another split; (b) the synthetic hold-out below (0.874 /
-0.932). Over all 20 voting dates (dev + test, 1,488 claims) the defaults
-score 0.967 / 0.966 with a per-date spread of 0.88--1.00 (s.d. 0.026 /
-0.031; `runs/v1/generalization.json`): a hidden set of a few voting
-dates can land several points lower or higher than our test split.
+0.932, evaluated after the defaults were fixed). Over all 20 voting
+dates (dev + test, 1,488 claims) the defaults score 0.967 / 0.966 with a
+per-date spread of 0.88--1.00 (s.d. 0.026 / 0.031;
+`runs/v1/generalization.json`): a hidden set of a few voting dates can
+land several points lower or higher than our test split.
 
 #strong[Copies.] v1.1 contains rows that are exact copies of another row
 (same claim, booklet and label), 122 of them in test (371 distinct
@@ -335,8 +337,11 @@ rows, measured on 4 October). The neutral re-check costs 8B about 250 ms
 on average (the previous 8B default measured 401 / 709 ms in the same
 session). Our own code takes 48 ms per claim (parsing is cached per
 booklet); the rest is Apertus. The endpoint's prefix cache cannot be
-switched off and its speed varies; OST scores tokens and time relative
-to the other teams with its proxy, so those scores are \[TBD\].
+switched off and its speed varies between sessions (the 8B default
+measured 648 ms in this cold run and 820 and 1,530 ms per case in the
+two Docker runs below). OST scores tokens and time with its own proxy
+and relative to the other teams; those scores exist only in OST's
+evaluation.
 
 #strong[End-to-end as OST runs it] (13 October): a fresh clone,
 `docker build --platform linux/amd64`, and
@@ -346,20 +351,29 @@ B, `experiments/v1/ost_cases.py`), 8B, no response cache: exit code 0,
 80 lines in 72 s, labels identical to the stored runs for all 80 cases;
 OST's `evaluate.py` gives task A 0.897 (n = 40, the sample holds 4 of
 the stored errors) with evidence 26 of 26, task B 0.978; self-reported
-2,760 input tokens and 820 ms per case. \#\# 5. Reproducibility
+2,760 input tokens and 820 ms per case (a later rerun of the same image:
+same labels, 1,530 ms; 70B: task A 0.978, evidence 25 of 26, 1,845 input
+tokens, 2,244 ms). Times here include parsing each booklet on first use.
 
+= 5. Reproducibility
+<reproducibility>
 `make run` builds the Docker image and runs the default pipeline on the
-test split against the endpoint in `LLM_*`\; no GPU or local weights are
-needed; from the response cache it reproduces 0.957 (8B) and 0.968 (70B)
-on the 497 v1.0 rows. For OST's cases the image runs as OST specifies:
+v1.1 test split (`data/v1/test_v11.jsonl`, 493 claims) against the
+endpoint in `BASE_URL` / `API_KEY` (or `LLM_*`); no GPU or local weights
+are needed. Against the live endpoint the result can differ by a few
+labels (see below). Every stored run in `runs/v1/` holds its
+predictions, so the reported numbers can be recomputed without any model
+call (`experiments/v1/report_tables_v11.py`, `generalization.py`,
+`ost_evidence.py`). For OST's cases the image runs as OST specifies:
 `docker run -e BASE_URL -e API_KEY -v <cases>:/data:ro -v <out>:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
 (details in `track_2a/README.md`). Settings: prompt `nli-v1`, k = 5, one
 neighbour, temperature 0, JSON schema. Replaying the stored test runs
-from the response cache with the current code gives the same 497 labels
-for both models; each run in `runs/v1/` stores its options, split seed
-and command. At temperature 0 the endpoint is not fully deterministic: a
-cold rerun of 50 cases gave the same label on 50/50 (8B) and 49/50
-(70B). Commit of the submission: \[TBD\].
+from the response cache with the current code gives the same labels on
+all test rows for both models; each run in `runs/v1/` stores its
+options, split seed and command. At temperature 0 the endpoint is not
+fully deterministic: a cold rerun of 50 cases gave the same label on
+50/50 (8B) and 49/50 (70B). Commit of the submission: \[\[NIKLAS:
+submission commit\]\].
 
 = 6. Limitations
 <limitations>

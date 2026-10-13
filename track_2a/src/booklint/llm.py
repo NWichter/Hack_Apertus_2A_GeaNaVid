@@ -14,6 +14,9 @@ _SECRET = re.compile(r"(sk-|key[ _-]?hash|hash)[\w:=\"' -]*[A-Za-z0-9_-]{12,}|[A
 
 
 RETRIES = {"rate_limit": 0, "other": 0, "bad_request_fallback": 0, "uncached": 0}
+# Parameters the endpoint rejected once (and accepted without): left out of every later call, so a proxy without
+# json_schema/logprobs costs one failed request per run, not one per call.
+UNSUPPORTED = set()
 
 
 def redact(text):
@@ -194,27 +197,28 @@ class LLM:
         if limit and RETRIES["uncached"] >= limit:
             raise RuntimeError(f"call budget of {limit} uncached Apertus calls reached")
         RETRIES["uncached"] += 1
+        params = dict(params)
+        if UNSUPPORTED:
+            for k in list(params):
+                if k in UNSUPPORTED:
+                    params.pop(k)
         for attempt in range(10):
             t0 = time.perf_counter()
             try:
                 resp = self.client.chat.completions.create(model=model, messages=messages, **params)
                 break
             except BadRequestError as exc:
-                had_fallback = False
-                if "response_format" in params:
-                    params.pop("response_format", None)
-                    had_fallback = True
-                if "logprobs" in params:
-                    params.pop("logprobs", None)
-                    params.pop("top_logprobs", None)
-                    had_fallback = True
-                if had_fallback:
+                dropped = [k for k in ("response_format", "logprobs", "top_logprobs") if k in params]
+                for k in dropped:
+                    params.pop(k)
+                if dropped:
                     RETRIES["bad_request_fallback"] += 1
                     if RETRIES["bad_request_fallback"] == 1:
                         print("warning: endpoint rejected response_format/logprobs; retrying without them "
                               "(no confidences, so decomposition and calibration are skipped)", file=sys.stderr)
                     try:
                         resp = self.client.chat.completions.create(model=model, messages=messages, **params)
+                        UNSUPPORTED.update(dropped)
                         break
                     except Exception as inner_exc:
                         raise RuntimeError(redact(inner_exc)) from None

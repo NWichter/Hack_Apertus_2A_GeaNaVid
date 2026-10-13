@@ -1,6 +1,6 @@
 .PHONY: run build test smoke
 
-INPUT ?= data/v1/test.jsonl
+INPUT ?= data/v1/test_v11.jsonl
 MODES ?= retrieval
 MODELS ?=
 LIMIT ?= 0
