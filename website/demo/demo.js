@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function populatePresetsDropdown(ost, syn) {
     presetSelect.innerHTML = '<option value="">-- Choose an example or type your own below --</option>';
-    addGroup("OST v1.0 benchmark (real cases, development split), Advanced task", ost, 0);
+    addGroup("OST v1.1 benchmark (real cases, development split), Advanced task", ost, 0);
     addGroup("Synthetic edge cases (LLM-written, not reviewed, never evaluated), Beginner task", syn, ost.length);
   }
 
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
     goldLabel = typeof p.label === "number" ? p.label : null;
     presetNote.textContent =
       p.kind === "ost"
-        ? `OST v1.0 ${p.id}, gold label: ${LABELS[p.label]}. The claim language is detected, as in OST's input.`
+        ? `OST v1.1 ${p.id}, gold label: ${LABELS[p.label]}. The claim language is detected, as in OST's input.`
         : `Synthetic ${p.challenge_type || "edge case"}, unreviewed label: ${LABELS[p.label]}. Demo only.`;
 
     updateCliPreview();
