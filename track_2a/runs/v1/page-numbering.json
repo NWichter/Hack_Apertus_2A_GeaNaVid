@@ -1,0 +1,554 @@
+{
+ "total": {
+  "booklets": 60,
+  "pages": 3408,
+  "pages_with_printed_number": 2084,
+  "printed_equals_pdf_index": 2083,
+  "booklets_with_another_offset": [
+   "2023-06-18_erlaeuterungen_des_bundesrates.pdf"
+  ]
+ },
+ "booklets": [
+  {
+   "booklet": "2025-09-28_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/6DaWglL-N7NM/2025-09-28_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 48,
+   "with_printed_number": 30,
+   "offsets": {
+    "0": 30
+   }
+  },
+  {
+   "booklet": "2025-02-09_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/9igLXNhBGtsc/2025-02-09_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 16,
+   "with_printed_number": 11,
+   "offsets": {
+    "0": 11
+   }
+  },
+  {
+   "booklet": "2024-03-03_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/In9i5Kp4p64r/2024-03-03_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 32,
+   "with_printed_number": 22,
+   "offsets": {
+    "0": 22
+   }
+  },
+  {
+   "booklet": "2022-02-13_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/JwKnnvQMcYT2/2022-02-13_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 64,
+   "with_printed_number": 42,
+   "offsets": {
+    "0": 42
+   }
+  },
+  {
+   "booklet": "2023-06-18_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/Lv5UWt6X1iUj/2023-06-18_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 56,
+   "with_printed_number": 35,
+   "offsets": {
+    "0": 34,
+    "-32": 1
+   }
+  },
+  {
+   "booklet": "2026-03-08_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/MDRXrtFaVPNG/2026-03-08_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 72,
+   "with_printed_number": 38,
+   "offsets": {
+    "0": 38
+   }
+  },
+  {
+   "booklet": "2021-09-26_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/NJXQlhZXHqDA/2021-09-26_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 40,
+   "with_printed_number": 27,
+   "offsets": {
+    "0": 27
+   }
+  },
+  {
+   "booklet": "2022-05-15_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/PCWaDg8-GOcJ/2022-05-15_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 56,
+   "with_printed_number": 38,
+   "offsets": {
+    "0": 38
+   }
+  },
+  {
+   "booklet": "2022-09-25_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/SwAIDvDocLte/2022-09-25_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 80,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2021-11-28_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/TbPPMZBkuvPm/2021-11-28_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 48,
+   "with_printed_number": 33,
+   "offsets": {
+    "0": 33
+   }
+  },
+  {
+   "booklet": "2021-06-13_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/UxUxfYD5ma0h/2021-06-13_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 144,
+   "with_printed_number": 110,
+   "offsets": {
+    "0": 110
+   }
+  },
+  {
+   "booklet": "2026-06-14_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/WeUrKyC0FyPc/2026-06-14_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 40,
+   "with_printed_number": 23,
+   "offsets": {
+    "0": 23
+   }
+  },
+  {
+   "booklet": "2020-09-27_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/XuiMCko39BzI/2020-09-27_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 88,
+   "with_printed_number": 53,
+   "offsets": {
+    "0": 53
+   }
+  },
+  {
+   "booklet": "2020-02-09_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/aSmZ7rOvZDrG/2020-02-09_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 32,
+   "with_printed_number": 19,
+   "offsets": {
+    "0": 19
+   }
+  },
+  {
+   "booklet": "2024-09-22_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/iWYLyEPfLvhn/2024-09-22_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 40,
+   "with_printed_number": 22,
+   "offsets": {
+    "0": 22
+   }
+  },
+  {
+   "booklet": "2021-03-07_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/jezxrs8DLj5a/2021-03-07_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 56,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2024-11-24_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/wHXT9BH3VlYQ/2024-11-24_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 72,
+   "with_printed_number": 35,
+   "offsets": {
+    "0": 35
+   }
+  },
+  {
+   "booklet": "2025-11-30_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/x6Qn59zt63F7/2025-11-30_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 32,
+   "with_printed_number": 22,
+   "offsets": {
+    "0": 22
+   }
+  },
+  {
+   "booklet": "2020-11-29_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/ywovGJwC1GeO/2020-11-29_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 32,
+   "with_printed_number": 17,
+   "offsets": {
+    "0": 17
+   }
+  },
+  {
+   "booklet": "2024-06-09_erlaeuterungen_des_bundesrates.pdf",
+   "url": "https://www.bk.admin.ch/dam/de/sd-web/z11TVw3xAFqy/2024-06-09_erlaeuterungen_des_bundesrates.pdf",
+   "pages": 88,
+   "with_printed_number": 33,
+   "offsets": {
+    "0": 33
+   }
+  },
+  {
+   "booklet": "2025-09-28_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/6DaWglL-N7NM/2025-09-28_explications_du_conseil_federal.pdf",
+   "pages": 48,
+   "with_printed_number": 30,
+   "offsets": {
+    "0": 30
+   }
+  },
+  {
+   "booklet": "2025-02-09_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/9igLXNhBGtsc/2025-02-09_explications_du_conseil_federal.pdf",
+   "pages": 16,
+   "with_printed_number": 11,
+   "offsets": {
+    "0": 11
+   }
+  },
+  {
+   "booklet": "2024-03-03_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/In9i5Kp4p64r/2024-03-03_explications_du_conseil_federal.pdf",
+   "pages": 32,
+   "with_printed_number": 24,
+   "offsets": {
+    "0": 24
+   }
+  },
+  {
+   "booklet": "2022-02-13_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/JwKnnvQMcYT2/2022-02-13_explications_du_conseil_federal.pdf",
+   "pages": 64,
+   "with_printed_number": 42,
+   "offsets": {
+    "0": 42
+   }
+  },
+  {
+   "booklet": "2023-06-18_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/Lv5UWt6X1iUj/2023-06-18_explications_du_conseil_federal.pdf",
+   "pages": 56,
+   "with_printed_number": 34,
+   "offsets": {
+    "0": 34
+   }
+  },
+  {
+   "booklet": "2026-03-08_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/MDRXrtFaVPNG/2026-03-08_explications_du_conseil_federal.pdf",
+   "pages": 72,
+   "with_printed_number": 42,
+   "offsets": {
+    "0": 42
+   }
+  },
+  {
+   "booklet": "2021-09-26_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/NJXQlhZXHqDA/2021-09-26_explications_du_conseil_federal.pdf",
+   "pages": 40,
+   "with_printed_number": 27,
+   "offsets": {
+    "0": 27
+   }
+  },
+  {
+   "booklet": "2022-05-15_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/PCWaDg8-GOcJ/2022-05-15_explications_du_conseil_federal.pdf",
+   "pages": 56,
+   "with_printed_number": 38,
+   "offsets": {
+    "0": 38
+   }
+  },
+  {
+   "booklet": "2022-09-25_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/SwAIDvDocLte/2022-09-25_explications_du_conseil_federal.pdf",
+   "pages": 80,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2021-11-28_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/TbPPMZBkuvPm/2021-11-28_explications_du_conseil_federal.pdf",
+   "pages": 48,
+   "with_printed_number": 33,
+   "offsets": {
+    "0": 33
+   }
+  },
+  {
+   "booklet": "2021-06-13_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/UxUxfYD5ma0h/2021-06-13_explications_du_conseil_federal.pdf",
+   "pages": 144,
+   "with_printed_number": 110,
+   "offsets": {
+    "0": 110
+   }
+  },
+  {
+   "booklet": "2026-06-14_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/WeUrKyC0FyPc/2026-06-14_explications_du_conseil_federal.pdf",
+   "pages": 40,
+   "with_printed_number": 24,
+   "offsets": {
+    "0": 24
+   }
+  },
+  {
+   "booklet": "2020-09-27_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/XuiMCko39BzI/2020-09-27_explications_du_conseil_federal.pdf",
+   "pages": 88,
+   "with_printed_number": 53,
+   "offsets": {
+    "0": 53
+   }
+  },
+  {
+   "booklet": "2020-02-09_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/aSmZ7rOvZDrG/2020-02-09_explications_du_conseil_federal.pdf",
+   "pages": 32,
+   "with_printed_number": 20,
+   "offsets": {
+    "0": 20
+   }
+  },
+  {
+   "booklet": "2024-09-22_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/iWYLyEPfLvhn/2024-09-22_explications_du_conseil_federal.pdf",
+   "pages": 40,
+   "with_printed_number": 22,
+   "offsets": {
+    "0": 22
+   }
+  },
+  {
+   "booklet": "2021-03-07_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/jezxrs8DLj5a/2021-03-07_explications_du_conseil_federal.pdf",
+   "pages": 56,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2024-11-24_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/wHXT9BH3VlYQ/2024-11-24_explications_du_conseil_federal.pdf",
+   "pages": 72,
+   "with_printed_number": 39,
+   "offsets": {
+    "0": 39
+   }
+  },
+  {
+   "booklet": "2025-11-30_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/x6Qn59zt63F7/2025-11-30_explications_du_conseil_federal.pdf",
+   "pages": 32,
+   "with_printed_number": 23,
+   "offsets": {
+    "0": 23
+   }
+  },
+  {
+   "booklet": "2020-11-29_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/ywovGJwC1GeO/2020-11-29_explications_du_conseil_federal.pdf",
+   "pages": 32,
+   "with_printed_number": 17,
+   "offsets": {
+    "0": 17
+   }
+  },
+  {
+   "booklet": "2024-06-09_explications_du_conseil_federal.pdf",
+   "url": "https://www.bk.admin.ch/dam/fr/sd-web/z11TVw3xAFqy/2024-06-09_explications_du_conseil_federal.pdf",
+   "pages": 88,
+   "with_printed_number": 34,
+   "offsets": {
+    "0": 34
+   }
+  },
+  {
+   "booklet": "2025-09-28_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/6DaWglL-N7NM/2025-09-28_spiegazioni_del_consigliofederale.pdf",
+   "pages": 48,
+   "with_printed_number": 32,
+   "offsets": {
+    "0": 32
+   }
+  },
+  {
+   "booklet": "2025-02-09_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/9igLXNhBGtsc/2025-02-09_spiegazioni_del_consigliofederale.pdf",
+   "pages": 16,
+   "with_printed_number": 11,
+   "offsets": {
+    "0": 11
+   }
+  },
+  {
+   "booklet": "2024-03-03_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/In9i5Kp4p64r/2024-03-03_spiegazioni_del_consigliofederale.pdf",
+   "pages": 32,
+   "with_printed_number": 25,
+   "offsets": {
+    "0": 25
+   }
+  },
+  {
+   "booklet": "2022-02-13_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/JwKnnvQMcYT2/2022-02-13_spiegazioni_del_consigliofederale.pdf",
+   "pages": 64,
+   "with_printed_number": 42,
+   "offsets": {
+    "0": 42
+   }
+  },
+  {
+   "booklet": "2023-06-18_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/Lv5UWt6X1iUj/2023-06-18_spiegazioni_del_consigliofederale.pdf",
+   "pages": 56,
+   "with_printed_number": 34,
+   "offsets": {
+    "0": 34
+   }
+  },
+  {
+   "booklet": "2026-03-08_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/MDRXrtFaVPNG/2026-03-08_spiegazioni_del_consigliofederale.pdf",
+   "pages": 72,
+   "with_printed_number": 46,
+   "offsets": {
+    "0": 46
+   }
+  },
+  {
+   "booklet": "2021-09-26_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/NJXQlhZXHqDA/2021-09-26_spiegazioni_del_consigliofederale.pdf",
+   "pages": 40,
+   "with_printed_number": 27,
+   "offsets": {
+    "0": 27
+   }
+  },
+  {
+   "booklet": "2022-05-15_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/PCWaDg8-GOcJ/2022-05-15_spiegazioni_del_consigliofederale.pdf",
+   "pages": 56,
+   "with_printed_number": 38,
+   "offsets": {
+    "0": 38
+   }
+  },
+  {
+   "booklet": "2022-09-25_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/SwAIDvDocLte/2022-09-25_spiegazioni_del_consigliofederale.pdf",
+   "pages": 80,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2021-11-28_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/TbPPMZBkuvPm/2021-11-28_spiegazioni_del_consigliofederale.pdf",
+   "pages": 48,
+   "with_printed_number": 33,
+   "offsets": {
+    "0": 33
+   }
+  },
+  {
+   "booklet": "2021-06-13_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/UxUxfYD5ma0h/2021-06-13_spiegazioni_del_consigliofederale.pdf",
+   "pages": 144,
+   "with_printed_number": 110,
+   "offsets": {
+    "0": 110
+   }
+  },
+  {
+   "booklet": "2026-06-14_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/WeUrKyC0FyPc/2026-06-14_spiegazioni_del_consigliofederale.pdf",
+   "pages": 40,
+   "with_printed_number": 25,
+   "offsets": {
+    "0": 25
+   }
+  },
+  {
+   "booklet": "2020-09-27_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/XuiMCko39BzI/2020-09-27_spiegazioni_del_consigliofederale.pdf",
+   "pages": 88,
+   "with_printed_number": 53,
+   "offsets": {
+    "0": 53
+   }
+  },
+  {
+   "booklet": "2020-02-09_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/aSmZ7rOvZDrG/2020-02-09_spiegazioni_del_consigliofederale.pdf",
+   "pages": 32,
+   "with_printed_number": 19,
+   "offsets": {
+    "0": 19
+   }
+  },
+  {
+   "booklet": "2024-09-22_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/iWYLyEPfLvhn/2024-09-22_spiegazioni_del_consigliofederale.pdf",
+   "pages": 40,
+   "with_printed_number": 25,
+   "offsets": {
+    "0": 25
+   }
+  },
+  {
+   "booklet": "2021-03-07_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/jezxrs8DLj5a/2021-03-07_spiegazioni_del_consigliofederale.pdf",
+   "pages": 56,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2024-11-24_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/wHXT9BH3VlYQ/2024-11-24_spiegazioni_del_consigliofederale.pdf",
+   "pages": 72,
+   "with_printed_number": 37,
+   "offsets": {
+    "0": 37
+   }
+  },
+  {
+   "booklet": "2025-11-30_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/x6Qn59zt63F7/2025-11-30_spiegazioni_del_consigliofederale.pdf",
+   "pages": 32,
+   "with_printed_number": 22,
+   "offsets": {
+    "0": 22
+   }
+  },
+  {
+   "booklet": "2020-11-29_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/ywovGJwC1GeO/2020-11-29_spiegazioni_del_consigliofederale.pdf",
+   "pages": 32,
+   "with_printed_number": 17,
+   "offsets": {
+    "0": 17
+   }
+  },
+  {
+   "booklet": "2024-06-09_spiegazioni_del_consigliofederale.pdf",
+   "url": "https://www.bk.admin.ch/dam/it/sd-web/z11TVw3xAFqy/2024-06-09_spiegazioni_del_consigliofederale.pdf",
+   "pages": 88,
+   "with_printed_number": 33,
+   "offsets": {
+    "0": 33
+   }
+  }
+ ]
+}

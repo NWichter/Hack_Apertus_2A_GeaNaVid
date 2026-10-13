@@ -31,6 +31,10 @@ ABLATION_BASE = {"mode": "ladder", "translate": False, "fewshot": 0, "decompose"
 
 
 def load(split):
+    """dev_rest = the 548 dev rows outside dev_s, which no option was chosen on."""
+    if split == "dev_rest":
+        used = {r["id"] for r in load("dev_s")}
+        return [r for r in load("dev") if r["id"] not in used]
     path = ROOT / "data" / "v1" / f"{split}.jsonl"
     return [json.loads(line) for line in path.open(encoding="utf-8")]
 
