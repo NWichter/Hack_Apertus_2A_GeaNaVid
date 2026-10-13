@@ -61,7 +61,7 @@ def score(sentence, queries, idf=None):
     return best / max(1.0, len(sgrams) / max(len(_grams(queries[0])), 40)) ** 0.5
 
 
-def select(chunks, queries, idf=None, preferred=(), bonus=1.2, max_spans=2, ratio=0.7, factors=None):
+def select(chunks, queries, idf=None, preferred=(), bonus=1.2, max_spans=2, ratio=0.7, factors=None, min_share=None):
     """Best sentence span(s) among `chunks`, best first.
 
     Sentences of `preferred` chunks (the passages Apertus cited) get their score multiplied by `bonus`; `factors` maps
@@ -69,7 +69,8 @@ def select(chunks, queries, idf=None, preferred=(), bonus=1.2, max_spans=2, rati
     Each span is a dict with text, page, char_start, char_end, chunk_id and score. Offsets refer to the booklet
     text (chunk texts joined by two characters, the convention of the chunk offsets), so
     `text == booklet_text[char_start:char_end]`. The best sentence is extended by an adjacent sentence of the
-    same chunk if that one scores at least `ratio` of it; a span from another chunk is added under the same rule.
+    same chunk if that one scores at least `ratio` of it; a span from another chunk is added if it scores at least
+    `min_share` (default `ratio`) of the best one, up to `max_spans` spans from different chunks.
     """
     queries = [q for q in queries if q and q.strip()]
     if not queries:
@@ -91,7 +92,7 @@ def select(chunks, queries, idf=None, preferred=(), bonus=1.2, max_spans=2, rati
     top = cands[0][0]
     picked = []
     for sc, _, c, spans, scored, j in cands:
-        if len(picked) >= max_spans or sc < ratio * top:
+        if len(picked) >= max_spans or sc < (ratio if min_share is None else min_share) * top:
             break
         if all(c.id != p["chunk_id"] for p in picked):
             picked.append(_span(c, spans, scored, j, ratio))

@@ -1,0 +1,72 @@
+{
+  "dev_s_v11/apertus-v1.5-8b/final-v2": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9203,
+    "first_item_matches": 0.8472,
+    "items_per_case": 1.47,
+    "chars_per_case": 240
+  },
+  "dev_s_v11/apertus-v1.5-8b/ev-s3-m05": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9369,
+    "first_item_matches": 0.8472,
+    "items_per_case": 2.23,
+    "chars_per_case": 372
+  },
+  "dev_s_v11/apertus-v1.5-8b/ev-s5-m05": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9435,
+    "first_item_matches": 0.8472,
+    "items_per_case": 2.59,
+    "chars_per_case": 439
+  },
+  "dev_s_v11/apertus-v1.5-8b/ev-s5-m0": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9635,
+    "first_item_matches": 0.8472,
+    "items_per_case": 4.83,
+    "chars_per_case": 816
+  },
+  "dev_s_v11/apertus-v1.5-8b/ev-s5-m0-para": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9535,
+    "first_item_matches": 0.814,
+    "items_per_case": 4.83,
+    "chars_per_case": 1824
+  },
+  "dev_s_v11/apertus-v1.5-70b/final-v2": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9169,
+    "first_item_matches": 0.8671,
+    "items_per_case": 1.44,
+    "chars_per_case": 236
+  },
+  "dev_s_v11/apertus-v1.5-70b/ev-s3-m05": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9369,
+    "first_item_matches": 0.8671,
+    "items_per_case": 2.07,
+    "chars_per_case": 346
+  },
+  "dev_s_v11/apertus-v1.5-70b/ev-s5-m05": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9468,
+    "first_item_matches": 0.8671,
+    "items_per_case": 2.36,
+    "chars_per_case": 397
+  },
+  "dev_s_v11/apertus-v1.5-70b/ev-s5-m0": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9535,
+    "first_item_matches": 0.8671,
+    "items_per_case": 4.76,
+    "chars_per_case": 806
+  },
+  "dev_s_v11/apertus-v1.5-70b/ev-s5-m0-para": {
+    "gold_ec_cases": 301,
+    "ost_evidence_score": 0.9435,
+    "first_item_matches": 0.8439,
+    "items_per_case": 4.76,
+    "chars_per_case": 1792
+  }
+}

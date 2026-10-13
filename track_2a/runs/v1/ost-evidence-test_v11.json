@@ -1,0 +1,44 @@
+{
+  "test_v11/apertus-v1.5-8b/final-v2": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9321,
+    "first_item_matches": 0.8488,
+    "items_per_case": 1.46,
+    "chars_per_case": 232
+  },
+  "test_v11/apertus-v1.5-8b/final-v3": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9691,
+    "first_item_matches": 0.8488,
+    "items_per_case": 4.77,
+    "chars_per_case": 811
+  },
+  "test_v11/apertus-v1.5-8b/beginner-default": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9568,
+    "first_item_matches": 0.9506,
+    "items_per_case": 1.48,
+    "chars_per_case": 210
+  },
+  "test_v11/apertus-v1.5-70b/final-v2": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9198,
+    "first_item_matches": 0.8549,
+    "items_per_case": 1.41,
+    "chars_per_case": 227
+  },
+  "test_v11/apertus-v1.5-70b/final-v3": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9599,
+    "first_item_matches": 0.8549,
+    "items_per_case": 4.71,
+    "chars_per_case": 793
+  },
+  "test_v11/apertus-v1.5-70b/beginner-default": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9568,
+    "first_item_matches": 0.9537,
+    "items_per_case": 1.44,
+    "chars_per_case": 214
+  }
+}

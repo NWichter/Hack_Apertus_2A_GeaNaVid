@@ -92,6 +92,8 @@ class Options:
     neutral_bias: float = 0.0
     max_evidence: int = 3
     evidence_unit: str = "sentence"
+    evidence_spans: int = 5
+    evidence_min_share: float = 0.0
     section_boost: float = 1.5
     evidence_section: float = 2.0
     evidence_section_pool: int = 4
@@ -789,6 +791,8 @@ class Pipeline:
                 idf,
                 preferred=cited,
                 bonus=self.opt.evidence_bonus,
+                max_spans=self.opt.evidence_spans,
+                min_share=self.opt.evidence_min_share,
                 factors=boost,
             )
             for sp in spans:

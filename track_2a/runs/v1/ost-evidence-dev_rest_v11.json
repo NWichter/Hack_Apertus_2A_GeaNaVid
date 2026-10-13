@@ -1,0 +1,30 @@
+{
+  "dev_rest_v11/apertus-v1.5-8b/final-v2": {
+    "gold_ec_cases": 365,
+    "ost_evidence_score": 0.8932,
+    "first_item_matches": 0.8521,
+    "items_per_case": 1.46,
+    "chars_per_case": 230
+  },
+  "dev_rest_v11/apertus-v1.5-8b/ev-s5-m0": {
+    "gold_ec_cases": 365,
+    "ost_evidence_score": 0.9397,
+    "first_item_matches": 0.8521,
+    "items_per_case": 4.82,
+    "chars_per_case": 795
+  },
+  "dev_rest_v11/apertus-v1.5-70b/final-v2": {
+    "gold_ec_cases": 365,
+    "ost_evidence_score": 0.8877,
+    "first_item_matches": 0.8493,
+    "items_per_case": 1.41,
+    "chars_per_case": 221
+  },
+  "dev_rest_v11/apertus-v1.5-70b/ev-s5-m0": {
+    "gold_ec_cases": 365,
+    "ost_evidence_score": 0.9233,
+    "first_item_matches": 0.8493,
+    "items_per_case": 4.72,
+    "chars_per_case": 774
+  }
+}
