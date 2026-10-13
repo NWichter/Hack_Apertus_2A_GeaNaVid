@@ -9,14 +9,36 @@ booklet sentence and PDF page that decide it, the input/output tokens and the ti
 makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
 translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
 committee, voting text, Federal Council), so a claim costs about 1.5–2.7 k instead of 20 k input tokens. On the
-held-out test split of OST v1.0 (497 pairs) the macro-F1 is 0.957 (8B) and 0.968 (70B), against 0.723 and 0.890
-for the whole booklet; the evidence sentence lies in OST's gold section for 86–88 % of the answers.
+held-out test split of OST v1.1 (493 pairs) the macro-F1 is 0.957 (8B) and 0.967 (70B), against 0.720 and 0.889
+for the whole booklet; by the rule of OST's evaluation script, one of our five quoted sentences lies in the gold
+passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
 ## Judges start here
 
 Requirements: Docker, an OpenAI-compatible Apertus v1.5 endpoint, no GPU, no local weights.
+
+**As OST runs it** (Solution API Guide, 7 October): the image takes `--input` / `--output`, reads `BASE_URL` and
+`API_KEY` at run time, and finds `booklet.path` below `/data`.
+
+```bash
+cd track_2a
+docker build --platform linux/amd64 -t geanavid .
+docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
+  -v /abs/path/data:/data:ro -v /abs/path/output:/output \
+  geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
+```
+
+Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path",
+"language"}}` and task B with `"reference": {"text", "language"}` instead of `booklet`, mixed in one file (flat
+variants are read too). Output: one line per case with `id`, `label`, `label_name`, `evidence[{page, text}]`
+(up to five quotes, 1-based PDF page; `null` page in task B; `[]` for neutral) and `metrics{input_tokens,
+output_tokens, inference_time_ms}`. A failed case is answered neutral with an `error` field; the run never stops
+and exits with 0. Checked on 13 October from a fresh clone with 80 OST-format cases and OST's `evaluate.py`
+(`track_2a/README.md`, section "OST task format").
+
+**Our benchmark run:**
 
 ```bash
 cd track_2a
@@ -27,29 +49,9 @@ make run LIMIT=30         # quick check
 
 `make run` also works from the repository root (the root `Makefile` forwards to `track_2a/`).
 
-**OST task format.** `booklint predict --case <file>` reads the cases of slide 24 (Advanced:
-`{"id", "booklet": {"path"}, "vote", "claim": {"text"}}`; Beginner: `{"id", "reference": {"text"},
-"claim": {"text"}}`) as one JSON object, a JSON list or JSONL, and prints exactly the output of slide 25
-(`id`, `label`, `label_name`, `evidence[{page, text}]`, `metrics{input_tokens, output_tokens,
-inference_time_ms}`), one line per case. A failed case is answered neutral with an `error` field; the batch
-never stops.
-
-```bash
-cd track_2a
-docker compose build
-docker compose run --rm -T   -v /abs/path/booklets:/work/booklets:ro -v /abs/path/cases:/work/cases:ro   -e BOOKLET_ROOT=/work   booklint predict --case /work/cases/cases.jsonl -o /work/runs/predictions.jsonl
-```
-
-**Mounts and `BOOKLET_ROOT`.** Booklet paths in the cases are paths inside the container. A relative path
-(`booklets/2024_11_24_de.pdf`) is read below `BOOKLET_ROOT` when it is set, otherwise relative to the working
-directory `/work`. If the file is not there, `booklint` also looks below `/work`, `/work/booklets`, `/data`,
-`/booklets` and next to the case file, and finally by file name inside those folders; the path it takes is
-printed on stderr. Output lands in `track_2a/runs/` (mounted at `/work/runs`). Use `-T` when the command runs
-without a terminal.
-
 **More.**
 
-- Technical report (4 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
+- Technical report (5 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
   source [`track_2a/technical_report.md`](track_2a/technical_report.md)
 - Experiments and all measurements: [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
 - How the numbers improved, round by round: [`track_2a/docs/ITERATIONS.md`](track_2a/docs/ITERATIONS.md)

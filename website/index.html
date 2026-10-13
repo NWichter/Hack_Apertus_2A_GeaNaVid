@@ -196,11 +196,11 @@
 
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="wrap">
-          <p class="eyebrow">Results · 4 October 2026</p>
-          <h2 id="status-title">OST v1.0, test split</h2>
+          <p class="eyebrow">Results · 13 October 2026</p>
+          <h2 id="status-title">OST v1.1, test split</h2>
           <p class="section-lede">
-            OST's benchmark MNLIoverSwissVotingBooklets v1.0, split by voting
-            date: 497 test pairs from 7 voting dates, 21 booklets, two thirds
+            OST's benchmark MNLIoverSwissVotingBooklets v1.1, split by voting
+            date: 493 test pairs from 7 voting dates, 21 booklets, two thirds
             cross-lingual. Macro-F1
             over entailment, neutral and contradiction; input tokens per claim
             from the API.
@@ -219,20 +219,20 @@
                 <tr>
                   <td>GeaNaVid, Advanced task (booklet PDF + claim)</td>
                   <td><strong>0.957</strong></td>
-                  <td><strong>0.968</strong></td>
-                  <td>2,662 / 1,531</td>
+                  <td><strong>0.967</strong></td>
+                  <td>2,667 / 1,532</td>
                 </tr>
                 <tr>
                   <td>Whole booklet (baseline)</td>
-                  <td>0.723</td>
-                  <td>0.890</td>
-                  <td>20,156</td>
+                  <td>0.720</td>
+                  <td>0.889</td>
+                  <td>20,242</td>
                 </tr>
                 <tr>
                   <td>Beginner task (claim + reference text)</td>
-                  <td>0.978</td>
+                  <td>0.977</td>
                   <td>0.980</td>
-                  <td>2,662 / 2,080</td>
+                  <td>2,675 / 2,093</td>
                 </tr>
               </tbody>
             </table>
@@ -241,7 +241,7 @@
             <li>
               <strong>Less context, better verdicts:</strong> 8B with the
               selected passages (0.957) beats 70B with the whole booklet
-              (0.890), at 8 to 13 % of the tokens.
+              (0.889), at 8 to 13 % of the tokens.
             </li>
             <li>
               <strong>Translation is the largest step:</strong> cross-lingual
@@ -249,15 +249,14 @@
               into the booklet language.
             </li>
             <li>
-              <strong>Evidence where the booklet says it:</strong> the quoted
-              sentence lies in OST's gold section for 86 % (8B) and 88 % (70B)
-              of entailment and contradiction answers, on a gold page for 87 % / 89 %.
+              <strong>Evidence as OST scores it:</strong> one of the first five
+              quoted sentences lies in OST's gold passage for 97 % (8B) and 96 %
+              (70B) of the entailment and contradiction cases, by the rule of
+              OST's own evaluation script.
             </li>
             <li>
-              <strong>All languages:</strong> 0.92 to 0.98 per claim language
-              and per booklet language (single pairs 0.86 to 1.00 with 8B,
-              0.92 to 1.00 with 70B); detecting the claim language instead of
-              reading it from the data changes nothing.
+              <strong>Claims nobody tuned on:</strong> 546 development claims
+              that no option was chosen on give 0.971 (8B) and 0.965 (70B).
             </li>
             <li>
               <strong>Time as OST measures it:</strong> cold run on 50 test
@@ -266,25 +265,26 @@
             </li>
             <li>
               <strong>New booklets:</strong> on a synthetic hold-out from three
-              voting dates outside OST v1.0 (89 claims, labels checked by two
+              voting dates outside OST v1.1 (89 claims, labels checked by two
               other models) the lead over the whole booklet holds: 0.874 vs
               0.665 (8B), 0.932 vs 0.872 (70B).
             </li>
           </ul>
           <p class="caveat">
-            OST v1.0 repeats 122 of the 497 test pairs, so the 95 % intervals
-            resample copies together: 0.933–0.978 (8B), 0.948–0.984 (70B);
+            OST v1.1 repeats 122 of the 493 test pairs, so the 95 % intervals
+            resample copies together: 0.930–0.978 (8B), 0.947–0.984 (70B);
             without the copies the defaults score 0.955 (8B) and 0.965 (70B).
             8B and 70B do not differ significantly. Variants were built on
-            development data, but test scores also decided which were kept
-            (five test evaluations); the synthetic hold-out on unseen booklets
-            checks that. The rounds are in docs/ITERATIONS.md.
+            development data, but test scores were looked at for 22
+            configurations and decided some of them, so the untouched
+            development claims and the synthetic hold-out are the honest
+            checks. The rounds are in docs/ITERATIONS.md.
           </p>
           <h3 class="sub">Open</h3>
           <ul class="progress">
             <li>
-              <span class="pill">open</span> How OST matches the evidence:
-              sentence or paragraph (Q&amp;A on 8 October)
+              <span class="pill">open</span> OST's weighting of F1, evidence,
+              tokens and time
             </li>
             <li>
               <span class="pill">open</span> Token counts of OST's proxy
@@ -292,7 +292,6 @@
           </ul>
         </div>
       </section>
-
       <section id="video" aria-labelledby="video-title">
         <div class="wrap">
           <p class="eyebrow">Video</p>
@@ -351,8 +350,8 @@
             <h2 id="report-title">How it works, what the numbers say</h2>
             <p>
               Architecture, use of Apertus, data, evaluation and limitations,
-              with sources. Draft of 4 October 2026 with the results on OST
-              v1.0; open points are marked as such.
+              with sources. Draft of 13 October 2026 with the results on OST
+              v1.1; open points are marked as such.
             </p>
             <div class="actions">
               <a class="button primary" href="/report.pdf"

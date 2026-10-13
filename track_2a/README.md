@@ -29,7 +29,7 @@ From `track_2a/`:
 
 ```bash
 cp .env.example .env          # set LLM_NAME, LLM_BASE_URL, LLM_API_KEY (OpenAI-compatible Apertus endpoint)
-make run                      # Docker: default pipeline on the held-out split data/v1/test.jsonl (497 claims)
+make run                      # Docker: default pipeline on the held-out split data/v1/test.jsonl (497 claims of v1.0)
 make run LIMIT=30             # quick check
 make run MODES=retrieval,baseline   # plus the whole-booklet baseline (~20 k tokens per claim)
 ```
@@ -41,40 +41,64 @@ seconds, `inference_time_ms` mean and p95) and writes it to
 
 ## OST task format
 
-**The command for OST is `booklint predict --case <file>`.** It reads the input of slide 24 of the OST session
-(2026-10-02) and prints the output of slide 25, nothing else. Both tasks:
+**The image follows OST's Solution API Guide (2026-10-07) and starter repository.** OST runs:
 
-- **Advanced:** `{"id", "booklet": {"path"}, "vote", "claim": {"text"}}`: the system finds the evidence in the PDF.
-- **Beginner:** `{"id", "reference": {"text"}, "claim": {"text"}}`: the claim is compared with the reference.
+```bash
+docker build --platform linux/amd64 -t geanavid .
+docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
+  -v /abs/path/data:/data:ro -v /abs/path/output:/output \
+  geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
+```
 
-`--case` takes one JSON object, a JSON list or a JSONL file (one case per line); `-` reads stdin. One object
-gives pretty-printed JSON, otherwise one line per case, written and flushed as soon as the case is done.
-`-o FILE` writes to a file instead of stdout. No language field is needed: the claim language is detected,
-and a `vote` title in another language than the booklet is translated by Apertus before the proposal is
-located.
+`BASE_URL` and `API_KEY` (injected by OST at run time) take precedence over `LLM_BASE_URL` / `LLM_API_KEY` and
+any `.env`; no key is baked into the image. `booklet.path` is relative to `/data` (`BOOKLET_ROOT=/data` in the
+image). The model is `LLM_NAME` (default `apertus-v1.5-8b`); if the endpoint does not offer that name, the Apertus
+model of the same size is taken from its `/models` list (OST's proxy names them `swiss-ai/Apertus-v1.5-...`).
+The same works without Docker as `booklint --input cases.jsonl --output predictions.jsonl`.
+
+Input, one JSON object per line, task A and B mixed:
+
+- **A (Advanced, document):** `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path", "language"}}`:
+  the system finds the evidence in the PDF.
+- **B (Beginner, reference):** `{"id", "vote", "claim": {"text", "language"}, "reference": {"text", "language"}}`:
+  the claim is compared with the reference.
+
+Also read: a JSON list or one object, a wrapper `{"cases": [...]}`, a UTF-8 BOM, CRLF, flat fields
+(`claim` as a string, `booklet_path`, `reference_string`, `hypothesis` / `premise`), `vote` as an object, ids as
+numbers; a line that is not valid JSON becomes a failed case instead of stopping the run. Without a language
+field the claim language is detected; a `vote` title in another language than the booklet is translated by
+Apertus before the proposal is located.
+
+Output, one line per case (`--format json` writes one JSON list instead):
 
 ```json
 {"id": "case-0042", "label": 0, "label_name": "entailment",
- "evidence": [{"page": 7, "text": "…verbatim sentence…"}],
+ "evidence": [{"page": 7, "text": "…verbatim sentence…"}, {"page": 9, "text": "…"}],
  "metrics": {"input_tokens": 1650, "output_tokens": 40, "inference_time_ms": 1820}}
 ```
 
-- `evidence` is required for entailment and contradiction and may be empty for neutral (we always return
-  `[]`). `page` is the 1-based PDF page. `--evidence-unit sentence` (default) returns the deciding sentence(s),
-  `--evidence-unit paragraph` the whole text block(s) around them.
+- `evidence` (entailment and contradiction): up to five verbatim sentences from different passages, best
+  first, each with its 1-based PDF page; OST scores a case if one of the first five lies in the gold passage.
+  Task B evidence has `"page": null`, as OST asks. Neutral: `[]`. `--evidence-unit paragraph` returns whole
+  text blocks instead of sentences.
 - `metrics` holds the input and output tokens reported by the API and the wall time of the case in ms (with a
   warm response cache this is not inference time; use `--no-cache` for timing). OST measures tokens through
-  its proxy and time itself (mean and p95).
+  its proxy and time itself.
 - A case that fails (missing PDF, no text layer, endpoint error, missing claim) never stops the batch: it is
   answered neutral with empty evidence, zero metrics and an extra field `error`, and a line goes to stderr.
+  The run exits with code 0.
 
-**Docker.** Booklet paths in the cases are file paths inside the container. Mount the booklets and the case
-file, and set `BOOKLET_ROOT` when the paths in the cases are relative (`booklets/2024_11_24_de.pdf`): a
-relative path is then read below `BOOKLET_ROOT`; without it, relative to the working directory `/work`.
-A path that does not exist there is also looked up below `/work`, `/work/booklets`, `/data`, `/booklets` and
-next to the case file, then by file name inside those folders; the path taken is printed on stderr
-(`booklet '…' not found at '…', using '…'`). URLs (bk.admin.ch) are downloaded and cached in `/work/.cache`.
-Add `-T` to `docker compose run` when it runs without a terminal.
+**Check it like OST.** `python experiments/v1/ost_cases.py --split test_v11 --rows 40 --out <dir>/data` writes
+OST-format cases with their booklets; move `expected-labels.jsonl` out of the mounted folder, run the image as
+above and score with `evaluate.py` from OST's starter repository.
+
+**Paths.** A relative booklet path is read below `BOOKLET_ROOT`; a path that does not exist there is also looked
+up relative to the working directory, below `/work`, `/work/booklets`, `/data`, `/booklets` and next to the case
+file, then by file name inside those folders; the path taken is printed on stderr. URLs (bk.admin.ch) are
+downloaded and cached; the cache falls back to the temp directory when its folder is not writable.
+
+With `docker compose` (development, uses `track_2a/.env` and the response cache in `track_2a/.cache`; add `-T`
+when it runs without a terminal):
 
 ```bash
 docker compose build
@@ -83,7 +107,6 @@ docker compose run --rm \
   -e BOOKLET_ROOT=/work \
   booklint predict --case /work/cases/cases.jsonl -o /work/runs/predictions.jsonl
 ```
-
 `LLM_NAME`, `LLM_BASE_URL`, `LLM_API_KEY` come from the environment or `track_2a/.env`; the output lands in
 `track_2a/runs/`. Single cases from the command line:
 
@@ -124,7 +147,7 @@ Output per claim (`check --json`, one line per claim in `run`/`bench`/`make run`
 - `decision` = `entailment_label`: 0 entailment (`answer` "yes"), 1 neutral ("blank"), 2 contradiction ("no").
 - `page`: 1-based PDF page of the evidence sentence. `evidence_sentence`: the sentence (or two adjacent
   sentences) of the booklet that supports or contradicts the claim, verbatim, including PDF artefacts
-  such as split words. `evidence_sentences`: up to two such spans, best first; `char_start`/`char_end` are
+  such as split words. `evidence_sentences`: up to five such spans from different passages, best first; `char_start`/`char_end` are
   offsets in the booklet text (all chunk texts joined by `"\n\n"`, the same convention as the chunk offsets
   in `evidence`).
 - Neutral: `page` and `evidence_sentence` are `null`, `evidence_sentences` and `evidence` are empty.
@@ -134,9 +157,10 @@ Output per claim (`check --json`, one line per claim in `run`/`bench`/`make run`
 The sentence is chosen after the decision without any Apertus call: the cited passages, the other top-5
 BM25 passages and the 4 best blocks of the section the claim names are split into sentences, and the sentence
 that covers most of the (translated) claim wins (idf-weighted word stems plus character 5-grams, so split words
-still match; cited passages get a 1.2 bonus, sentences of the named section a factor 2). On the test split the
-chosen sentence lies in OST's gold section for 86 % (8B) and 88 % (70B) of the entailment/contradiction answers,
-and on a gold page for 87 % / 89 % (`docs/ITERATIONS.md`).
+still match; cited passages get a 1.2 bonus, sentences of the named section a factor 2); the next best sentences
+of other passages follow, up to five. On the v1.1 test split the first sentence lies in OST's gold section for 86 %
+(8B) and 88 % (70B) of the entailment/contradiction answers, and by the rule of OST's `evaluate.py` one of the
+five does for 97 % / 96 % of the gold entailment/contradiction cases (`runs/v1/ost-evidence-test_v11.json`).
 
 Default pipeline (`--mode retrieval`): find the proposal by its title (or, without a title, from the claim;
 no LLM), let Apertus translate cross-lingual claims into the booklet language, retrieve 5 passages with BM25
@@ -162,7 +186,7 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 
 | File                                           | Content                                                                                                                           | Licence       |
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `data/v1/v1.0.jsonl`                           | OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (HF commit adca9a5), 1,495 claims                                       | MIT           |
+| `data/v1/v1.0.jsonl`                           | OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (HF commit adca9a5), 1,495 claims; v1.1 (6 Oct.) drops the 7 rows in `data/v1/v1.1-removed.json`, splits with suffix `_v11` in `experiments/v1/run.py` | MIT           |
 | `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test; ids `v1-NNNN` added | MIT (derived) |
 | `data/archive/demo-2026-10-01/`                | the earlier 28-row demo and its cross-lingual variants (archived)                                                                 | MIT           |
 | `data/edge_cases.jsonl`                        | 24 synthetic stress pairs (ours, written by Gemini 3.8 Flash via Antigravity, not reviewed by a person, not part of the OST benchmark), see `data/README.md` | CDLA-Permissive-2.0 |

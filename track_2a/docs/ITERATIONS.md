@@ -219,3 +219,21 @@ contradiction F1 0.735 → 0.793, cross-lingual 0.807 → 0.848, input tokens 2,
 section 0.80. 70B is unchanged (0.932). `runs/holdout-synth/apertus-v1.5-8b/retrieval-v2.summary.json`.
 
 Apertus calls in this log: 4,243 of 8,000 (rounds 0–6 and the first hold-out) and 1,941 of 3,500 (rounds 7–12).
+
+## 13 October: OST's scoring script, v1.1 and an untouched development split
+
+OST published a Solution API Guide (7 October), a starter repository with `evaluate.py` (8 October) and dataset
+v1.1 (6 October, 7 faulty rows removed, 4 of them in our test split). No call was spent on test in this block.
+
+| # | idea | decided on | dev_s 8B / 70B | dev_rest 8B / 70B | test v1.1 8B / 70B | kept | calls |
+| - | ---- | ---------- | -------------- | ----------------- | ------------------ | ---- | ----- |
+| – | final defaults on `dev_rest` (546 dev claims outside `dev_s`, never used to choose an option) | – | – | macro-F1 0.971 / 0.965 | – | – | 1,409 |
+| 13 | evidence: up to 5 sentences from different passages, no score threshold (was at most 2, the second only at ≥ 70 % of the best score) | `dev_s`, OST evidence score | 0.920 → 0.964 / 0.917 → 0.954 | 0.893 → 0.940 / 0.888 → 0.923 | 0.932 → 0.969 / 0.920 → 0.960 | **yes** | 0 |
+| 13b | same with whole paragraphs instead of sentences | `dev_s` | 0.954 / 0.944 | – | – | no | 0 |
+| 13c | 3 sentences, threshold 50 % / 5 sentences, threshold 50 % | `dev_s` | 0.937 / 0.937, 0.944 / 0.947 | – | – | no | 0 |
+
+The OST evidence score counts a gold entailment/contradiction case if one of the first five quotes (≤ 5,000
+characters) matches the gold `reference_string` with rapidfuzz `partial_ratio` ≥ 90 (`experiments/v1/ost_evidence.py`
+reimplements `evaluate.py`). Labels and tokens do not change; the first quote stays the same. All v1.1 numbers
+come from the stored runs without the removed rows (`experiments/v1/replay_v11.py`, `runs/v1/v1.1-filtered.json`):
+test v1.1 macro-F1 8B 0.957, 70B 0.967, whole booklet 0.720 / 0.889, Beginner 0.977 / 0.980.

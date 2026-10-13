@@ -1,0 +1,172 @@
+{
+  "rows": 493,
+  "main": [
+    {
+      "setup": "Baseline: whole booklet",
+      "8b": {
+        "run": "baseline",
+        "macro_f1": 0.72,
+        "input_tokens": 20242
+      },
+      "70b": {
+        "run": "baseline",
+        "macro_f1": 0.8886,
+        "input_tokens": 20242
+      }
+    },
+    {
+      "setup": "Beginner: gold section",
+      "8b": {
+        "run": "easy",
+        "macro_f1": 0.94,
+        "input_tokens": 2093
+      },
+      "70b": {
+        "run": "easy",
+        "macro_f1": 0.9798,
+        "input_tokens": 2093
+      }
+    },
+    {
+      "setup": "Beginner + 3 examples (8B)",
+      "8b": {
+        "run": "easy-fs3",
+        "macro_f1": 0.9774,
+        "input_tokens": 2675
+      }
+    },
+    {
+      "setup": "Adv.: BM25, whole booklet",
+      "8b": {
+        "run": "ret-booklet",
+        "macro_f1": 0.7602,
+        "input_tokens": 1368
+      }
+    },
+    {
+      "setup": "Adv.: proposal + BM25",
+      "8b": {
+        "run": "ret-vote",
+        "macro_f1": 0.7764,
+        "input_tokens": 1310
+      },
+      "70b": {
+        "run": "ret-vote",
+        "macro_f1": 0.8168,
+        "input_tokens": 1310
+      }
+    },
+    {
+      "setup": "Adv.: + translation",
+      "8b": {
+        "run": "ret-vote-tr",
+        "macro_f1": 0.939,
+        "input_tokens": 1637
+      },
+      "70b": {
+        "run": "ret-vote-tr",
+        "macro_f1": 0.9508,
+        "input_tokens": 1631
+      }
+    },
+    {
+      "setup": "Adv.: + 3 ex. + decomp.",
+      "8b": {
+        "run": "default",
+        "macro_f1": 0.94,
+        "input_tokens": 2259
+      }
+    },
+    {
+      "setup": "Adv.: + sections (70B default)",
+      "8b": {
+        "run": "r1-secboost",
+        "macro_f1": 0.9526,
+        "input_tokens": 2130
+      },
+      "70b": {
+        "run": "r1-secboost",
+        "macro_f1": 0.9674,
+        "input_tokens": 1532
+      }
+    },
+    {
+      "setup": "Adv.: + neutral re-check (8B default)",
+      "8b": {
+        "run": "final-v2",
+        "macro_f1": 0.9569,
+        "input_tokens": 2667
+      },
+      "70b": {
+        "run": "r9-recheck-terms",
+        "macro_f1": 0.9655,
+        "input_tokens": 2071
+      }
+    }
+  ],
+  "languages": {
+    "All": {
+      "n": 493,
+      "Adv. 8b": 0.9569,
+      "Adv. 70b": 0.9674,
+      "Beg. 8b": 0.9774,
+      "Beg. 70b": 0.9798
+    },
+    "Same lang.": {
+      "n": 163,
+      "Adv. 8b": 0.9866,
+      "Adv. 70b": 0.9864,
+      "Beg. 8b": 0.9794,
+      "Beg. 70b": 0.9866
+    },
+    "Cross-ling.": {
+      "n": 330,
+      "Adv. 8b": 0.9426,
+      "Adv. 70b": 0.9576,
+      "Beg. 8b": 0.976,
+      "Beg. 70b": 0.9765
+    },
+    "Claim DE": {
+      "n": 163,
+      "Adv. 8b": 0.9499,
+      "Adv. 70b": 0.9628,
+      "Beg. 8b": 0.9549,
+      "Beg. 70b": 0.9618
+    },
+    "Booklet DE": {
+      "n": 152,
+      "Adv. 8b": 0.9798,
+      "Adv. 70b": 0.9606,
+      "Beg. 8b": 0.9733,
+      "Beg. 70b": 0.9869
+    },
+    "Claim FR": {
+      "n": 165,
+      "Adv. 8b": 0.9453,
+      "Adv. 70b": 0.9575,
+      "Beg. 8b": 0.9824,
+      "Beg. 70b": 0.9888
+    },
+    "Booklet FR": {
+      "n": 186,
+      "Adv. 8b": 0.9663,
+      "Adv. 70b": 0.9827,
+      "Beg. 8b": 0.9833,
+      "Beg. 70b": 0.9887
+    },
+    "Claim IT": {
+      "n": 165,
+      "Adv. 8b": 0.9755,
+      "Adv. 70b": 0.9813,
+      "Beg. 8b": 0.9939,
+      "Beg. 70b": 0.9877
+    },
+    "Booklet IT": {
+      "n": 155,
+      "Adv. 8b": 0.9201,
+      "Adv. 70b": 0.9511,
+      "Beg. 8b": 0.974,
+      "Beg. 70b": 0.9652
+    }
+  }
+}
