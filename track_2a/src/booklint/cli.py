@@ -106,12 +106,12 @@ def check_case(pipeline, c, claim_lang=None):
         c["vote"],
         case_id=c["id"],
     )
-    if not c["booklet"] and c.get("reference_page"):
-        # Beginner case whose reference carries its page: cite that page instead of 1.
+    if not c["booklet"]:
+        # Reference task (B): no PDF page; OST asks for "page": null unless the reference names its page.
+        page = c.get("reference_page")
         for item in out.get("evidence", []) + out.get("evidence_sentences", []):
-            item["page"] = c["reference_page"]
-        if out.get("page") is not None:
-            out["page"] = c["reference_page"]
+            item["page"] = page
+        out["page"] = page if out.get("evidence") else None
     return out
 
 
@@ -704,6 +704,8 @@ def main(argv=None):
     )
     p.add_argument(
         "--case",
+        "--input",
+        dest="case",
         default=None,
         help='OST input case(s): JSON object, list or JSONL file; "-" = stdin',
     )
@@ -771,6 +773,10 @@ def main(argv=None):
     add_common(p)
     p.set_defaults(fn=cmd_bench)
 
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0].split("=")[0] in ("--input", "--output"):
+        # OST's contract: <entrypoint> --input /data/cases.jsonl --output /output/predictions.jsonl
+        argv = ["predict", *argv]
     args = ap.parse_args(argv)
     args.fn(args)
 

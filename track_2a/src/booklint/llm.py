@@ -48,6 +48,33 @@ class Usage:
         }
 
 
+_RESOLVED = {}
+
+
+def resolve_model(client, wanted):
+    """The endpoint's id for the wanted Apertus model. OST's proxy may name it differently
+    (e.g. swiss-ai/Apertus-v1.5-8B-...); the same size is chosen from /models. Unchanged if the list fails."""
+    key = (str(client.base_url), wanted)
+    if key in _RESOLVED:
+        return _RESOLVED[key]
+    choice = wanted
+    try:
+        ids = [m.id for m in client.with_options(timeout=10, max_retries=0).models.list().data]
+        if wanted not in ids:
+            size = re.search(r"(\d+)\s*b\b", wanted.lower())
+            apertus = [i for i in ids if "apertus" in i.lower()]
+            same = [i for i in apertus if size and re.search(rf"(?<!\d){size.group(1)}\s*b\b", i.lower())]
+            pool = same or apertus
+            pool.sort(key=lambda i: ("1.5" not in i, "instruct" not in i.lower(), len(i)))
+            if pool:
+                choice = pool[0]
+                print(f"model {wanted!r} not offered by the endpoint, using {choice!r}", file=sys.stderr)
+    except Exception:
+        pass
+    _RESOLVED[key] = choice
+    return choice
+
+
 class LLM:
     def __init__(self, settings, use_cache=True):
         self.settings = settings
@@ -58,6 +85,8 @@ class LLM:
             timeout=settings.timeout,
             max_retries=1,
         )
+        if os.environ.get("BOOKLINT_RESOLVE_MODEL", "1") != "0":
+            self.model = settings.model = resolve_model(self.client, settings.model)
         self.cache = settings.cache_dir / "llm"
         self.cache.mkdir(parents=True, exist_ok=True)
         self.use_cache = use_cache

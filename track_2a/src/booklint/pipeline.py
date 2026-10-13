@@ -180,14 +180,15 @@ def format_slide25(out, case_id=None):
         raw_ev = out.get("evidence", [])
         if not raw_ev and out.get("evidence_sentences"):
             raw_ev = out["evidence_sentences"]
+        # page null is kept: OST asks for "page": null on reference (task B) evidence.
         ev = [
-            {"page": int(item["page"]), "text": str(item["text"])}
+            {"page": None if item.get("page") is None else int(item["page"]), "text": str(item["text"])}
             for item in raw_ev
-            if "page" in item and "text" in item and item["page"] is not None and item["text"]
+            if "text" in item and item["text"]
         ]
         if not ev and out.get("evidence_sentence"):
-            page = int(out.get("page") or 1)
-            ev = [{"page": page, "text": str(out["evidence_sentence"])}]
+            page = out.get("page")
+            ev = [{"page": None if page is None else int(page), "text": str(out["evidence_sentence"])}]
 
     metrics = out.get("metrics")
     usage = out.get("usage", {})

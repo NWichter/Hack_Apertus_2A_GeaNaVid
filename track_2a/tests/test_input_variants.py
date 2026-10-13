@@ -157,11 +157,12 @@ def test_predict_output_is_jsonl_slide25_for_every_variant(monkeypatch, tmp_path
         }
         assert all(isinstance(v, int) for v in r["metrics"].values())
         assert all(
-            set(e) == {"page", "text"} and isinstance(e["page"], int) and e["text"]
+            set(e) == {"page", "text"} and (e["page"] is None or isinstance(e["page"], int)) and e["text"]
             for e in r["evidence"]
         )
     assert rows[0]["label"] == 0 and {e["page"] for e in rows[0]["evidence"]} == {4}
-    assert rows[1]["evidence"][0]["page"] == 1
+    # task B without a page on the reference: "page": null, as OST's Solution API Guide asks
+    assert rows[1]["evidence"] and all(e["page"] is None for e in rows[1]["evidence"])
     assert rows[3]["label"] == 1 and rows[3]["evidence"] == [] and "error" in rows[3]
 
 
@@ -187,3 +188,46 @@ def test_single_case_to_a_pipe_is_one_line_and_json_list_format(monkeypatch, tmp
         main(["predict", "--case", str(path), "--format", "json", "-o", str(out)])
     data = json.loads(out.read_text(encoding="utf-8"))
     assert isinstance(data, list) and data[0]["id"] == "one"
+
+
+def test_ost_entrypoint_input_output_and_env_names(monkeypatch, tmp_path):
+    """OST runs `<entrypoint> --input /data/cases.jsonl --output /output/predictions.jsonl` with BASE_URL / API_KEY."""
+    for k in ("LLM_BASE_URL", "LLM_API_KEY"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("BASE_URL", "http://fake-proxy")
+    monkeypatch.setenv("API_KEY", "fake-team-key")
+    monkeypatch.setenv("BOOKLINT_ENV_FILE", str(tmp_path / "none.env"))
+    cases = tmp_path / "cases.jsonl"
+    cases.write_text(
+        json.dumps({"id": "v1.1-row-1-B", "reference": {"text": "Die E-ID ist kostenlos.", "language": "de"},
+                    "vote": "E-ID", "claim": {"text": "La E-ID est gratuite.", "language": "fr"}}) + "\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "output" / "predictions.jsonl"
+    with patch("booklint.cli.LLM", return_value=MockLLM(label="entailment")) as llm:
+        main(["--input", str(cases), "--output", str(out)])
+    settings = llm.call_args[0][0]
+    assert (settings.base_url, settings.api_key) == ("http://fake-proxy", "fake-team-key")
+    row = json.loads(out.read_text(encoding="utf-8"))
+    assert row["id"] == "v1.1-row-1-B" and row["label"] == 0
+
+
+def test_resolve_model_maps_size_to_the_endpoint_name():
+    from types import SimpleNamespace
+
+    from booklint import llm as llm_module
+
+    ids = ["swiss-ai/Apertus-v1.5-70B-Instruct", "swiss-ai/Apertus-v1.5-8B-Instruct", "other/model-8b"]
+
+    class Client:
+        base_url = "http://x"
+
+        def with_options(self, **_):
+            return SimpleNamespace(models=SimpleNamespace(list=lambda: SimpleNamespace(data=[SimpleNamespace(id=i) for i in ids])))
+
+    llm_module._RESOLVED.clear()
+    assert llm_module.resolve_model(Client(), "apertus-v1.5-8b") == "swiss-ai/Apertus-v1.5-8B-Instruct"
+    llm_module._RESOLVED.clear()
+    assert llm_module.resolve_model(Client(), "apertus-v1.5-70b") == "swiss-ai/Apertus-v1.5-70B-Instruct"
+    llm_module._RESOLVED.clear()
+    assert llm_module.resolve_model(Client(), "swiss-ai/Apertus-v1.5-8B-Instruct") == "swiss-ai/Apertus-v1.5-8B-Instruct"
