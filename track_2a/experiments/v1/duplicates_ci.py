@@ -1,6 +1,6 @@
 """Macro-F1 intervals on the test split that account for the exact duplicate rows of OST v1.0 (no Apertus calls).
 
-python experiments/v1/duplicates_ci.py
+python experiments/v1/duplicates_ci.py [--v11]   (--v11: OST v1.1, without the 4 test rows OST removed)
 
 For each stored test run: macro-F1 and 95 % percentile bootstrap (2,000 resamples, seed 13) four ways:
   rows       every row independent (as in summary.json)
@@ -13,6 +13,7 @@ Output: runs/v1/test/duplicates-ci.json
 
 import json
 import random
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -69,6 +70,10 @@ def ci(units):
 
 def main():
     rows = rj(ROOT / "data" / "v1" / "test.jsonl")
+    v11 = "--v11" in sys.argv
+    if v11:
+        removed = json.loads((ROOT / "data" / "v1" / "v1.1-removed.json").read_text(encoding="utf-8"))["removed"]
+        rows = [r for r in rows if r["id"] not in removed]
     key = {
         r["id"]: (r["claim"].strip(), r["booklet_url"], r["entailment_label"])
         for r in rows
@@ -97,7 +102,7 @@ def main():
             path = TEST / model / f"{name}.jsonl"
             if not path.exists():
                 continue
-            pred = {p["id"]: p["entailment_label"] for p in rj(path)}
+            pred = {p["id"]: p["entailment_label"] for p in rj(path) if p["id"] in gold}
             assert set(pred) == set(gold), path
             pair = {i: (gold[i], pred[i]) for i in gold}
             all_units = [[pair[i]] for i in gold]
@@ -141,7 +146,7 @@ def main():
         ),
         "ci": [round(diffs[int(0.025 * B)], 3), round(diffs[int(0.975 * B) - 1], 3)],
     }
-    dst = TEST / "duplicates-ci.json"
+    dst = TEST / ("duplicates-ci-v11.json" if v11 else "duplicates-ci.json")
     dst.write_text(
         json.dumps(out, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
     )

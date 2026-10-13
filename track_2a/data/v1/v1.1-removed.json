@@ -1,0 +1,15 @@
+{
+  "note": "OST v1.1 (Hugging Face OSTswiss/MNLIoverSwissVotingBooklets, file v1.1.jsonl, 1,488 rows) is v1.0 without these 7 rows (PR #5 of 2026-10-06, 'Remove Faulty Rows (Vote Text Missing)'). Matched by claim, reference_string, booklet_url, label and vote; all other 1,488 rows are unchanged. IDs are ours (v1-<row index in v1.0>).",
+  "v1.1_sha256": "87ee4afd9c0ee8861106c50f05884481402ca668aecf927df68fc52d915b02fd",
+  "hf_revision_checked": "fc2b27600310778da6bbf445651ddbca22d86269",
+  "checked": "2026-10-13",
+  "removed": {
+    "v1-0129": "test",
+    "v1-0414": "test",
+    "v1-1070": "test",
+    "v1-1158": "test",
+    "v1-0486": "dev",
+    "v1-1177": "dev",
+    "v1-1491": "dev_s"
+  }
+}

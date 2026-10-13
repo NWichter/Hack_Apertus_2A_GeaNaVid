@@ -32,6 +32,9 @@ ABLATION_BASE = {"mode": "ladder", "translate": False, "fewshot": 0, "decompose"
 
 def load(split):
     """dev_rest = the 548 dev rows outside dev_s, which no option was chosen on."""
+    if split.endswith("_v11"):
+        removed = json.loads((ROOT / "data" / "v1" / "v1.1-removed.json").read_text(encoding="utf-8"))["removed"]
+        return [r for r in load(split[:-4]) if r["id"] not in removed]
     if split == "dev_rest":
         used = {r["id"] for r in load("dev_s")}
         return [r for r in load("dev") if r["id"] not in used]

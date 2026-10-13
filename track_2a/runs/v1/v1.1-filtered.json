@@ -1,0 +1,62 @@
+{
+  "test/apertus-v1.5-8b/baseline": {
+    "n": 493,
+    "macro_f1": 0.72,
+    "input_tokens_mean": 20241.7
+  },
+  "test/apertus-v1.5-8b/final-v2": {
+    "n": 493,
+    "macro_f1": 0.9569,
+    "input_tokens_mean": 2667.2
+  },
+  "test/apertus-v1.5-8b/beginner-default": {
+    "n": 493,
+    "macro_f1": 0.9774,
+    "input_tokens_mean": 2675.4
+  },
+  "test/apertus-v1.5-70b/baseline": {
+    "n": 493,
+    "macro_f1": 0.8886,
+    "input_tokens_mean": 20241.7
+  },
+  "test/apertus-v1.5-70b/final-v2": {
+    "n": 493,
+    "macro_f1": 0.9674,
+    "input_tokens_mean": 1531.6
+  },
+  "test/apertus-v1.5-70b/beginner-default": {
+    "n": 493,
+    "macro_f1": 0.9798,
+    "input_tokens_mean": 2093.4
+  },
+  "dev_s/apertus-v1.5-8b/baseline": {
+    "n": 449,
+    "macro_f1": 0.6541,
+    "input_tokens_mean": 28283.0
+  },
+  "dev_s/apertus-v1.5-8b/final-v2": {
+    "n": 449,
+    "macro_f1": 0.9732,
+    "input_tokens_mean": 2566.0
+  },
+  "dev_s/apertus-v1.5-70b/baseline": {
+    "n": 449,
+    "macro_f1": 0.8528,
+    "input_tokens_mean": 28283.0
+  },
+  "dev_s/apertus-v1.5-70b/final-v2": {
+    "n": 449,
+    "macro_f1": 0.9665,
+    "input_tokens_mean": 1491.1
+  },
+  "dev_rest/apertus-v1.5-8b/final-v2": {
+    "n": 546,
+    "macro_f1": 0.9706,
+    "input_tokens_mean": 2564.5
+  },
+  "dev_rest/apertus-v1.5-70b/final-v2": {
+    "n": 546,
+    "macro_f1": 0.9651,
+    "input_tokens_mean": 1481.2
+  }
+}
