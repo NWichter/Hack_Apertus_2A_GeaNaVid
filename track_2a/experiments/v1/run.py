@@ -6,6 +6,7 @@ Output: runs/v1/<split>/<model>/<name>.{jsonl,config.json,summary.json}
 
 import argparse
 import json
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -101,6 +102,8 @@ def main():
     rows = load(args.split)[: args.limit or None]
     base = ABLATION_BASE if args.base == "ablation" else {}
     opts = Options(**{**base, **json.loads(args.opts)})
+    if args.offline:
+        os.environ["BOOKLINT_RESOLVE_MODEL"] = "0"
     llm = LLM(Settings.from_env(args.model))
     if args.offline:
         def refuse(**_):

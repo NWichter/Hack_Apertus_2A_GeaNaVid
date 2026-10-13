@@ -50,30 +50,108 @@ class Usage:
 
 _RESOLVED = {}
 
+# Spellings of the Apertus models seen in the Hack Apertus guide, OST's Solution API Guide
+# ("swiss-ai/Apertus-v1.5-..."), Hugging Face and the hackathon endpoint; {size} is 8 or 70.
+CANDIDATES = (
+    "swiss-ai/Apertus-v1.5-{size}B",
+    "swiss-ai/Apertus-v1.5-{size}B-Instruct",
+    "apertus-v1.5-{size}b",
+    "swiss-ai/apertus-v1.5-{size}b",
+    "Apertus-v1.5-{size}B",
+    "swiss-ai/Apertus-{size}B-Instruct-2509",
+    "Apertus-{size}B-Instruct-2509",
+    "apertus-{size}b",
+)
+
+
+def warn(message):
+    print(f"WARNING: {message}", file=sys.stderr, flush=True)
+
+
+def model_size(name):
+    m = re.search(r"(?<![\d.])(\d+)\s*b\b", (name or "").lower())
+    return m.group(1) if m else None
+
+
+def _status(exc):
+    return getattr(exc, "status_code", None) or getattr(getattr(exc, "response", None), "status_code", None)
+
+
+def _model_missing(exc):
+    """Errors that mean "this model name is not served here" (404/400/422, or 401/403 naming the model)."""
+    status, text = _status(exc), str(exc).lower()
+    if status in (400, 404, 422):
+        return True
+    return status in (401, 403) and "model" in text
+
+
+def probe(client, model):
+    """One tiny chat call: None if the model answers, else the exception."""
+    try:
+        client.chat.completions.create(model=model, messages=[{"role": "user", "content": "Ja?"}], max_tokens=1,
+                                       temperature=0)
+        return None
+    except RateLimitError:
+        return None
+    except Exception as exc:  # noqa: BLE001
+        return exc
+
+
+def pick_from_list(ids, wanted):
+    """The Apertus model of the wanted size from an endpoint's model list, else the first Apertus model."""
+    apertus = [i for i in ids if "apertus" in i.lower()]
+    size = model_size(wanted)
+    same = [i for i in apertus if size and model_size(i) == size]
+    pool = sorted(same, key=lambda i: ("1.5" not in i, "instruct" not in i.lower(), len(i))) or apertus
+    return pool[0] if pool else None
+
+
+def candidates(wanted):
+    size = model_size(wanted) or "8"
+    other = "70" if size == "8" else "8"
+    out = [c.format(size=size) for c in CANDIDATES] + [c.format(size=other) for c in CANDIDATES]
+    return [c for c in dict.fromkeys(out) if c != wanted]
+
 
 def resolve_model(client, wanted):
-    """The endpoint's id for the wanted Apertus model. OST's proxy may name it differently
-    (e.g. swiss-ai/Apertus-v1.5-8B-...); the same size is chosen from /models. Unchanged if the list fails."""
+    """The model id to send. A test call checks `wanted` first; if the endpoint says the model does not exist,
+    its /models list is read and the Apertus model of the same size is taken; without a list, known spellings
+    are tried one by one. Every change and every failure is reported on stderr; nothing fails silently."""
     key = (str(client.base_url), wanted)
     if key in _RESOLVED:
         return _RESOLVED[key]
+    quick = client.with_options(timeout=30, max_retries=0)
+    exc = probe(quick, wanted)
     choice = wanted
-    try:
-        ids = [m.id for m in client.with_options(timeout=10, max_retries=0).models.list().data]
-        if wanted not in ids:
-            size = re.search(r"(\d+)\s*b\b", wanted.lower())
-            apertus = [i for i in ids if "apertus" in i.lower()]
-            same = [i for i in apertus if size and re.search(rf"(?<!\d){size.group(1)}\s*b\b", i.lower())]
-            pool = same or apertus
-            pool.sort(key=lambda i: ("1.5" not in i, "instruct" not in i.lower(), len(i)))
-            if pool:
-                choice = pool[0]
-                print(f"model {wanted!r} not offered by the endpoint, using {choice!r}", file=sys.stderr)
-    except Exception:
-        pass
+    if exc is not None and not _model_missing(exc):
+        warn(f"test call to model {wanted!r} failed ({redact(type(exc).__name__)}: {redact(exc)[:200]}); "
+             "continuing with this model, cases that fail are answered neutral with an 'error' field")
+    elif exc is not None:
+        warn(f"model {wanted!r} is not served by the endpoint ({_status(exc)}: {redact(exc)[:160]})")
+        ids = None
+        try:
+            ids = [m.id for m in quick.models.list().data]
+        except Exception as list_exc:  # noqa: BLE001
+            warn(f"no model list at {redact(client.base_url)}models ({type(list_exc).__name__}); trying known names")
+        found = pick_from_list(ids, wanted) if ids else None
+        if ids and not found:
+            warn(f"the endpoint lists no Apertus model: {ids[:10]}")
+        if found:
+            choice = found
+            warn(f"using {choice!r} from the endpoint's model list")
+        else:
+            for name in candidates(wanted):
+                if probe(quick, name) is None:
+                    choice = name
+                    warn(f"using {choice!r}, the first known Apertus name the endpoint accepts")
+                    break
+            else:
+                warn("no Apertus model name works at this endpoint; every case will fail and be answered "
+                     "neutral with an 'error' field. Set LLM_NAME to the endpoint's model name.")
+        if model_size(choice) and model_size(choice) != model_size(wanted):
+            warn(f"{choice!r} is not the configured size ({wanted!r})")
     _RESOLVED[key] = choice
     return choice
-
 
 class LLM:
     def __init__(self, settings, use_cache=True):

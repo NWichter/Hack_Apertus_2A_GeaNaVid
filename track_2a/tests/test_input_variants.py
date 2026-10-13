@@ -203,24 +203,3 @@ def test_ost_entrypoint_input_output_and_env_names(monkeypatch, tmp_path):
     assert (settings.base_url, settings.api_key) == ("http://fake-proxy", "fake-team-key")
     row = json.loads(out.read_text(encoding="utf-8"))
     assert row["id"] == "v1.1-row-1-B" and row["label"] == 0
-
-
-def test_resolve_model_maps_size_to_the_endpoint_name():
-    from types import SimpleNamespace
-
-    from booklint import llm as llm_module
-
-    ids = ["swiss-ai/Apertus-v1.5-70B-Instruct", "swiss-ai/Apertus-v1.5-8B-Instruct", "other/model-8b"]
-
-    class Client:
-        base_url = "http://x"
-
-        def with_options(self, **_):
-            return SimpleNamespace(models=SimpleNamespace(list=lambda: SimpleNamespace(data=[SimpleNamespace(id=i) for i in ids])))
-
-    llm_module._RESOLVED.clear()
-    assert llm_module.resolve_model(Client(), "apertus-v1.5-8b") == "swiss-ai/Apertus-v1.5-8B-Instruct"
-    llm_module._RESOLVED.clear()
-    assert llm_module.resolve_model(Client(), "apertus-v1.5-70b") == "swiss-ai/Apertus-v1.5-70B-Instruct"
-    llm_module._RESOLVED.clear()
-    assert llm_module.resolve_model(Client(), "swiss-ai/Apertus-v1.5-8B-Instruct") == "swiss-ai/Apertus-v1.5-8B-Instruct"

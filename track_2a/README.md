@@ -52,8 +52,13 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
 
 `BASE_URL` and `API_KEY` (injected by OST at run time) take precedence over `LLM_BASE_URL` / `LLM_API_KEY` and
 any `.env`; no key is baked into the image. `booklet.path` is relative to `/data` (`BOOKLET_ROOT=/data` in the
-image). The model is `LLM_NAME` (default `apertus-v1.5-8b`); if the endpoint does not offer that name, the Apertus
-model of the same size is taken from its `/models` list (OST's proxy names them `swiss-ai/Apertus-v1.5-...`).
+image). The model is `LLM_NAME` (default `apertus-v1.5-8b`; to submit with 70B, uncomment
+`# ENV LLM_NAME=apertus-v1.5-70b` in the `Dockerfile`). At start one test call checks the name. If the endpoint answers
+that the model does not exist (400/404/422, or 401/403 naming the model), the Apertus model of the same size is
+taken from its `/models` list, or, without a list, the first of the known spellings it accepts
+(`swiss-ai/Apertus-v1.5-70B`, `swiss-ai/Apertus-70B-Instruct-2509`, `apertus-70b`, ... and the 8B forms;
+`CANDIDATES` in `src/booklint/llm.py`). Every switch and every failure is printed on stderr with `WARNING`, and
+the run ends with a count of failed cases, so a wrong name never turns into silent neutral answers.
 The same works without Docker as `booklint --input cases.jsonl --output predictions.jsonl`.
 
 Input, one JSON object per line, task A and B mixed:

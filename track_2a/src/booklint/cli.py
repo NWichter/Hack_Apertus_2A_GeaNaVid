@@ -129,6 +129,7 @@ def run_rows(pipeline, rows, workers):
             out = check_case(pipeline, c)
         except Exception as exc:
             out = failure(cid, exc)
+            print(f"WARNING: case {cid!r} failed and is answered neutral: {out['error']}", file=sys.stderr, flush=True)
         out["id"] = cid
         return out
 
@@ -382,6 +383,7 @@ def cmd_predict(args):
     as_list = args.format == "json"
     if as_list:
         sink.write("[\n")
+    failed_ids = []
     try:
         for n, c in enumerate(cases):
             try:
@@ -397,7 +399,8 @@ def cmd_predict(args):
                 result = dict(
                     format_slide25(failed, case_id=c["id"]), error=failed["error"]
                 )
-                print(f"case {c['id']!r} failed: {failed['error']}", file=sys.stderr)
+                failed_ids.append(c["id"])
+                print(f"WARNING: case {c['id']!r} failed and is answered neutral: {failed['error']}", file=sys.stderr, flush=True)
             indent = 2 if single else None
             line = json.dumps(result, ensure_ascii=False, indent=indent)
             sink.write(
@@ -409,6 +412,9 @@ def cmd_predict(args):
             sink.write("\n]\n")
         if sink is not sys.stdout:
             sink.close()
+        if failed_ids:
+            print(f"WARNING: {len(failed_ids)} of {len(cases)} cases failed and were answered neutral "
+                  f"(field 'error' in the output); first: {failed_ids[:5]}", file=sys.stderr, flush=True)
 
 
 def cmd_run(args):
