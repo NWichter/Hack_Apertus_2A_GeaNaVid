@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -93,9 +94,11 @@ def failure(cid, exc):
 
 
 def check_case(pipeline, c, claim_lang=None):
+    if c.get("error"):
+        raise ValueError(c["error"])
     if not c["claim"] or not (c["booklet"] or c["reference"]):
         raise ValueError("case needs a claim and a booklet path or a reference text")
-    return pipeline.check(
+    out = pipeline.check(
         c["claim"],
         c["booklet"],
         claim_lang or c["claim_lang"],
@@ -103,6 +106,13 @@ def check_case(pipeline, c, claim_lang=None):
         c["vote"],
         case_id=c["id"],
     )
+    if not c["booklet"] and c.get("reference_page"):
+        # Beginner case whose reference carries its page: cite that page instead of 1.
+        for item in out.get("evidence", []) + out.get("evidence_sentences", []):
+            item["page"] = c["reference_page"]
+        if out.get("page") is not None:
+            out["page"] = c["reference_page"]
+    return out
 
 
 def run_rows(pipeline, rows, workers):
@@ -196,6 +206,8 @@ def resolve_booklet(path, case_dir=None):
     """Booklet path as given; a relative path is read below BOOKLET_ROOT when it is set. A path that does not
     exist is also looked up below the usual mount points, next to the case file and by file name; the path
     taken is reported on stderr."""
+    if path and path.lower().startswith("file://"):
+        path = path[7:]
     if not path or "://" in path:
         return path
     root = os.environ.get("BOOKLET_ROOT")
@@ -204,36 +216,145 @@ def resolve_booklet(path, case_dir=None):
         return primary
     key = (path, root, str(case_dir or ""))
     if key not in _resolved:
-        found = next((c for c in _booklet_candidates(path, case_dir) if c.is_file()), None)
+        found = next(
+            (c for c in _booklet_candidates(path, case_dir) if c.is_file()), None
+        )
         _resolved[key] = str(found) if found else primary
         if found:
-            print(f"booklet {path!r} not found at {primary!r}, using {str(found)!r}", file=sys.stderr)
+            print(
+                f"booklet {path!r} not found at {primary!r}, using {str(found)!r}",
+                file=sys.stderr,
+            )
     return _resolved[key]
 
 
+def _text(value, *keys):
+    """A non-empty string, or the first non-empty string under one of `keys` of a dict; a list is joined."""
+    if isinstance(value, dict):
+        return next((t for t in (_text(value.get(k)) for k in keys) if t), None)
+    if isinstance(value, list):
+        parts = [_text(v, *keys) for v in value]
+        return "\n\n".join(p for p in parts if p) or None
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return str(value)
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _first(r, *keys):
+    return next((r[k] for k in keys if r.get(k) not in (None, "", {}, [])), None)
+
+
+LANGS = {"de", "fr", "it"}
+
+
+def _lang(*values):
+    for v in values:
+        v = (_text(v) or "").lower()[:2]
+        if v in LANGS:
+            return v
+    return None
+
+
+def _page(value):
+    try:
+        page = int(value)
+    except (TypeError, ValueError):
+        return None
+    return page if page > 0 else None
+
+
 def normalize_case(r, case_dir=None):
-    """Flat dataset rows and OST task cases (slide 24: booklet.path, claim.text, reference.text) -> one shape."""
+    """Flat dataset rows and OST task cases (slide 24: booklet.path, claim.text, reference.text) -> one shape.
+    Also accepted: plain strings instead of the nested objects, `url`/`file` for the booklet, `title` for a
+    nested vote, `hypothesis`/`premise`, a language next to the claim and a page next to the reference."""
+    if not isinstance(r, dict):
+        r = {"_error": f"case is a {type(r).__name__}, not a JSON object"}
+    claim = _first(r, "claim", "hypothesis", "claim_text", "statement")
+    booklet = _first(
+        r,
+        "booklet",
+        "booklet_path",
+        "booklet_url",
+        "booklet_file",
+        "pdf",
+        "pdf_path",
+        "document",
+    )
+    reference = _first(
+        r,
+        "reference",
+        "reference_string",
+        "reference_text",
+        "premise",
+        "passage",
+        "context",
+    )
+    vote = _first(r, "vote", "vote_title", "proposal", "title")
+    cid = _first(r, "id", "case_id", "uid", "pair_id")
     return {
-        "id": str(r.get("id") or ""),
-        "claim": _field(r.get("claim"), "text"),
+        "id": "" if cid is None else str(cid),
+        "claim": _text(claim, "text", "claim"),
         "booklet": resolve_booklet(
-            _field(r.get("booklet"), "path") or r.get("booklet_path") or r.get("booklet_url"),
+            _text(booklet, "path", "file", "pdf", "url", "booklet_path", "booklet_url"),
             case_dir,
         ),
-        "reference": _field(r.get("reference"), "text") or r.get("reference_string"),
-        "vote": r.get("vote"),
-        "claim_lang": r.get("claim_language"),
+        "reference": _text(reference, "text", "reference_string", "passage"),
+        "reference_page": _page(_first(reference, "page", "page_number", "pdf_page"))
+        if isinstance(reference, dict)
+        else _page(r.get("reference_page")),
+        "vote": _text(vote, "title", "text", "name", "vote"),
+        "claim_lang": _lang(
+            r.get("claim_language"),
+            r.get("claim_lang"),
+            claim.get("language") if isinstance(claim, dict) else None,
+            claim.get("lang") if isinstance(claim, dict) else None,
+        ),
+        "error": r.get("_error"),
     }
 
 
+def _items(data):
+    """A case object, a list of cases, or an object that wraps the list ({"cases": [...]})."""
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and not any(
+        k in data for k in ("claim", "hypothesis", "claim_text")
+    ):
+        for key in ("cases", "data", "items", "instances", "examples", "rows"):
+            if isinstance(data.get(key), list):
+                return data[key]
+    return [data]
+
+
 def read_cases(path):
-    """A file with one JSON object, a JSON list, or JSONL; "-" reads stdin."""
-    raw = sys.stdin.read() if path == "-" else Path(path).read_text(encoding="utf-8")
+    """A file with one JSON object, a JSON list (or an object wrapping it), or JSONL; "-" reads stdin.
+    A UTF-8 BOM is ignored; a JSONL line that is not valid JSON becomes a failed case, not a crash."""
+    if path == "-":
+        buffer = getattr(sys.stdin, "buffer", None)
+        raw = (
+            buffer.read().decode("utf-8-sig", errors="replace")
+            if buffer
+            else sys.stdin.read().lstrip("﻿")
+        )
+    else:
+        raw = Path(path).read_bytes().decode("utf-8-sig", errors="replace")
     try:
-        data = json.loads(raw)
-        items = data if isinstance(data, list) else [data]
+        items = _items(json.loads(raw))
     except json.JSONDecodeError:
-        items = [json.loads(line) for line in raw.splitlines() if line.strip()]
+        items = []
+        for n, line in enumerate(raw.splitlines(), start=1):
+            if not line.strip():
+                continue
+            try:
+                items.extend(_items(json.loads(line)))
+            except json.JSONDecodeError as exc:
+                found = re.search(r'"(?:id|case_id)"\s*:\s*"?([^",}]+)', line)
+                items.append(
+                    {
+                        "id": found.group(1) if found else f"line-{n}",
+                        "_error": f"invalid JSON on line {n}: {exc}",
+                    }
+                )
     case_dir = None if path == "-" else str(Path(path).resolve().parent)
     return [normalize_case(c, case_dir) for c in items]
 
@@ -258,28 +379,46 @@ def cmd_predict(args):
         ]
     llm = LLM(Settings.from_env(args.model), use_cache=not args.no_cache)
     pipelines = {}
-    single = len(cases) == 1 and not (args.case and args.case.endswith(".jsonl"))
     if args.output:
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         sink = open(args.output, "w", encoding="utf-8", newline="\n")
     else:
         sink = sys.stdout
+    # One compact line per case, so the output is always valid JSONL; pretty only for one case on a terminal.
+    single = (
+        len(cases) == 1
+        and sink is sys.stdout
+        and sys.stdout.isatty()
+        and args.format == "jsonl"
+    )
+    as_list = args.format == "json"
+    if as_list:
+        sink.write("[\n")
     try:
-        for c in cases:
+        for n, c in enumerate(cases):
             try:
                 mode = args.mode or (None if c["booklet"] else "easy")
                 if mode not in pipelines:
                     pipelines[mode] = Pipeline(llm, options_from(args, mode=mode))
                 case = dict(c, reference=None if c["booklet"] else c["reference"])
-                result = format_slide25(check_case(pipelines[mode], case, args.claim_lang), case_id=c["id"])
+                result = format_slide25(
+                    check_case(pipelines[mode], case, args.claim_lang), case_id=c["id"]
+                )
             except Exception as exc:
                 failed = failure(c["id"], exc)
-                result = dict(format_slide25(failed, case_id=c["id"]), error=failed["error"])
+                result = dict(
+                    format_slide25(failed, case_id=c["id"]), error=failed["error"]
+                )
                 print(f"case {c['id']!r} failed: {failed['error']}", file=sys.stderr)
             indent = 2 if single else None
-            sink.write(json.dumps(result, ensure_ascii=False, indent=indent) + "\n")
+            line = json.dumps(result, ensure_ascii=False, indent=indent)
+            sink.write(
+                (",\n" if as_list and n else "") + line + ("" if as_list else "\n")
+            )
             sink.flush()
     finally:
+        if as_list:
+            sink.write("\n]\n")
         if sink is not sys.stdout:
             sink.close()
 
@@ -589,6 +728,12 @@ def main(argv=None):
     )
     p.add_argument(
         "--no-cache", action="store_true", help="do not reuse cached LLM answers"
+    )
+    p.add_argument(
+        "--format",
+        default="jsonl",
+        choices=["jsonl", "json"],
+        help="jsonl: one JSON object per line (default); json: one JSON list",
     )
     add_common(p)
     p.set_defaults(fn=cmd_predict)

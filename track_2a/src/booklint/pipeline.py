@@ -170,7 +170,9 @@ def format_slide25(out, case_id=None):
     cid = case_id if case_id is not None else out.get("id", "")
     cid_str = str(cid) if cid is not None else ""
     lbl = int(out.get("label", out.get("entailment_label", 1)))
-    lbl_name = str(out.get("label_name", "neutral"))
+    if lbl not in (0, 1, 2):
+        lbl = 1
+    lbl_name = ("entailment", "neutral", "contradiction")[lbl]
 
     if lbl == 1 or lbl_name == "neutral":
         ev = []
