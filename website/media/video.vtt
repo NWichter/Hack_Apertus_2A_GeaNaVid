@@ -121,10 +121,19 @@ GeaNaVid: 0.96.
 0.89, with about 7 % of the tokens.
 
 27
-00:01:43.005 --> 00:01:44.786
-GeaNaVid runs on Apertus.
+00:01:43.005 --> 00:01:44.715
+We submit 70B.
 
 28
-00:01:44.836 --> 00:01:48.625
+00:01:44.765 --> 00:01:49.995
+Synthetic tests on older booklets,
+back to 1998: 0.89.
+
+29
+00:01:50.745 --> 00:01:52.526
+GeaNaVid runs on Apertus.
+
+30
+00:01:52.576 --> 00:01:56.365
 Every Gea and every Na comes
 with the line that decides it.
