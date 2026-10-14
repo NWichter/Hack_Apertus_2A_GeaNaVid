@@ -486,13 +486,15 @@ full run; 40 cases are too few for a macro-F1.
 
 = 5. Reproducibility
 <reproducibility>
-`make run` builds the Docker image and runs the default pipeline on the
-v1.1 test split (`data/v1/test_v11.jsonl`, 493 claims) against the
-endpoint in `BASE_URL` / `API_KEY` (or `LLM_*`); no GPU or local weights
-are needed. Against the live endpoint the result can differ by a few
-labels (see below). Every stored run in `runs/v1/` holds its
-predictions, so the reported numbers can be recomputed without any model
-call (`experiments/v1/report_tables_v11.py`, `generalization.py`,
+Everything runs in Docker: `make test` (unit tests), `make run` (the
+default pipeline on the v1.1 test split, `data/v1/test_v11.jsonl`, 493
+claims, against the endpoint in `BASE_URL` / `API_KEY` or `LLM_*`) and
+`make ost` (a sample through OST's container contract, scored like OST's
+`evaluate.py`); no GPU or local weights are needed. Against the live
+endpoint the result can differ by a few labels (see below). Every stored
+run in `runs/v1/` holds its predictions, so the reported numbers can be
+recomputed without any model call
+(`experiments/v1/report_tables_v11.py`, `generalization.py`,
 `ost_evidence.py`). For OST's cases the image runs as OST specifies:
 `docker run -e BASE_URL -e API_KEY -v <cases>:/data:ro -v <out>:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
 (details in `track_2a/README.md`). `LLM_NAME` selects the model; the

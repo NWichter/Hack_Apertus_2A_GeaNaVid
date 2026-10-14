@@ -23,6 +23,8 @@ are in the technical report, §4.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
+Demo video: [[NIKLAS: video link]] · submitted commit: [[NIKLAS: submission commit]]
+
 ## Judges start here
 
 Requirements: Docker and an OpenAI-compatible Apertus v1.5 endpoint; no GPU, no local weights. Every target runs in
