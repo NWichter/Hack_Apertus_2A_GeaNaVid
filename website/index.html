@@ -300,13 +300,23 @@
               other models) the lead over the whole booklet holds: 0.874 (second evaluation; first 0.845) vs
               0.665 (8B), 0.932 vs 0.872 (70B).
             </li>
+            <li>
+              <strong>Older booklets:</strong> OST v1.1 covers 2020–2026. On a
+              synthetic stress set from 1999–2018 (claims by an open model, labels
+              agreed by two other open models, no human check) task A first fell
+              to 0.79, because older layouts name no proposal in their page
+              headers. Reading the proposal structure from the booklet's own
+              outline raised it, on voting dates held out until the end (141
+              claims), from 0.819 to 0.864 (8B) and from 0.828 to 0.915 (70B).
+              OST results are unchanged.
+            </li>
           </ul>
           <p class="caveat">
             OST v1.1 repeats 122 of the 493 test pairs, so the 95 % intervals
             resample copies together: 0.933–0.980 (8B), 0.944–0.983 (70B);
             without the copies the defaults score 0.957 (8B) and 0.962 (70B).
             8B and 70B do not differ significantly. Variants were built on
-            development data, but test scores were seen 25 times, for 24
+            development data, but test scores were seen 26 times, for 24
             configurations and decided some of them, so the 546
             development claims and the synthetic hold-out are the honest
             checks. The rounds are in docs/ITERATIONS.md.

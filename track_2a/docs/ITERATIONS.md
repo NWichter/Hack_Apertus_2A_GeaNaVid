@@ -2,7 +2,7 @@
 
 How the pipeline improved after the first complete version (`docs/EXPERIMENTS-v1.md`, state of 2026-10-04 05:00).
 Each round: error analysis on development data, one idea, measured on `dev_s` (450 development claims), kept only
-if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was evaluated 25 times, for 24
+if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was evaluated 26 times, for 24
 configurations and decided some defaults, see the technical report, §4). All numbers come from
 `runs/v1/<split>/<model>/<run>.summary.json`; `python experiments/v1/run.py --base default ...` reproduces them
 from the response cache.
@@ -297,3 +297,39 @@ old and new interleaved in one session: 1,338 / 2,050 → 1,274 / 2,197 ms (mean
 0.937 → 0.956 (one flip). OST's Docker run on all 493 test rows (70B, rerun): task A 0.965, 312 of 324 evidence, task B
 0.976, 1,460 tokens, 1,059 / 2,344 ms. Note: the six few-shot rows lie in `dev_rest` (three used by 8B), so `dev_rest`
 is not fully clean for 8B; 8B is unchanged in this round. Calls: several thousand, not counted exactly (dev runs, cold runs, test 70B, Docker 70B).
+
+## 14 October (afternoon): older booklets (stress set 1999–2018)
+
+A synthetic stress set on 10 voting dates outside OST (`data/stress-synth/`, 298 claims; generator Nemotron 3 Ultra,
+judges Gemma 4 31B and Qwen3-235B, no human) showed task A at 0.788 (8B) / 0.791 (70B) against task B 0.889 / 0.976.
+Before any change the set was split by voting date (`experiments/stress/split.py`, seeded, stratified by failure type):
+`dev` 2005, 2008, 2010, 2016, 2018 (157 claims), `holdout` 1999, 2002, 2013, 2014, 2017 (141 claims). Development used
+only `dev` and OST development data. Caveat: the first stress report (read before the split) described the failure of
+every date, the held-out ones included.
+
+Guard for OST: `experiments/stress/scope_regress.py` stores the region `locate()` gives for all 1,488 OST v1.1 rows;
+after every change 0 rows differ, no OST booklet uses the outline (60 of 60 keep their header structure), and an offline
+replay of dev_s, dev_rest and test (`replay-v6`, both models, 0 uncached calls) gives the stored labels on every row.
+
+| # | idea (stress `dev` half, task A, 8B / 70B) | proposal right | macro-F1 | input tokens | kept |
+| - | ---- | ---- | ---- | ---- | ---- |
+| – | before (first stress run, same code as the defaults) | 17 / 157 | 0.760 / 0.757 | 1,997 / 1,276 | – |
+| 20 | outline: proposals from lines "Erste Vorlage / Premier objet / Primo oggetto", else from the overview's page ranges (6+ pages, not nested); garbled header names and garbled text (> 5 % of a booklet) ignored; used only when the headers give fewer than two readable proposals | 157 / 157 | 0.830 / 0.884 | 2,100 / 1,379 | **yes** |
+| 21 | no section boost when the proposals come from the outline (gold page in the hits, 70B: 0.567 → 0.732) | 157 / 157 | 0.877 / 0.929 | 2,153 / 1,464 | **yes** |
+| 22 | k = 7 instead of 5 for outline layouts (gold page in the hits 0.73 → 0.80) | 157 / 157 | 0.876 / **0.955** | 2,530 / 1,802 | **70B only** (8B not better) |
+| 22b | recommendation routing restricted to the region | | 0.870 / 0.955 | | no (8B not better; within noise) |
+| 23 | 8B: re-check every neutral answer (`recheck_below` 1.01) | | 0.858 / – | 2,548 / – | no (dev_s 0.971 → 0.973 at +21 % tokens) |
+
+Final run on `dev` with the kept options: 0.864 (8B, run-to-run noise against 0.877 in round 21 at the same options) /
+0.955 (70B). Then the `holdout` half once (A and B, both models):
+
+| held-out half (141) | 8B before → after | 70B before → after |
+| --- | --- | --- |
+| task A macro-F1 | 0.819 → **0.864** | 0.828 → **0.915** |
+| task A evidence (gold page as passage) | 0.674 → 0.800 | 0.684 → 0.842 |
+| task A input tokens | 2,509 → 2,674 | 1,778 → 2,073 |
+| task B macro-F1 | 0.897 → 0.888 | 0.964 → 0.964 |
+
+All 298 claims (dev + held-out): task A 0.788 → 0.864 (8B), 0.791 → 0.936 (70B). Times in these runs come from
+up to eight parallel requests and are not comparable. OST test: the replay is the 26th test evaluation (no new
+configuration on OST): 0.959 / 0.965, unchanged.

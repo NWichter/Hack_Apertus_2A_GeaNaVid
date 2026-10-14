@@ -43,9 +43,12 @@ Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980. On
 546 development claims outside the tuning subset, the defaults reach
 0.971 / 0.971, and on a synthetic hold-out from booklets outside OST
 v1.1 the gap to the baseline carries over (8B 0.874 in its second
-evaluation, first 0.845, vs 0.665; 70B 0.932 vs 0.872). The output is
-never a voting recommendation: every yes or no comes with a quote from
-the booklet; a neutral answer ("blank") cites nothing.
+evaluation, first 0.845, vs 0.665; 70B 0.932 vs 0.872). On older
+booklets (1999--2018, a synthetic stress set) task A first fell to 0.79;
+reading the proposal structure of older layouts raised it to 0.864 (8B)
+\/ 0.915 (70B) on dates held out. The output is never a voting
+recommendation: every yes or no comes with a quote from the booklet; a
+neutral answer ("blank") cites nothing.
 
 = 2. System design and architecture
 <system-design-and-architecture>
@@ -185,24 +188,25 @@ rows changes no prediction, so all v1.1 numbers are recomputed from the
 stored runs without new calls (`experiments/v1/replay_v11.py`).
 
 #strong[How often test was used.] Variants were developed on `dev_s`,
-but test was evaluated 25 times over the project, for 24 configurations
-(14 with 8B, 10 with 70B; the 70B compact headers twice, on 4 and 14
-October), plus cold runs on 50 test cases (all stored in `runs/v1/test/`
-and `runs/v1/test_v11/`), and at least three default decisions used
-them: the section step was kept because test agreed, and compact headers
-and the ungated neutral re-check were not adopted for 70B on 4 October
-because test disagreed. Test is therefore not untouched. Two checks that
-did not steer any option: (a) #strong[`dev_rest`], the 546 development
-claims outside `dev_s` (same 13 dates; only the claim-cue → section
-mapping was read off all development claims), evaluated once with the
-final defaults: #strong[0.971 (8B) / 0.971 (70B)], 0.968 / 0.972 without
-claims that also occur in another split; (b) the synthetic hold-out
-below (0.874 / 0.932; the 8B value is its second evaluation, after the
-re-check was added). Over all 20 voting dates (dev + test, 1,488 claims)
-the defaults score 0.967 / 0.971 with a per-date spread of 0.87--1.00
-(s.d. 0.030 / 0.028; `runs/v1/generalization.json`): a hidden set of a
-few voting dates can land several points lower or higher than our test
-split.
+but test was evaluated 26 times over the project, for 24 configurations
+(the 26th, on 14 October, reproduced the stored labels, see "Older
+booklets") (14 with 8B, 10 with 70B; the 70B compact headers twice, on 4
+and 14 October), plus cold runs on 50 test cases (all stored in
+`runs/v1/test/` and `runs/v1/test_v11/`), and at least three default
+decisions used them: the section step was kept because test agreed, and
+compact headers and the ungated neutral re-check were not adopted for
+70B on 4 October because test disagreed. Test is therefore not
+untouched. Two checks that did not steer any option: (a)
+#strong[`dev_rest`], the 546 development claims outside `dev_s` (same 13
+dates; only the claim-cue → section mapping was read off all development
+claims), evaluated once with the final defaults: #strong[0.971 (8B) /
+0.971 (70B)], 0.968 / 0.972 without claims that also occur in another
+split; (b) the synthetic hold-out below (0.874 / 0.932; the 8B value is
+its second evaluation, after the re-check was added). Over all 20 voting
+dates (dev + test, 1,488 claims) the defaults score 0.967 / 0.971 with a
+per-date spread of 0.87--1.00 (s.d. 0.030 / 0.028;
+`runs/v1/generalization.json`): a hidden set of a few voting dates can
+land several points lower or higher than our test split.
 
 #strong[Tokens and time (14 October).] Because OST scores tokens and
 time relative to the other teams, one more round cut both, with the same
@@ -344,6 +348,47 @@ GeaNaVid 0.845 / 0.932 at 9 % / 7 % of the tokens, Beginner 0.855 /
 0.931 (`data/holdout-synth/`). The 8B neutral re-check, added later, was
 evaluated there once more: 0.874 (contradiction F1 0.735 → 0.793).
 
+#strong[Older booklets (stress set, 14 October).] OST v1.1 covers
+2020--2026 only. A second synthetic set covers 10 voting dates from 1999
+to 2018 (298 claims, `data/stress-synth/`): claims written by Nemotron 3
+Ultra from one booklet page each, kept only where two blind judges of
+other model families (Gemma 4 31B, Qwen3-235B) agree; no human checked
+them, and the judges dropped more than half of the generated neutral
+claims, so the scores are rather too high. Task A fell to 0.788 (8B) /
+0.791 (70B), while task B held (0.889 / 0.976). Causes: page headers
+that name no proposal (2008--2018: retrieval over the whole booklet) or
+are font-encoding garbage (2005: the wrong proposal), and the section
+boost, whose headings the older layouts lack. Fix, without LLM calls:
+when the headers give fewer than two readable proposal names, proposals
+start at lines such as "Erste Vorlage / Premier objet / Primo oggetto"
+or at the explanation page ranges of the overview ("Seiten 4--11");
+garbled text is dropped; the section boost is skipped; 70B reads 7
+instead of 5 passages there. No OST booklet takes these paths: an
+offline replay of all OST splits gives the same labels (the 26th test
+evaluation, 0.959 / 0.965). Protocol: the set was split by voting date
+before any change (seeded and stratified; 5 dates to develop on, 5 held
+out), the held-out half was run once:
+
+#figure(
+  align(center)[#table(
+    columns: 3,
+    align: (auto,auto,auto,),
+    table.header([Task A, macro-F1 (8B / 70B)], [Dev half
+      (157)], [Held-out half (141)],),
+    table.hline(),
+    [Before], [0.760 / 0.757], [0.819 / 0.828],
+    [After], [0.864 / 0.955], [#strong[0.864 / 0.915]],
+  )]
+  , kind: table
+  )
+
+On the held-out half input tokens rise from 2,509 / 1,778 to 2,674 /
+2,073 and the evidence score (gold page as passage) from 0.67 / 0.68 to
+0.80 / 0.84; task B is unchanged (0.888 / 0.964). The held-out half is
+not fully clean: the first stress report, read before the split,
+described the failure of every date. Rejected: re-checking every neutral
+8B answer (stress dev 0.858, `dev_s` +0.002 at +21 % tokens).
+
 #strong[Evidence (task A).] With OST's rule, our quotes score
 #strong[0.969 (8B) and 0.963 (70B)] on the 324 gold entailment and
 contradiction cases of test v1.1
@@ -454,18 +499,19 @@ submission commit\]\].
 <limitations>
 493 test claims (371 distinct) from 7 voting dates: differences below
 about 0.02--0.03 macro-F1 are within the cluster-bootstrap interval (the
-defaults differ by 0.006, 70B − 8B), and test was evaluated 25 times
+defaults differ by 0.006, 70B − 8B), and test was evaluated 26 times
 (§4); per voting date the defaults range from 0.87 to 1.00. The
 model-aware defaults (examples and decomposition only for 8B, re-check
 gates per model) were chosen on 450 development claims. The section
-keywords cover the federal booklet layouts of 2018--2026; other layouts
-fall back to plain BM25. Main error sources are topical but unsupported
-claims, attribution (committee vs. Federal Council) and contradictions
-that change one detail, which Apertus calls neutral with high confidence
-(19 of 30 70B errors on development data; the gated re-check finds a
-few, a broader one over-calls contradiction). Booklets without a text
-layer are not handled (OST provides text PDFs). Labels and evidence are
-an automated reading of the booklet, not a voting recommendation.
+keywords cover the federal booklet layouts of 2018--2026; older layouts
+are scoped by their outline (stress set, synthetic, no human labels).
+Main error sources are topical but unsupported claims, attribution
+(committee vs. Federal Council) and contradictions that change one
+detail, which Apertus calls neutral with high confidence (19 of 30 70B
+errors on development data; the gated re-check finds a few, a broader
+one over-calls contradiction). Booklets without a text layer are not
+handled (OST provides text PDFs). Labels and evidence are an automated
+reading of the booklet, not a voting recommendation.
 
 OST's Solution API Guide and starter repository (7--8 October) settled
 page numbering (1-based PDF page), the Beginner page (`null`) and the
@@ -516,7 +562,7 @@ proxy's name for the model by itself.
 - #strong[Read the scoring script.] OST counts a case if any of the
   first five quotes matches; returning five sentences instead of at most
   two raised the evidence score by about four points without a token.
-- #strong[Keep a split nobody looked at.] Test was evaluated 25 times;
+- #strong[Keep a split nobody looked at.] Test was evaluated 26 times;
   the 546 development claims no option was chosen on (0.971 / 0.971) are
   the more honest estimate for unseen claims on the same booklets.
 

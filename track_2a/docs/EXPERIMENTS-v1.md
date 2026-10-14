@@ -354,7 +354,7 @@ CACHE_DIR=<cache without llm/> python experiments/v1/ost_checks.py cold
 
 ## Draft for the technical report (section "Results on OST v1.0")
 
-Superseded by `technical_report.md`: test was later evaluated 25 times (24 configurations) and decided some defaults
+Superseded by `technical_report.md`: test was later evaluated 26 times (24 configurations) and decided some defaults
 (report, §4), so "held-out" and "run once" below describe the state of 4 October only.
 
 > We evaluate on OST's v1.0 benchmark (1,495 claims, 60 booklets, two thirds cross-lingual), split by voting
