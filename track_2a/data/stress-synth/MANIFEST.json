@@ -1,0 +1,112 @@
+{
+  "frozen_at": "2026-10-14T10:43:24+00:00",
+  "note": "Eingefroren, bevor booklint/Apertus auf diesen Daten lief. Synthetisch, nicht OST.",
+  "counts": {
+    "candidates": 439,
+    "passed_text_checks": 433,
+    "clean": 298,
+    "disputed": 135,
+    "clean_labels": {
+      "contradiction": 94,
+      "entailment": 103,
+      "neutral": 101
+    },
+    "clean_same_language": 111,
+    "clean_by_date": {
+      "1999-06-13": 32,
+      "2002-03-03": 31,
+      "2005-06-05": 36,
+      "2008-11-30": 34,
+      "2010-11-28": 34,
+      "2013-03-03": 32,
+      "2014-02-09": 30,
+      "2016-06-05": 27,
+      "2017-05-21": 16,
+      "2018-03-04": 26
+    },
+    "clean_by_booklet_language": {
+      "de": 108,
+      "fr": 98,
+      "it": 92
+    },
+    "clean_by_claim_language": {
+      "de": 93,
+      "it": 95,
+      "fr": 110
+    }
+  },
+  "files": {
+    "generated.jsonl": {
+      "sha256": "592dee12539234f69991aa7dd225910a201a6aabb4f117bc22ebfd2d46661e9f",
+      "bytes": 847500
+    },
+    "generated_neutral.jsonl": {
+      "sha256": "7927b921cf7ee17e32b1add2ebb0c705dba9604d2eefd29d3221577c758d1b70",
+      "bytes": 163702
+    },
+    "candidates.jsonl": {
+      "sha256": "48c4fd72fbb0b6c45496c917256d7049a82f36d5859af612ec997caed550b630",
+      "bytes": 1398111
+    },
+    "judge_gemma.jsonl": {
+      "sha256": "d64ea6b52c899c10348e515fc22edbcecea76828c2f89bd4ff988d2feb3ac02d",
+      "bytes": 534445
+    },
+    "judge_qwen.jsonl": {
+      "sha256": "ffa9bc5a01aef4bae0090324ac65d653db5b23d3857dfa1b34595de009955a99",
+      "bytes": 547237
+    },
+    "clean.jsonl": {
+      "sha256": "89788950bfc86d3add0494b1864926daf2645279a668c56e1b54c886991559a5",
+      "bytes": 1181510
+    },
+    "disputed.jsonl": {
+      "sha256": "4a1939e47091311874ac5939732ab04d10b831220365197b1591eb0d0b4c4ab1",
+      "bytes": 527678
+    },
+    "cases_A.jsonl": {
+      "sha256": "f1482d5e5cc89b7041525721011c37755d0f4b52e21d230a4c7d98c72b658fe9",
+      "bytes": 101357
+    },
+    "cases_B.jsonl": {
+      "sha256": "f443578f01571abeef7d31a43b6ce2745d95a24b1c047d9204aa8f2729f38b76",
+      "bytes": 665475
+    },
+    "download.log": {
+      "sha256": "9760d40707b879fc07689aaa1be7f78cbce9a8f73ca67304bdd1724b9b7af5c4",
+      "bytes": 3980
+    }
+  },
+  "booklets": {
+    "1999-06-13_de.pdf": "80ae33d863978b6c14acfa1fbaa1670d09e83557de0806f9908e3ce15a967961",
+    "1999-06-13_fr.pdf": "6673e7c40d8f2773361a5906a343f2f637b800fa5388181599c6d6b5bf83aa93",
+    "1999-06-13_it.pdf": "0e26af1a1b7acb883e8449f03baa11cf3872f6c1879e3b1cfcdaf3d1b60c6eee",
+    "2002-03-03_de.pdf": "9cad4bb71481a31041e678a545c45ebe096e0fd3819e33bc81567e0e9255fdf8",
+    "2002-03-03_fr.pdf": "45477857a4b850554ec75e3baae765773d17e77c6beb46a7c660c7ecddf1d745",
+    "2002-03-03_it.pdf": "89b432de756a502bf72fe5fd013ec554c851eb7771f38a243b5cd0c08f0aeead",
+    "2005-06-05_de.pdf": "b89055f061bd507e97f6c5c2d4199a0c55e018dbad9204fea5a8b80206c61438",
+    "2005-06-05_fr.pdf": "c628ad255319736c5bb926632704ddd26562dc9a8b252d54542651abecf4e142",
+    "2005-06-05_it.pdf": "4e99dadf7ae62dafeda53c596b07c3341b1db85d73d5edaab05868d6d6fe5438",
+    "2008-11-30_de.pdf": "257853d5b2cbb36df5e6d5f8396a4397e49e76e91ea0d0df2a42fa7d5ac7e687",
+    "2008-11-30_fr.pdf": "8ef06329c370e86d36401ec0399fbf9ae92cbd3512eea3df41e475198c3506ac",
+    "2008-11-30_it.pdf": "ba9612379c8930d8970e93a4a189ec0f5e630597526530fe2f9832dbd56509b9",
+    "2010-11-28_de.pdf": "dbc339eaf98f5df5d57428b9fe671397a169c6b1da16fb44e2b97979a470d7bb",
+    "2010-11-28_fr.pdf": "804d8c168db2176306d44e8374151d0eeb764888508c7aaab3ecda048b33c050",
+    "2010-11-28_it.pdf": "ae1e8c0725bd4e689a0f3d34021f7d3c7d067dd61ba8e04ed6afc749b9c8cbfd",
+    "2013-03-03_de.pdf": "929320ae8027f6fa5c47b32fa6f42194a220d6462cce3a5f42638f3e5ecc0ce7",
+    "2013-03-03_fr.pdf": "7d0833e312fdaca5799db5dec3073ca9319263eceb31f679717eed88d6861939",
+    "2013-03-03_it.pdf": "9ea6522781f3b3dc11e0c7c2ed9c5ec9adc3d38e546e9666919357327ef542da",
+    "2014-02-09_de.pdf": "c684bf9066a07943a0dc31b8c1a3abbb091545e403a36ef0b164da65a00242f3",
+    "2014-02-09_fr.pdf": "ddc9cac23719424b65fe9355f5b5d389546a3c19e99ef8fc028023a31eaa7de9",
+    "2014-02-09_it.pdf": "773252078526a4153b07b21e9fe7a72db5580582251a69b7bf7dcac6946fc3b6",
+    "2016-06-05_de.pdf": "5f8b428a804afe9259e915ea9d0f295a22fb29f2af4b7f92630e032c06ff3170",
+    "2016-06-05_fr.pdf": "3a0ac8be82ba051d0ed2c25682dfb1bb8952d7994edf7d9f38993d0e813b3f8c",
+    "2016-06-05_it.pdf": "bcd5ea23b29cd0f4a101dac9c86a9dacd77212abe884d458cf31ddaf077542f2",
+    "2017-05-21_de.pdf": "73e24b5828f50db10a075d86ea3d09cc3410a4ecac1870998bf38345f355d100",
+    "2017-05-21_fr.pdf": "eef5bc4bb53fa5520e41213a4676044ee7273947397ff8ca0babc73c14f4daf3",
+    "2017-05-21_it.pdf": "71ececaab6231de0c4abfcb096d4ee92cef6728c65629f2c96008a52d9b73894",
+    "2018-03-04_de.pdf": "bbb65d2e83d6569411cc380c60e3c5f04151dcf5777cfd80b44f2ca605002fb3",
+    "2018-03-04_fr.pdf": "a13c00fbc97017eb76e88bf7e6b8a69e003f91cd73f0e6f91cd236a1f75a929f",
+    "2018-03-04_it.pdf": "f75c2493eafd16e9595d01f421cc53eaa23d0f159a7fec4bbe5d7556e5c650fc"
+  }
+}
