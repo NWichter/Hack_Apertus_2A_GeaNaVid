@@ -41,7 +41,7 @@ class Settings:
             model=model
             or os.environ.get("LLM_NAME")
             or os.environ.get("MODEL")
-            or "apertus-v1.5-8b",
+            or "swiss-ai/Apertus-v1.5-70B",
             base_url=base_url,
             api_key=api_key,
             cache_dir=cache_dir(),

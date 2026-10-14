@@ -8,11 +8,33 @@ python experiments/v1/ost_score.py --predictions runs/ost-sample/output/predicti
 
 import argparse
 import json
+import re
 import sys
+import unicodedata
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from ost_evidence import MAX_QUOTES, matches  # noqa: E402
+from rapidfuzz import fuzz
+
+MAX_QUOTES, MAX_CHARS, MIN_RATIO = (
+    5,
+    5000,
+    90,
+)  # as in ost_evidence.py (OST's evaluate.py)
+
+
+def normalize(text):
+    text = unicodedata.normalize("NFKC", text).replace("­", "")
+    text = re.sub(r"(\w) ?-\s*\n\s*(\w)", r"\1\2", text)
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
+def matches(quote, passage):
+    quote, passage = normalize(quote), normalize(passage)
+    return (
+        bool(quote)
+        and len(quote) <= MAX_CHARS
+        and fuzz.partial_ratio(quote, passage) >= MIN_RATIO
+    )
 
 
 def macro_f1(gold, pred):
