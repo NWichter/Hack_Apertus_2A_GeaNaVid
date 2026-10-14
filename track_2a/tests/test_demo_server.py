@@ -131,6 +131,15 @@ def test_info_hides_key(base_url):
     assert "api_key" not in raw and "LLM_API_KEY" not in raw
 
 
+def test_info_shows_both_limits(base_url):
+    req = Request(f"{base_url}/api/info")
+    req.add_header("Authorization", _auth())
+    with urlopen(req) as resp:
+        info = json.loads(resp.read().decode())
+    assert info["rate_limit"].endswith(" s")
+    assert info["global_limit"] == f"{demo_server.GLOBAL_LIMIT_MAX_REQUESTS} requests / {demo_server.GLOBAL_LIMIT_WINDOW_SECONDS} s"
+
+
 def test_predict_beginner_returns_measured_metrics(base_url):
     payload = {
         "id": "t-01",

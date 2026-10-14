@@ -307,6 +307,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
                         for (d, lang), url in sorted(BOOKLETS.items())
                     },
                     "rate_limit": f"{RATE_LIMIT_MAX_REQUESTS} requests / {RATE_LIMIT_WINDOW_SECONDS} s",
+                    "global_limit": f"{GLOBAL_LIMIT_MAX_REQUESTS} requests / {GLOBAL_LIMIT_WINDOW_SECONDS} s",
                 },
             )
             return
