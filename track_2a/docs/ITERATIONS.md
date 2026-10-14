@@ -341,7 +341,7 @@ configuration on OST): 0.959 / 0.965, unchanged.
 A second set by the same method (504 claims, 16 voting dates; `clean-b.jsonl`, OpenRouter cost 0.81 USD) was split by a
 rule fixed in the README before the data existed (seed 20261015): half 1 = 1999-02, 2000, 2003, 2004, 2009, 2011, 2015,
 2018-09 (252 claims), half 2 = 1998, 2001, 2006, 2007, 2012, 2013-09, 2016-09, 2017-09 (252). Both halves were run once
-with the code of round 22, and with the code before round 20 for comparison (`--src` worktree of `30f58d5`):
+with the code of round 22, and with the code before round 20 for comparison (`--src` worktree of `a4ad821`):
 
 | task A, 8B / 70B | before | first run (round 22 code) |
 | --- | --- | --- |
