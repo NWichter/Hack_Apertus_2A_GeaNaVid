@@ -91,6 +91,15 @@
             </div>
           </div>
 
+          <!-- Model: shown only when the endpoint offers more than one Apertus model -->
+          <div class="form-group hidden" id="modelGroup">
+            <label for="modelSelect">
+              <span>Apertus model</span>
+              <span class="hint">8B is faster, 70B slightly more accurate with fewer tokens</span>
+            </label>
+            <select id="modelSelect" class="form-select"></select>
+          </div>
+
           <!-- Dynamic Mode Fields: Beginner (Reference) -->
           <div id="beginnerFields" class="mode-fields">
             <div class="form-group">
@@ -181,6 +190,7 @@
             <div class="verdict-metrics" id="verdictMetrics">
               <span class="metric-item">Tokens: <strong id="metricTokens">-</strong></span>
               <span class="metric-item">Latency: <strong id="metricLatency">- ms</strong></span>
+              <span class="metric-item">Model: <strong id="metricModel">-</strong></span>
             </div>
           </div>
 

@@ -31,6 +31,11 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
   geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
 ```
 
+**Model.** `LLM_NAME` selects the Apertus model: `apertus-v1.5-8b` (image default) or `apertus-v1.5-70b`
+(`-e LLM_NAME=apertus-v1.5-70b`). Recommended for the evaluation: [[NIKLAS: Modellwahl]]. 8B: macro-F1 0.959, 2,159
+input tokens, 366 / 545 ms (mean / p95); 70B: 0.963, 1,418 tokens, 1,342 / 2,015 ms (test split and cold runs, see
+the technical report).
+
 Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path",
 "language"}}` and task B with `"reference": {"text", "language"}` instead of `booklet`, mixed in one file (flat
 variants are read too). Output: one line per case with `id`, `label`, `label_name`, `evidence[{page, text}]`

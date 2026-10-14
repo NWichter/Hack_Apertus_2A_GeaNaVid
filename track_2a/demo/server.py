@@ -57,7 +57,6 @@ DATASET_FILE = TRACK2A_ROOT / "data" / "v1" / "v1.0.jsonl"
 _rate_limits = defaultdict(list)
 _rate_lock = threading.Lock()
 _pipeline_lock = threading.Lock()
-_pipeline_instance = None
 
 
 def check_rate_limit(client_ip):
@@ -134,20 +133,48 @@ OST_EXAMPLES = ost_examples(_ROWS)
 del _ROWS
 
 
-def get_pipeline():
-    global _pipeline_instance
+_pipelines = {}
+_models = None
+
+
+def available_models():
+    """Apertus models the demo offers: DEMO_MODELS (comma-separated), else the Apertus models in the endpoint's
+    /models list, else only the configured LLM_NAME. The first one is the default."""
+    global _models
     with _pipeline_lock:
-        if _pipeline_instance is None:
+        if _models is not None:
+            return _models
+        try:
+            settings = Settings.from_env()
+        except SystemExit as exc:
+            logger.error("LLM backend not configured: %s", exc)
+            return []
+        wanted = [m.strip() for m in os.environ.get("DEMO_MODELS", "").split(",") if m.strip()]
+        if not wanted:
             try:
-                settings = Settings.from_env()
-            except SystemExit as exc:
-                logger.error("LLM backend not configured: %s", exc)
-                return None
-            _pipeline_instance = Pipeline(
-                LLM(settings, use_cache=USE_LLM_CACHE), Options()
-            )
-            logger.info("Pipeline ready, model %s", settings.model)
-        return _pipeline_instance
+                client = LLM(settings, use_cache=USE_LLM_CACHE).client
+                listed = [m.id for m in client.with_options(timeout=10, max_retries=0).models.list().data]
+                wanted = sorted((m for m in listed if "apertus" in m.lower()), key=lambda m: (m != settings.model, m))
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("No model list from the endpoint: %s", redact(exc)[:200])
+        _models = wanted or [settings.model]
+        logger.info("Demo models: %s", ", ".join(_models))
+        return _models
+
+
+def get_pipeline(model=None):
+    models = available_models()
+    if not models:
+        return None
+    model = model or models[0]
+    if model not in models:
+        return None
+    with _pipeline_lock:
+        if model not in _pipelines:
+            settings = Settings.from_env(model)
+            _pipelines[model] = Pipeline(LLM(settings, use_cache=USE_LLM_CACHE), Options())
+            logger.info("Pipeline ready, model %s", _pipelines[model].llm.model)
+        return _pipelines[model]
 
 
 def load_presets():
@@ -252,11 +279,12 @@ class DemoHandler(SimpleHTTPRequestHandler):
             )
             return
         if path == "/api/info":
-            pipe = get_pipeline()
+            models = available_models()
             self._send_json(
                 200,
                 {
-                    "model": pipe.llm.model if pipe else None,
+                    "model": models[0] if models else None,
+                    "models": models,
                     "labels": {"0": "entailment", "1": "neutral", "2": "contradiction"},
                     "booklets": sorted({d for d, _ in BOOKLETS}),
                     "booklet_sources": {
@@ -352,7 +380,11 @@ class DemoHandler(SimpleHTTPRequestHandler):
             self._send_json(400, {"error": "'mode' must be 'beginner' or 'advanced'."})
             return
 
-        pipe = get_pipeline()
+        model = str(payload.get("model") or "").strip() or None
+        if model and model not in available_models():
+            self._send_json(400, {"error": f"Unknown model. Choose one of: {', '.join(available_models())}."})
+            return
+        pipe = get_pipeline(model)
         if pipe is None:
             self._send_json(
                 503, {"error": "The LLM backend is not configured on this server."}
@@ -364,7 +396,8 @@ class DemoHandler(SimpleHTTPRequestHandler):
             logger.error("Inference failed for %s: %s", case_id, redact(exc)[:300])
             self._send_json(502, {"error": "Inference failed. Please try again later."})
             return
-        self._send_json(200, result)
+        # the model goes in a header, so the body stays exactly OST's output format
+        self._send_json(200, result, {"X-Model": pipe.llm.model})
 
 
 def main(argv=None):

@@ -47,15 +47,19 @@ def base_url():
         demo_server.BASIC_AUTH_PASSWORD,
         demo_server.AUTH_ENABLED,
     ) = USER, PASSWORD, True
-    demo_server._pipeline_instance = Pipeline(
-        MockLLM(), Options(decompose=False, fewshot=0)
-    )
+    demo_server._models = ["mock-apertus", "mock-apertus-70b"]
+    big = MockLLM()
+    big.model = "mock-apertus-70b"
+    demo_server._pipelines = {
+        "mock-apertus": Pipeline(MockLLM(), Options(decompose=False, fewshot=0)),
+        "mock-apertus-70b": Pipeline(big, Options(decompose=False, fewshot=0)),
+    }
     server = demo_server.ThreadingHTTPServer(("127.0.0.1", 0), demo_server.DemoHandler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     yield f"http://127.0.0.1:{server.server_address[1]}"
     server.shutdown()
     server.server_close()
-    demo_server._pipeline_instance = None
+    demo_server._models, demo_server._pipelines = None, {}
     (
         demo_server.BASIC_AUTH_USER,
         demo_server.BASIC_AUTH_PASSWORD,
@@ -161,7 +165,7 @@ def test_validation_errors(base_url):
 
 
 def test_upstream_failure_is_an_error_not_a_label(base_url):
-    demo_server._pipeline_instance = Pipeline(
+    demo_server._pipelines["mock-apertus"] = Pipeline(
         MockLLM(fail=True), Options(decompose=False, fewshot=0)
     )
     try:
@@ -170,7 +174,7 @@ def test_upstream_failure_is_an_error_not_a_label(base_url):
         assert exc.value.code == 502
         assert "upstream" not in exc.value.read().decode()
     finally:
-        demo_server._pipeline_instance = Pipeline(
+        demo_server._pipelines["mock-apertus"] = Pipeline(
             MockLLM(), Options(decompose=False, fewshot=0)
         )
 
@@ -206,3 +210,16 @@ def test_start_without_credentials_fails(monkeypatch):
     monkeypatch.setattr(demo_server, "BASIC_AUTH_PASSWORD", "")
     with pytest.raises(SystemExit):
         demo_server.main(["--port", "0"])
+
+
+def test_model_choice_is_listed_used_and_checked(base_url):
+    req = Request(f"{base_url}/api/info")
+    req.add_header("Authorization", _auth())
+    info = json.loads(urlopen(req).read())
+    assert info["models"] == ["mock-apertus", "mock-apertus-70b"] and info["model"] == "mock-apertus"
+    resp = _post(base_url, {"mode": "beginner", "claim": "x", "reference": "y", "model": "mock-apertus-70b"})
+    assert resp.headers["X-Model"] == "mock-apertus-70b" and "model" not in json.loads(resp.read())
+    assert _post(base_url, {"mode": "beginner", "claim": "x", "reference": "y"}).headers["X-Model"] == "mock-apertus"
+    with pytest.raises(HTTPError) as exc:
+        _post(base_url, {"mode": "beginner", "claim": "x", "reference": "y", "model": "gpt-4"})
+    assert exc.value.code == 400

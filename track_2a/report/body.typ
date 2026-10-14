@@ -272,6 +272,8 @@ claim, 8B / 70B where they differ;
   , kind: table
   )
 
+A dash means the step was not run for that model: the three examples and
+the decomposition are 8B steps (examples cost 70B 0.02 on `dev_s`).
 Defaults: 8B three examples, decomposition and the gated neutral
 re-check; 70B sections with compact headers (both since 14 October;
 `runs/v1/test_v11/*/final-v4.*`). The 8B pipeline beats the 8B baseline
@@ -389,7 +391,10 @@ predictions, so the reported numbers can be recomputed without any model
 call (`experiments/v1/report_tables_v11.py`, `generalization.py`,
 `ost_evidence.py`). For OST's cases the image runs as OST specifies:
 `docker run -e BASE_URL -e API_KEY -v <cases>:/data:ro -v <out>:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
-(details in `track_2a/README.md`). Settings: prompt `nli-v1`, k = 5, one
+(details in `track_2a/README.md`). `LLM_NAME` selects the model (image
+default `apertus-v1.5-8b`, `-e LLM_NAME=apertus-v1.5-70b` for 70B);
+recommended for the evaluation: \[\[NIKLAS: Modellwahl\]\]. Both models
+are reported throughout. Settings: prompt `nli-v1`, k = 5, one
 neighbour, temperature 0, JSON schema. Replaying the stored test runs
 from the response cache with the current code gives the same labels on
 all test rows for both models; each run in `runs/v1/` stores its

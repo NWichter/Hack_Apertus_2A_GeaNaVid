@@ -562,3 +562,8 @@ kbd {
 .muted {
   color: var(--text-muted);
 }
+
+.form-group.hidden {
+  display: none;
+}
+

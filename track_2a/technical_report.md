@@ -186,7 +186,8 @@ validity thresholds (macro-F1 ≥ 0.60 on A, ≥ 0.70 on B) are passed by every 
 | **Default 8B:** re-check only if p < 0.999 | **0.959** | – | 2,159 |
 | **Default 70B:** sections + compact headers | – | **0.963** | 1,418 |
 
-Defaults: 8B three examples, decomposition and the gated neutral re-check; 70B sections with compact headers
+A dash means the step was not run for that model: the three examples and the decomposition are 8B steps (examples
+cost 70B 0.02 on `dev_s`). Defaults: 8B three examples, decomposition and the gated neutral re-check; 70B sections with compact headers
 (both since 14 October; `runs/v1/test_v11/*/final-v4.*`). The 8B pipeline beats the 8B baseline by +0.239 and even
 the 70B baseline; 70B gains +0.074. Both need 1.4–2.2 k instead of 20 k input tokens per claim. The section step added +0.011 (8B) and +0.015 (70B) on development data and
 +0.013 / +0.017 on test; the neutral re-check with the committee words added +0.016 / +0.009 on development data
@@ -259,7 +260,8 @@ local weights are needed. Against the live endpoint the result can differ by a f
 stored run in `runs/v1/` holds its predictions, so the reported numbers can be recomputed without any model call
 (`experiments/v1/report_tables_v11.py`, `generalization.py`, `ost_evidence.py`). For OST's cases the image runs as OST specifies:
 `docker run -e BASE_URL -e API_KEY -v <cases>:/data:ro -v <out>:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
-(details in `track_2a/README.md`). Settings: prompt `nli-v1`, k = 5, one neighbour,
+(details in `track_2a/README.md`). `LLM_NAME` selects the model (image default `apertus-v1.5-8b`, `-e LLM_NAME=apertus-v1.5-70b`
+for 70B); recommended for the evaluation: [[NIKLAS: Modellwahl]]. Both models are reported throughout. Settings: prompt `nli-v1`, k = 5, one neighbour,
 temperature 0, JSON schema. Replaying the stored test runs from the response cache with the current code
 gives the same labels on all test rows for both models; each run in `runs/v1/` stores its options, split seed and
 command. At temperature 0 the endpoint is not fully deterministic: a cold rerun of 50 cases gave the same

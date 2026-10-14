@@ -50,6 +50,10 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
   geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
 ```
 
+**Model.** `LLM_NAME` selects the model: `apertus-v1.5-8b` (image default) or `apertus-v1.5-70b`. Recommended for the
+evaluation: [[NIKLAS: Modellwahl]]. To make 70B the image default, uncomment `# ENV LLM_NAME=apertus-v1.5-70b` in the
+`Dockerfile`.
+
 `BASE_URL` and `API_KEY` (injected by OST at run time) take precedence over `LLM_BASE_URL` / `LLM_API_KEY` and
 any `.env`; no key is baked into the image. `booklet.path` is relative to `/data` (`BOOKLET_ROOT=/data` in the
 image). The model is `LLM_NAME` (default `apertus-v1.5-8b`; to submit with 70B, uncomment

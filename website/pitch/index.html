@@ -341,27 +341,28 @@
             <div class="h">FR</div>
             <div class="h">IT</div>
             <div class="h row">DE</div>
-            <div class="c same">0.98</div>
-            <div class="c">0.94</div>
-            <div class="c">0.91</div>
+            <div class="c same"><span>0.98</span><span class="m70">0.98</span></div>
+            <div class="c"><span>0.94</span><span class="m70">0.98</span></div>
+            <div class="c"><span>0.91</span><span class="m70">0.91</span></div>
             <div class="h row">FR</div>
-            <div class="c">0.96</div>
-            <div class="c same">1.00</div>
-            <div class="c">0.86</div>
+            <div class="c"><span>0.96</span><span class="m70">0.97</span></div>
+            <div class="c same"><span>1.00</span><span class="m70">0.98</span></div>
+            <div class="c"><span>0.86</span><span class="m70">0.91</span></div>
             <div class="h row">IT</div>
-            <div class="c">1.00</div>
-            <div class="c">0.96</div>
-            <div class="c same">1.00</div>
+            <div class="c"><span>1.00</span><span class="m70">0.94</span></div>
+            <div class="c"><span>0.96</span><span class="m70">0.97</span></div>
+            <div class="c same"><span>1.00</span><span class="m70">0.98</span></div>
           </div>
           <p class="axis">
-            Macro-F1 per pair, Apertus 8B. Rows: claim language · columns: booklet language.
-            Framed: same language.
+            Macro-F1 per pair: top Apertus 8B, below 70B. Rows: claim language · columns:
+            booklet language. Framed: same language.
           </p>
         </div>
         <div>
-          <div class="big">0.70<small> → 0.94</small></div>
+          <div class="big">0.70<small> → 0.94</small> <span class="tag">8B</span></div>
+          <div class="big">0.74<small> → 0.94</small> <span class="tag">70B</span></div>
           <p class="fact">
-            macro-F1 on the 330 cross-lingual test claims (8B), before and after Apertus
+            macro-F1 on the 330 cross-lingual test claims, before and after Apertus
             translates the claim into the booklet language.
           </p>
           <div class="fix">

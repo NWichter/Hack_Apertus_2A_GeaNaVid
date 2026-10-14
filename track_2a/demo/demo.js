@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const metricLatency = document.getElementById("metricLatency");
   const specStatus = document.getElementById("specStatus");
   const modelBadge = document.getElementById("modelBadge");
+  const modelGroup = document.getElementById("modelGroup");
+  const modelSelect = document.getElementById("modelSelect");
+  const metricModel = document.getElementById("metricModel");
 
   const LABELS = ["entailment", "neutral", "contradiction"];
   let currentMode = "beginner";
@@ -53,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   caseId.addEventListener("input", updateCliPreview);
   claimLang.addEventListener("change", updateCliPreview);
   voteTitle.addEventListener("input", updateCliPreview);
+  modelSelect.addEventListener("change", updateCliPreview);
 
   // Mode Switcher
   function setMode(mode) {
@@ -105,7 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // The CLI call that runs the same pipeline with the same model as this page.
   function updateCliPreview() {
-    const parts = ["booklint", "predict", "--id", shellQuote(caseId.value.trim() || "demo-01")];
+    const parts = [];
+    if (modelSelect.value) parts.push(`LLM_NAME=${modelSelect.value}`);
+    parts.push("booklint", "predict", "--id", shellQuote(caseId.value.trim() || "demo-01"));
     parts.push("--claim", shellQuote(claimText.value.trim() || "<claim>"));
     if (currentMode === "beginner") {
       parts.push("--reference", shellQuote(referenceText.value.trim() || "<reference text>"));
@@ -150,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function populatePresetsDropdown(ost, syn) {
     presetSelect.innerHTML = '<option value="">-- Choose an example or type your own below --</option>';
-    addGroup("OST v1.0 benchmark (real cases, development split), Advanced task", ost, 0);
+    addGroup("OST v1.1 benchmark (real cases, development split), Advanced task", ost, 0);
     addGroup("Synthetic edge cases (LLM-written, not reviewed, never evaluated), Beginner task", syn, ost.length);
   }
 
@@ -180,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     goldLabel = typeof p.label === "number" ? p.label : null;
     presetNote.textContent =
       p.kind === "ost"
-        ? `OST v1.0 ${p.id}, gold label: ${LABELS[p.label]}. The claim language is detected, as in OST's input.`
+        ? `OST v1.1 ${p.id}, gold label: ${LABELS[p.label]}. The claim language is detected, as in OST's input.`
         : `Synthetic ${p.challenge_type || "edge case"}, unreviewed label: ${LABELS[p.label]}. Demo only.`;
 
     updateCliPreview();
@@ -195,6 +201,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data.model) {
           modelBadge.textContent = `Model: ${data.model}`;
         }
+        const models = data.models && data.models.length ? data.models : data.model ? [data.model] : [];
+        modelSelect.innerHTML = "";
+        models.forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = /70b/i.test(m) ? `${m} (70B)` : /8b/i.test(m) ? `${m} (8B)` : m;
+          modelSelect.appendChild(opt);
+        });
+        modelGroup.classList.toggle("hidden", models.length < 2);
         bookletSources = data.booklet_sources || {};
         if (data.booklets && data.booklets.length) {
           const keep = bookletSelect.value;
@@ -237,6 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
       booklet: currentMode === "advanced" ? bookletSelect.value : "",
       booklet_lang: currentMode === "advanced" ? bookletLang.value : "",
       vote: currentMode === "advanced" ? voteTitle.value.trim() : "",
+      model: modelSelect.value || null,
     };
 
     const t0 = performance.now();
@@ -271,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         specStatus.textContent = "Request failed.";
         return;
       }
-      displayResult(data, clientLatency);
+      displayResult(data, clientLatency, res.headers.get("X-Model") || modelSelect.value || "");
     } catch (err) {
       console.error(err);
       jsonOutput.innerHTML = `<code style="color: #ff7b72;">// Network error: ${escapeHtml(err.message)}</code>`;
@@ -282,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Display Result conforming to Slide 25
-  function displayResult(data, clientLatency) {
+  function displayResult(data, clientLatency, usedModel) {
     // Validate Slide 25 Root Keys
     const keys = Object.keys(data);
     const requiredKeys = ["id", "label", "label_name", "evidence", "metrics"];
@@ -318,6 +334,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalTokens = (m.input_tokens || 0) + (m.output_tokens || 0);
     metricTokens.textContent = `${totalTokens} (${m.input_tokens || 0} in / ${m.output_tokens || 0} out)`;
     metricLatency.textContent = `${m.inference_time_ms || clientLatency} ms`;
+    metricModel.textContent = usedModel || "-";
+    if (usedModel) modelBadge.textContent = `Model: ${usedModel}`;
 
     verdictRibbon.classList.remove("hidden");
 

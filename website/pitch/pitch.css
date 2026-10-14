@@ -991,3 +991,24 @@ body.present.idle {
   border: 4px solid #8a94a3;
   border-radius: 50% !important;
 }
+
+/* both models in the language matrix and the translation numbers */
+.grid3 .c {
+  flex-direction: column;
+  gap: 4px;
+}
+.grid3 .c .m70 {
+  font-size: 0.72em;
+  color: var(--muted);
+}
+.s-x .big {
+  font-size: 104px;
+}
+.s-x .big + .big {
+  margin-top: 8px;
+}
+.big .tag {
+  font: 600 32px/1 var(--mono);
+  color: var(--muted);
+  letter-spacing: 0;
+}
