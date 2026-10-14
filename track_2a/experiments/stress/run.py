@@ -21,7 +21,7 @@ from rapidfuzz import fuzz
 
 ROOT = Path(__file__).resolve().parents[2]
 D = ROOT / "data/stress-synth"
-ENV = ROOT.parents[1] / "Hack_Apertus_Apertool" / "intern" / ".env"
+ENV = Path(os.environ.get("BOOKLINT_ENV_FILE", ROOT / ".env"))
 
 
 def norm(text):

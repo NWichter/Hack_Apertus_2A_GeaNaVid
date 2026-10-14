@@ -90,7 +90,7 @@ def main():
     ap.add_argument("--model", default="")
     ap.add_argument("--workers", type=int, default=3)
     args = ap.parse_args()
-    load_dotenv(os.environ.get("HOLDOUT_ENV_FILE", "../../Hack_Apertus_Apertool/intern/.env"))
+    load_dotenv(os.environ.get("HOLDOUT_ENV_FILE", str(Path(__file__).resolve().parents[2] / ".env")))
     if not os.environ.get("OPENROUTER_API_KEY"):
         sys.exit("OPENROUTER_API_KEY missing")
     client = OpenAI(

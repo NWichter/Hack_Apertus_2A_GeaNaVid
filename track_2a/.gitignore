@@ -37,3 +37,4 @@ data/holdout-synth/booklets/
 data/stress-synth/booklets/
 !runs/holdout-synth/
 !runs/stress/
+data/stress-synth/work-set*/

@@ -7,8 +7,10 @@ data/
 │   ├── dev.jsonl            # 998 pairs: prompts, few-shot examples, thresholds
 │   ├── dev_s.jsonl          # 450-pair subset of dev for ablations
 │   ├── test.jsonl           # 497 pairs (test_v11.jsonl: 493, OST v1.1); evaluated 26 times (24 configurations)
+│   ├── test_v11.jsonl       # test without the rows OST removed in v1.1 (v1.1-removed.json; dev_s/dev_rest v1.1 are filtered in code)
 │   └── split.json           # split definition (seed 2026)
 ├── holdout-synth/           # 89 synthetic hold-out pairs from 2018/2019 booklets, NOT OST, evaluated after the defaults were fixed (README there)
+├── stress-synth/            # 802 synthetic pairs on 26 older voting dates (1998–2018), NOT OST, generalisation check (README there)
 ├── edge_cases.jsonl         # 24 synthetic stress pairs, NOT part of the OST benchmark, CDLA-Permissive-2.0
 ├── LICENSE-edge_cases       # CDLA-Permissive-2.0 text for edge_cases.jsonl
 ├── manifest.json            # sha256, sizes, label and language counts
@@ -68,8 +70,8 @@ invented `metrics` values of the 24 pairs.
 | `v1/{dev,dev_s,test}.jsonl`, `split.json` | derived from `v1.0.jsonl` by `experiments/v1/split.py` (seed 2026); rerunning the script reproduces all four files byte for byte | us (script) | as v1.0, plus `id` | tuning on dev, final numbers on test | yes |
 | `edge_cases.jsonl` | this repository | Gemini 3.8 Flash via Antigravity CLI (2026-10-03), edited 2026-10-04 | `provenance.*` on all 24 rows | demo presets and qualitative stress tests (Romansh, traps) | yes |
 | `archive/demo-2026-10-01/demo.jsonl` | OST demo `demo_2026_09_28_1130.jsonl`, commit `43f8aa356dc16f5d1c434781749d1118f9503f04` (2026-09-28); rows identical to the HF file apart from the added `id` | OST | `booklet_url`, dates | first prototype before v1.0 existed | yes (archived) |
-| `archive/demo-2026-10-01/demo_crossling.jsonl` | derived from the demo by `src/data_prep/crosslingual.py` (no LLM) | us (script) | `author: ost_demo`, `generator_model` | first cross-lingual tests | yes (archived) |
-| `archive/synthetic-2026-10-01/` | `synthetic-v0` built by `src/data_prep/` | Claude Opus 5.5 and GPT-5.5 (Codex CLI), 2026-10-01, prompt `gen-v1`; cross-lingual copies by script | `author`, `generator_model` (full provenance only in the local `merged.v0.jsonl`) | development before v1.0; superseded | no (gitignored, local only) |
+| `archive/demo-2026-10-01/demo_crossling.jsonl` | derived from the demo by a small script (no LLM; not part of the repository) | us (script) | `author: ost_demo`, `generator_model` | first cross-lingual tests | yes (archived) |
+| `archive/synthetic-2026-10-01/` | `synthetic-v0`, built by internal generation scripts (not part of the repository) | Claude Opus 5.5 and GPT-5.5 (Codex CLI), 2026-10-01, prompt `gen-v1`; cross-lingual copies by script | `author`, `generator_model` (full provenance only in the local `merged.v0.jsonl`) | development before v1.0; superseded | no (gitignored, local only) |
 
 No reported number uses the edge cases or the archived sets. The OST dataset card gives no citation; cite it
 as: OST Ostschweizer Fachhochschule, *MNLIoverSwissVotingBooklets* v1.0, Hugging Face, commit `adca9a5`, 2026.
@@ -89,3 +91,4 @@ both dev and test (against different booklets).
 - `edge_cases.jsonl` is our submitted dataset: CDLA-Permissive-2.0, see [`LICENSE-edge_cases`](LICENSE-edge_cases).
 - `v1/` and `archive/demo-2026-10-01/` are OST data and splits derived from it: MIT, as published by OST.
   They are not relicensed.
+- `holdout-synth/` and `stress-synth/`: CDLA-Permissive-2.0, see the `LICENSE` file in each folder.

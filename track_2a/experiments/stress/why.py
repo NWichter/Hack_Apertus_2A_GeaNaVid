@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "src"))
 D = ROOT / "data/stress-synth"
 os.environ.setdefault(
     "BOOKLINT_ENV_FILE",
-    str(ROOT.parents[1] / "Hack_Apertus_Apertool" / "intern" / ".env"),
+    str(ROOT / ".env"),
 )
 os.environ.pop("BASE_URL", None)
 os.environ.pop("API_KEY", None)

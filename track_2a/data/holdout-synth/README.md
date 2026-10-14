@@ -26,7 +26,7 @@ Scripts are in `experiments/holdout/`:
 | `pdftext.py` | PyMuPDF text extraction, line joining and the loose normalisation used for checks |
 | `build_candidates.py` | Builds `holdout-candidates.jsonl` from `spec.py` and the PDFs (keeps existing `judge_*` fields) |
 | `verify.py` | Checks that every `reference_string` line and every evidence text occur in the PDF (evidence on the stated page) and prints the counts |
-| `run_codex.py` | Blind Codex judge, writes `judge_codex` |
+| (not in the repository) | the blind Codex judge (a CLI agent run); its answers are stored in `judge_codex` |
 | `export_judge_cases.py` | Writes `judge-cases.jsonl` |
 | `run_nemotron.py` | Blind Nemotron judge on OpenRouter, writes `judge_nemotron`, `holdout.jsonl`, `holdout-dropped.jsonl` |
 | `evaluate.py` | The one-time evaluation with booklint (`runs/holdout-synth/<model>/<mode>.*`) |

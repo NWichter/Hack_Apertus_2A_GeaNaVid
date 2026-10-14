@@ -126,7 +126,7 @@ def main():
             fh.write(json.dumps(p, ensure_ascii=False) + "\n")
     config = {"name": args.name, "split": args.split, "model": args.model, "options": asdict(opts),
               "split_seed": 2026, "rows": len(rows), "started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-              "command": " ".join(sys.argv)}
+              "command": " ".join([Path(sys.argv[0]).resolve().relative_to(ROOT).as_posix(), *sys.argv[1:]])}
     (out / f"{args.name}.config.json").write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (out / f"{args.name}.summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     keys = ["macro_f1", "ci95", "evidence_first_in_gold", "evidence_page_gold", "input_tokens_mean", "f1_e", "f1_n", "f1_c", "macro_f1_same", "macro_f1_cross", "recall_hit",

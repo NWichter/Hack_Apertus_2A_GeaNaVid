@@ -82,7 +82,7 @@ Licences follow the Hack Apertus Terms & Conditions (6. What you build is open s
 
 | Part | License | File |
 | --- | --- | --- |
-| Code: `track_2a/` (package `booklint`, `data_prep`, experiments, tests, demo), `website/` | Apache-2.0 | [`LICENSE`](LICENSE) |
+| Code: `track_2a/` (package `booklint`, experiments, tests, demo), `website/` | Apache-2.0 | [`LICENSE`](LICENSE) |
 | Documentation and technical report: README files, `track_2a/docs/`, `track_2a/technical_report.md`, `track_2a/report/`, `track_2a/Apertool_Report.pdf`, pitch slides | CC-BY-4.0 | [`LICENSE-docs`](LICENSE-docs) |
 | Submitted dataset: 24 synthetic edge cases, `track_2a/data/edge_cases.jsonl` | CDLA-Permissive-2.0 | [`track_2a/data/LICENSE-edge_cases`](track_2a/data/LICENSE-edge_cases) |
 | Synthetic hold-out `track_2a/data/holdout-synth/` and stress sets `track_2a/data/stress-synth/` (claims, labels, judge outputs; quoted booklet passages are official texts under Art. 5 URG) | CDLA-Permissive-2.0 | [`holdout-synth/LICENSE`](track_2a/data/holdout-synth/LICENSE), [`stress-synth/LICENSE`](track_2a/data/stress-synth/LICENSE) |
