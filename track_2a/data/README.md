@@ -89,6 +89,6 @@ both dev and test (against different booklets).
 ## Licences
 
 - `edge_cases.jsonl` is our submitted dataset: CDLA-Permissive-2.0, see [`LICENSE-edge_cases`](LICENSE-edge_cases).
-- `v1/` and `archive/demo-2026-10-01/` are OST data and splits derived from it: MIT, as published by OST.
-  They are not relicensed.
+- `v1/` and `archive/demo-2026-10-01/` are OST data and splits derived from it: MIT, as published by OST
+  (text in [`v1/LICENSE`](v1/LICENSE)). They are not relicensed.
 - `holdout-synth/` and `stress-synth/`: CDLA-Permissive-2.0, see the `LICENSE` file in each folder.

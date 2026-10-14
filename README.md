@@ -87,10 +87,11 @@ Licences follow the Hack Apertus Terms & Conditions (6. What you build is open s
 | Documentation and technical report: README files, `track_2a/docs/`, `track_2a/technical_report.md`, `track_2a/report/`, `track_2a/Apertool_Report.pdf`, pitch slides | CC-BY-4.0 | [`LICENSE-docs`](LICENSE-docs) |
 | Submitted dataset: 24 synthetic edge cases, `track_2a/data/edge_cases.jsonl` | CDLA-Permissive-2.0 | [`track_2a/data/LICENSE-edge_cases`](track_2a/data/LICENSE-edge_cases) |
 | Synthetic hold-out `track_2a/data/holdout-synth/` and stress sets `track_2a/data/stress-synth/` (claims, labels, judge outputs; quoted booklet passages are official texts under Art. 5 URG) | CDLA-Permissive-2.0 | [`holdout-synth/LICENSE`](track_2a/data/holdout-synth/LICENSE), [`stress-synth/LICENSE`](track_2a/data/stress-synth/LICENSE) |
+| OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0/v1.1 and our splits (`track_2a/data/v1/`), archived OST demo (`track_2a/data/archive/demo-2026-10-01/`); not ours, not relicensed | MIT (OST – Ostschweizer Fachhochschule, dataset authors; [dataset card](https://huggingface.co/datasets/OSTswiss/MNLIoverSwissVotingBooklets)) | [`track_2a/data/v1/LICENSE`](track_2a/data/v1/LICENSE) |
 
 Third-party material keeps its own licence and is not relicensed:
 
-- OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (`track_2a/data/v1/`), our splits derived from it and the archived kickoff demo (`track_2a/data/archive/demo-2026-10-01/`): MIT, as published by OST.
+- OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (`track_2a/data/v1/`), our splits derived from it and the archived kickoff demo (`track_2a/data/archive/demo-2026-10-01/`): MIT, as published by OST (licence text in `track_2a/data/v1/LICENSE`).
 - Federal voting booklets (bk.admin.ch): not shipped; our benchmark scripts and the web demo download and cache them, OST's evaluation reads them from `/data`.
 - VotingBooklets-v1 (Stüssi & Vamvas, SwissText 2026): CC BY 4.0; one quoted Romansh sentence on a pitch slide, with attribution; the corpus is not shipped.
 - `intfloat/multilingual-e5-small` (optional dense retrieval): MIT, downloaded on demand, not shipped.
