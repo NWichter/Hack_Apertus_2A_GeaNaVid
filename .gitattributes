@@ -1,0 +1,10 @@
+# Data and run files whose bytes are recorded as SHA-256 (data/manifest.json, stress-synth/MANIFEST*.json,
+# *.sha256) or compared byte for byte: never convert line endings, on any platform.
+track_2a/data/**/*.jsonl -text
+track_2a/data/**/*.json -text
+track_2a/data/**/*.csv -text
+track_2a/data/**/*.sha256 -text
+track_2a/data/**/*.log -text
+track_2a/runs/**/*.jsonl -text
+track_2a/runs/**/*.json -text
+track_2a/runs/**/*.csv -text
