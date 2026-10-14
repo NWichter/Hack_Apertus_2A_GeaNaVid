@@ -406,7 +406,7 @@ def main(argv=None):
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8080)
     parser.add_argument(
-        "--no-auth", action="store_true", help="run without Basic Auth (local use only)"
+        "--no-auth", action="store_true", help="run without Basic Auth (local use, or public behind nginx; the rate limit stays active)"
     )
     args = parser.parse_args(argv)
 

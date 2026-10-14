@@ -45,15 +45,16 @@ credentials and the LLM key never leaves the server.
 
 ## Deployment
 
-Online at `https://geanavid.apertool.ch/demo/` behind Basic Auth (preview, `noindex`). `website/docker-compose.yml`
+Online at `https://geanavid.apertool.ch/demo/`, public (no Basic Auth, no `noindex`). `website/docker-compose.yml`
 runs two services: `web` (nginx, static site and `website/demo/`) and `demo` (`server.py`, built from
-`track_2a/` with `demo/Dockerfile`). nginx forwards `/api/` to `demo:8080`; Basic Auth covers the whole site
-including `/api/`, and `server.py` checks the same credentials again. The CSP allows inline styles only under
+`track_2a/` with `demo/Dockerfile`). nginx forwards `/api/` to `demo:8080`; the `demo` container starts with `--no-auth` and publishes no port, so
+only nginx reaches it. The per-IP rate limit (`RATE_LIMIT_MAX` per `RATE_LIMIT_WINDOW`, then HTTP 429) and the
+input limits (16 KB body, 1,000 claim characters) protect the LLM key. The CSP allows inline styles only under
 `/demo/`. `TRUST_PROXY=1` is set in Compose because nginx always stands in front of the demo service; nginx
 passes on the `X-Forwarded-For` header from the reverse proxy unchanged, so the rate limit counts per client.
 
-Coolify app: base directory `/website`, Compose file `/docker-compose.yml`, environment `BASIC_AUTH_USER`,
-`BASIC_AUTH_PASSWORD`, `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_NAME`. Compose stops with an error if one of the
+Coolify app: base directory `/website`, Compose file `/docker-compose.yml`, environment
+`LLM_BASE_URL`, `LLM_API_KEY`, `LLM_NAME`. Compose stops with an error if one of the
 required values is missing. The LLM key stays in the `demo` container.
 
 Local test: copy `website/.env.example` to `website/.env`, fill it in, publish a port for `web` in an override

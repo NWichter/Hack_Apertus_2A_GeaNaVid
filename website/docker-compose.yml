@@ -4,17 +4,15 @@ services:
     restart: unless-stopped
     depends_on:
       - demo
-    environment:
-      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?}
-      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:?}
   demo:
     build:
       context: ../track_2a
       dockerfile: demo/Dockerfile
     restart: unless-stopped
+    # Public demo: no Basic Auth. The service has no published port (only nginx reaches it);
+    # the per-IP rate limit (RATE_LIMIT_MAX / RATE_LIMIT_WINDOW) stays active.
+    command: ["python", "demo/server.py", "--host", "0.0.0.0", "--port", "8080", "--no-auth"]
     environment:
-      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?}
-      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:?}
       LLM_BASE_URL: ${LLM_BASE_URL:?}
       LLM_API_KEY: ${LLM_API_KEY:?}
       LLM_NAME: ${LLM_NAME:-apertus-v1.5-8b}

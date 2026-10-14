@@ -223,3 +223,15 @@ def test_model_choice_is_listed_used_and_checked(base_url):
     with pytest.raises(HTTPError) as exc:
         _post(base_url, {"mode": "beginner", "claim": "x", "reference": "y", "model": "gpt-4"})
     assert exc.value.code == 400
+
+def test_public_mode_without_auth_keeps_rate_limit(base_url, monkeypatch):
+    """Public deployment (--no-auth): no credentials needed, but the per-IP rate limit still applies."""
+    monkeypatch.setattr(demo_server, "AUTH_ENABLED", False)
+    payload = {"mode": "beginner", "claim": "x", "reference": "y"}
+    assert _post(base_url, payload, auth=False).status == 200
+    demo_server._rate_limits["127.0.0.1"] = [
+        time.time()
+    ] * demo_server.RATE_LIMIT_MAX_REQUESTS
+    with pytest.raises(HTTPError) as exc:
+        _post(base_url, payload, auth=False)
+    assert exc.value.code == 429
