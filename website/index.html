@@ -152,7 +152,7 @@
           <p class="section-lede">
             Sending the whole booklet to the model costs about 20,000 input
             tokens per claim. GeaNaVid gives Apertus the few passages of the
-            right proposal instead, about 1,500 to 2,700 input tokens per claim.
+            right proposal instead, about 1,400 to 2,200 input tokens per claim.
           </p>
           <ol class="steps">
             <li>
@@ -177,8 +177,8 @@
                 One call to Apertus v1.5 with numbered passages. The answer is
                 strict JSON: first the passages that decide, then the label.
                 With 8B, unsure verdicts are re-checked claim part by claim part,
-                and a neutral verdict is asked once more whether one detail is
-                contradicted.
+                and a neutral verdict Apertus is not fully sure of is asked once
+                more whether one detail is contradicted.
               </p>
             </li>
             <li>
@@ -196,7 +196,7 @@
 
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="wrap">
-          <p class="eyebrow">Results · 13 October 2026</p>
+          <p class="eyebrow">Results · 14 October 2026</p>
           <h2 id="status-title">OST v1.1, test split</h2>
           <p class="section-lede">
             OST's benchmark MNLIoverSwissVotingBooklets v1.1, split by voting
@@ -218,9 +218,9 @@
               <tbody>
                 <tr>
                   <td>GeaNaVid, Advanced task (booklet PDF + claim)</td>
-                  <td><strong>0.957</strong></td>
-                  <td><strong>0.967</strong></td>
-                  <td>2,667 / 1,532</td>
+                  <td><strong>0.959</strong></td>
+                  <td><strong>0.963</strong></td>
+                  <td>2,159 / 1,418</td>
                 </tr>
                 <tr>
                   <td>Whole booklet (baseline)</td>
@@ -240,8 +240,8 @@
           <ul class="findings">
             <li>
               <strong>Less context, better verdicts:</strong> 8B with the
-              selected passages (0.957) beats 70B with the whole booklet
-              (0.889), at 8 to 13 % of the tokens.
+              selected passages (0.959) beats 70B with the whole booklet
+              (0.889), at 7 to 11 % of the tokens.
             </li>
             <li>
               <strong>Translation is the largest step:</strong> cross-lingual
@@ -256,12 +256,13 @@
             </li>
             <li>
               <strong>Claims outside the tuning subset:</strong> 546 development claims
-              that no option was chosen on give 0.971 (8B) and 0.965 (70B).
+              that no option was chosen on give 0.971 (8B) and 0.967 (70B).
             </li>
             <li>
-              <strong>Time as OST measures it:</strong> cold run on 50 test
-              cases, mean / p95 per claim 648 / 1,188 ms (8B) and 1,344 / 2,200 ms
-              (70B); 48 ms of it is our own code.
+              <strong>Time as OST measures it:</strong> cold run on 50
+              development cases, mean / p95 per claim 366 / 545 ms (8B) and
+              1,342 / 2,015 ms (70B); 48 ms of it is our own code. Re-checking only
+              unsure neutral answers cut the 8B p95 by 44 % at the same F1.
             </li>
             <li>
               <strong>New booklets:</strong> on a synthetic hold-out from three
@@ -272,10 +273,10 @@
           </ul>
           <p class="caveat">
             OST v1.1 repeats 122 of the 493 test pairs, so the 95 % intervals
-            resample copies together: 0.930–0.978 (8B), 0.947–0.984 (70B);
-            without the copies the defaults score 0.955 (8B) and 0.965 (70B).
+            resample copies together: 0.933–0.980 (8B), 0.942–0.981 (70B);
+            without the copies the defaults score 0.957 (8B) and 0.960 (70B).
             8B and 70B do not differ significantly. Variants were built on
-            development data, but test scores were looked at for 22
+            development data, but test scores were looked at for 23
             configurations and decided some of them, so the 546
             development claims and the synthetic hold-out are the honest
             checks. The rounds are in docs/ITERATIONS.md.
@@ -350,7 +351,7 @@
             <h2 id="report-title">How it works, what the numbers say</h2>
             <p>
               Architecture, use of Apertus, data, evaluation and limitations,
-              with sources. Draft of 13 October 2026 with the results on OST
+              with sources. State of 14 October 2026 with the results on OST
               v1.1; open points are marked as such.
             </p>
             <div class="actions">

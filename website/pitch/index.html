@@ -273,45 +273,45 @@
           </div>
         </div>
       </div>
-      <p class="climb">Per claim: 1,532 input tokens with 70B, 2,667 with 8B (three worked examples, a second look at neutral answers)</p>
+      <p class="climb">Per claim: 1,418 input tokens with 70B, 2,159 with 8B (three worked examples, a second look at unsure neutral answers)</p>
       <p class="src">
         Mean input tokens per claim as reported by the API, OST v1.1 test split (493 pairs),
-        Apertus v1.5, 13 October 2026.
+        Apertus v1.5, 14 October 2026.
       </p>
     </section>
 
     <!-- 6 Pareto -->
     <section class="slide s-pareto">
       <p class="kicker">The trade-off</p>
-      <h2>Under a seventh of the tokens. Better verdicts.</h2>
+      <h2>Under a ninth of the tokens. Better verdicts.</h2>
       <div class="wrap">
-        <svg width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Macro-F1 against input tokens per claim on the OST v1.1 test split: Apertus 8B GeaNaVid 0.957 with 2,667 tokens, whole booklet 0.720 with 20,242 tokens; Apertus 70B GeaNaVid 0.967 with 1,532 tokens, whole booklet 0.889; without translation 0.776 and 0.817 with 1,310 tokens.">
+        <svg width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-label="Macro-F1 against input tokens per claim on the OST v1.1 test split: Apertus 8B GeaNaVid 0.959 with 2,159 tokens, whole booklet 0.720 with 20,242 tokens; Apertus 70B GeaNaVid 0.963 with 1,418 tokens, whole booklet 0.889; without translation 0.776 and 0.817 with 1,310 tokens.">
           <rect x="150" y="30" width="980" height="520" fill="#FFFFFF" stroke="#DCD8CE" stroke-width="2" rx="6" />
           <g stroke="#ECE9E2" stroke-width="2"><line x1="150" x2="1130" y1="420.0" y2="420.0" /><line x1="150" x2="1130" y1="290.0" y2="290.0" /><line x1="150" x2="1130" y1="160.0" y2="160.0" /></g>
           <g font-size="24" fill="#5C6675" text-anchor="end"><text x="136" y="38">1.0</text><text x="136" y="168.0">0.75</text><text x="136" y="298.0">0.5</text><text x="136" y="428.0">0.25</text><text x="136" y="558">0</text></g>
           <text x="40" y="290" font-size="26" font-weight="600" fill="#1F2A37" transform="rotate(-90 40 290)" text-anchor="middle">Macro-F1</text>
           <line x1="150" x2="1130" y1="463.3" y2="463.3" stroke="#1F2A37" stroke-width="3" stroke-dasharray="10 8" />
           <text x="1118" y="451.3" font-size="23" fill="#1F2A37" text-anchor="end">always one label: 0.17</text>
-          <polyline points="398.6,146.5 518.5,52.4 860.3,175.6" fill="none" stroke="#E2A72E" stroke-width="5" stroke-linejoin="round" />
+          <polyline points="398.6,146.5 482.9,51.3 860.3,175.6" fill="none" stroke="#E2A72E" stroke-width="5" stroke-linejoin="round" />
           <circle cx="398.6" cy="146.5" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
-          <circle cx="518.5" cy="52.4" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="482.9" cy="51.3" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
           <circle cx="860.3" cy="175.6" r="11" fill="#E2A72E" stroke="#FFFFFF" stroke-width="3" />
-          <polyline points="398.6,125.2 425.0,47.2 860.3,87.7" fill="none" stroke="#1F2A37" stroke-width="5" stroke-linejoin="round" />
+          <polyline points="398.6,125.2 412.0,49.2 860.3,87.7" fill="none" stroke="#1F2A37" stroke-width="5" stroke-linejoin="round" />
           <circle cx="398.6" cy="125.2" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
-          <circle cx="425.0" cy="47.2" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
+          <circle cx="412.0" cy="49.2" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
           <circle cx="860.3" cy="87.7" r="11" fill="#1F2A37" stroke="#FFFFFF" stroke-width="3" />
-          <g font-size="24" font-weight="600" fill="#1F2A37"><text x="412" y="22" text-anchor="end">70B 0.967</text><text x="535" y="22" text-anchor="start">8B 0.957</text><text x="380" y="190" text-anchor="start">without translation 0.82 / 0.78</text><text x="882" y="84" text-anchor="start">70B 0.889</text><text x="882" y="110" text-anchor="start" font-weight="400">whole booklet</text><text x="882" y="171" text-anchor="start">8B 0.720</text><text x="882" y="197" text-anchor="start" font-weight="400">whole booklet</text></g>
+          <g font-size="24" font-weight="600" fill="#1F2A37"><text x="400" y="22" text-anchor="end">70B 0.963</text><text x="495" y="22" text-anchor="start">8B 0.959</text><text x="380" y="190" text-anchor="start">without translation 0.82 / 0.78</text><text x="882" y="84" text-anchor="start">70B 0.889</text><text x="882" y="110" text-anchor="start" font-weight="400">whole booklet</text><text x="882" y="171" text-anchor="start">8B 0.720</text><text x="882" y="197" text-anchor="start" font-weight="400">whole booklet</text></g>
           <g font-size="24" fill="#5C6675" text-anchor="middle"><text x="236.2" y="586">500</text><text x="353.1" y="586">1k</text><text x="470.0" y="586">2k</text><text x="624.6" y="586">5k</text><text x="741.6" y="586">10k</text><text x="858.5" y="586">20k</text><text x="1013.1" y="586">50k</text><text x="1130.0" y="586">100k</text></g>
           <text x="640" y="638" font-size="26" font-weight="600" fill="#1F2A37" text-anchor="middle">Input tokens per claim (log scale)</text>
         </svg>
         <div class="notes">
           <div class="note">
             <b><span class="sw sw-8b"></span>Apertus 8B</b>
-            <span>GeaNaVid 0.957 with 2,667 tokens. Whole booklet 0.720 with 20,242.</span>
+            <span>GeaNaVid 0.959 with 2,159 tokens. Whole booklet 0.720 with 20,242.</span>
           </div>
           <div class="note">
             <b><span class="sw sw-70b"></span>Apertus 70B</b>
-            <span>GeaNaVid 0.967 with 1,532 tokens. Whole booklet 0.889.</span>
+            <span>GeaNaVid 0.963 with 1,418 tokens. Whole booklet 0.889.</span>
           </div>
           <div class="note">
             <b>Beginner task</b>
@@ -321,9 +321,9 @@
       </div>
       <p class="src">
         OST MNLIoverSwissVotingBooklets v1.1, test split: 493 pairs from 7 voting dates; 95 % cluster intervals
-        0.930–0.978 (8B), 0.947–0.984 (70B). Test scores also decided which variants were kept, so we add checks
-        not used for tuning: 546 development claims outside the tuning subset 0.971 (8B) / 0.965 (70B), and unseen booklets
-        (synthetic hold-out, evaluated after the defaults were fixed) 0.874 / 0.932 vs 0.665 / 0.872 whole booklet. 13 October 2026.
+        0.933–0.980 (8B), 0.942–0.981 (70B). Test scores also decided which variants were kept, so we add checks
+        not used for tuning: 546 development claims outside the tuning subset 0.971 (8B) / 0.967 (70B), and unseen booklets
+        (synthetic hold-out, evaluated after the defaults were fixed) 0.874 / 0.932 vs 0.665 / 0.872 whole booklet. 14 October 2026.
       </p>
     </section>
 
@@ -351,7 +351,7 @@
             <div class="h row">IT</div>
             <div class="c">1.00</div>
             <div class="c">0.96</div>
-            <div class="c same">0.98</div>
+            <div class="c same">1.00</div>
           </div>
           <p class="axis">
             Macro-F1 per pair, Apertus 8B. Rows: claim language · columns: booklet language.
@@ -372,7 +372,7 @@
       </div>
       <p class="src">
         OST v1.1 test split, 38 to 74 claims per pair, so single cells vary by about ±0.05. Same-language
-        0.987, cross-lingual 0.943 (8B); 70B 0.986 and 0.958.
+        0.993, cross-lingual 0.943 (8B); 70B 0.980 and 0.955.
       </p>
     </section>
 

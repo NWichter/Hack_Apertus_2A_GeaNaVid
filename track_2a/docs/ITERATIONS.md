@@ -237,3 +237,25 @@ characters) matches the gold `reference_string` with rapidfuzz `partial_ratio` �
 reimplements `evaluate.py`). Labels and tokens do not change; the first quote stays the same. All v1.1 numbers
 come from the stored runs without the removed rows (`experiments/v1/replay_v11.py`, `runs/v1/v1.1-filtered.json`):
 test v1.1 macro-F1 8B 0.957, 70B 0.967, whole booklet 0.720 / 0.889, Beginner 0.977 / 0.980.
+
+## 14 October: fewer tokens and less time (OST scores both relative to the other teams)
+
+Protocol as above: choose on `dev_s` (v1.1, 449), confirm once on `dev_rest` (546), then one test run (the 23rd test
+look). Labels and tokens from `runs/v1/{dev_s,dev_rest,test}_v11/<model>/*.summary.json`; latency from cold runs on 50
+seeded `dev_rest` cases with old and new default interleaved (`runs/v1/dev_rest_v11/cold-*-1014.json`).
+
+| # | idea | dev_s 8B / 70B | dev_rest 8B / 70B | test 8B / 70B | input tokens (test) | kept |
+| - | ---- | -------------- | ----------------- | ------------- | ------------------- | ---- |
+| 14 | 8B: re-check a neutral verdict only if p(label) < 0.999 (`--recheck-below`, 0.9999 / 0.99999 same F1 on dev_s, more tokens) | 0.973 → 0.971 / – | 0.971 → 0.971 / – | 0.957 → **0.959** / – | 2,667 → **2,159** | **yes** (0 calls: a subset of the cached calls) |
+| 15 | 70B: compact passage headers by default | – / 0.966 → 0.973 | – / 0.965 → 0.967 | – / 0.967 → **0.963** | 1,532 → **1,418** | **yes** (test −0.004, within the interval) |
+| 15b | 8B: compact headers, few-shot headers converted the same way (with 14) | 0.960 | – | – | −7 % | no |
+| 16 | 8B: two / one few-shot examples (with 14) | 0.967 / 0.951 | – | – | −11 % / −18 % | no |
+
+Cold latency, mean / p95 per case: 8B 543 / 972 → **366 / 545 ms**, 70B 1,407 / 2,056 → **1,342 / 2,015 ms**; same
+macro-F1 on the 50 cases. OST evidence score on test unchanged (0.969 / 0.960). Calls for this round: about 2,800
+(dev_s and dev_rest runs, cold runs, test 70B).
+
+Also fixed on the way: two workers asking the same prompt had written one cache file twice into each other (a
+replay then failed on these two claims); cache files are now written atomically, and a broken one counts as a
+miss. A run hung for over 20 minutes on one request: connection and timeout errors are now retried at most four
+times with a 60 s timeout.

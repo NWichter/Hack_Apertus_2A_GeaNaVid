@@ -8,10 +8,10 @@ GeaNaVid checks a claim in German, French or Italian against a Swiss federal vot
 booklet sentence and PDF page that decide it, the input/output tokens and the time. Apertus v1.5 (8B or 70B)
 makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
 translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
-committee, voting text, Federal Council), so a claim costs about 1.5–2.7 k instead of 20 k input tokens. On the
-test split of OST v1.1 (493 pairs) the macro-F1 is 0.957 (8B) and 0.967 (70B), against 0.720 and 0.889 for the
+committee, voting text, Federal Council), so a claim costs about 1.4–2.2 k instead of 20 k input tokens. On the
+test split of OST v1.1 (493 pairs) the macro-F1 is 0.959 (8B) and 0.963 (70B), against 0.720 and 0.889 for the
 whole booklet. The test split was looked at for 22 configurations; 546 development claims outside the tuning
-subset give a second check (0.971 / 0.965). By the rule of OST's evaluation script, one of our five quoted
+subset give a second check (0.971 / 0.967). By the rule of OST's evaluation script, one of our five quoted
 sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
@@ -36,7 +36,7 @@ Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "langu
 variants are read too). Output: one line per case with `id`, `label`, `label_name`, `evidence[{page, text}]`
 (up to five quotes, 1-based PDF page; `null` page in task B; `[]` for neutral) and `metrics{input_tokens,
 output_tokens, inference_time_ms}`. A failed case is answered neutral with an `error` field; the run never stops
-and exits with 0. Checked on 13 October from a fresh clone with 80 OST-format cases and OST's `evaluate.py`
+and exits with 0. Checked on 14 October from a fresh clone with 80 OST-format cases and OST's `evaluate.py`
 (`track_2a/README.md`, section "OST task format").
 
 **Our benchmark run:**
