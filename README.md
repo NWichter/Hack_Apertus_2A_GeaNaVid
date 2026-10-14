@@ -25,10 +25,18 @@ The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`trac
 
 ## Judges start here
 
-Requirements: Docker, an OpenAI-compatible Apertus v1.5 endpoint, no GPU, no local weights.
+Requirements: Docker and an OpenAI-compatible Apertus v1.5 endpoint; no GPU, no local weights. Every target runs in
+Docker and works from the repository root (the root `Makefile` forwards to `track_2a/`).
+
+```bash
+cp track_2a/.env.example track_2a/.env   # LLM_NAME, LLM_BASE_URL, LLM_API_KEY
+make test                                 # unit tests, no model calls
+make run LIMIT=30                         # benchmark on 30 test claims; make run = all 493; table in track_2a/runs/make-run/
+make ost ROWS=20                          # OST's contract: 20 test rows as task A and B through the image, scored like evaluate.py
+```
 
 **As OST runs it** (Solution API Guide, 7 October): the image takes `--input` / `--output`, reads `BASE_URL` and
-`API_KEY` at run time, and finds `booklet.path` below `/data`.
+`API_KEY` at run time and finds `booklet.path` below a read-only `/data`.
 
 ```bash
 cd track_2a
@@ -38,41 +46,30 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
   geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
 ```
 
+Checked on 14 October from fresh clones: all 986 OST-format cases of the test split (every row as task A and as
+task B) with OST's `evaluate.py`, exit code 0, and `make test`, `make run`, `make ost` on Linux.
+
 **Model.** The image runs **Apertus v1.5 70B** (`LLM_NAME=swiss-ai/Apertus-v1.5-70B`, the name format of OST's Solution
-API Guide; other spellings are resolved from the endpoint's `/models`). Why 70B: macro-F1 0.965 on the test split,
-fewer input tokens (1,461 vs 2,159) and more robust on older booklets (stress set below). 8B stays available with
-`-e LLM_NAME=apertus-v1.5-8b` and is faster: 8B 0.959, 366 / 545 ms (mean / p95); 70B 1,274 / 2,197 ms (cold runs,
-see the technical report).
+API Guide; other spellings are resolved from the endpoint's `/models`, with a `WARNING` on stderr). Why 70B: macro-F1
+0.965 on the test split, fewer input tokens (1,461 vs 2,159) and more robust on older booklets. 8B stays available
+with `-e LLM_NAME=apertus-v1.5-8b` and is faster: 8B 0.959, 366 / 545 ms (mean / p95); 70B 1,274 / 2,197 ms
+(cold runs, see the technical report).
 
 Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path",
 "language"}}` and task B with `"reference": {"text", "language"}` instead of `booklet`, mixed in one file (flat
 variants are read too). Output: one line per case with `id`, `label`, `label_name`, `evidence[{page, text}]`
 (up to five quotes, 1-based PDF page; `null` page in task B; `[]` for neutral) and `metrics{input_tokens,
 output_tokens, inference_time_ms}`. A failed case is answered neutral with an `error` field; the run never stops
-and exits with 0. Checked on 14 October from a fresh clone with 80 OST-format cases and OST's `evaluate.py`
-(`track_2a/README.md`, section "OST task format").
+and exits with 0. Details: [`track_2a/README.md`](track_2a/README.md), section "OST task format".
 
-**Our benchmark run:**
+**Read next.**
 
-```bash
-cd track_2a
-cp .env.example .env      # LLM_NAME, LLM_BASE_URL, LLM_API_KEY
-make run                  # Docker: default pipeline on the test split data/v1/test_v11.jsonl (493), table in runs/make-run/
-make run LIMIT=30         # quick check
-```
-
-`make run` also works from the repository root (the root `Makefile` forwards to `track_2a/`).
-
-**More.**
-
-- Technical report (5 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
-  source [`track_2a/technical_report.md`](track_2a/technical_report.md)
-- Experiments and all measurements: [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
-- How the numbers improved, round by round: [`track_2a/docs/ITERATIONS.md`](track_2a/docs/ITERATIONS.md)
-- Data, splits and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
-- Web demo (preview behind a password): https://geanavid.apertool.ch/demo/, code in [`track_2a/demo/`](track_2a/demo/)
-- Project page and pitch: https://geanavid.apertool.ch
-- Demo video: embedded on the project page (`website/media/video.mp4`, subtitles `website/media/video.vtt`)
+1. Technical report (6 pages, tokens and time included): [`track_2a/Apertool_Report.pdf`](track_2a/Apertool_Report.pdf),
+   source [`track_2a/technical_report.md`](track_2a/technical_report.md)
+2. How the numbers improved, round by round, with every rejected idea: [`track_2a/docs/ITERATIONS.md`](track_2a/docs/ITERATIONS.md)
+3. Data, splits, synthetic sets and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
+4. Early ablations on OST v1.0 (2–4 October, superseded numbers): [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
+5. Project page with pitch, demo video and web demo: https://geanavid.apertool.ch (demo code in [`track_2a/demo/`](track_2a/demo/))
 
 GeaNaVid reads the booklet; it never tells anyone how to vote.
 

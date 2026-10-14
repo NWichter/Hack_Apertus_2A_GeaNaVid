@@ -29,10 +29,14 @@ From `track_2a/`:
 
 ```bash
 cp .env.example .env          # set LLM_NAME, LLM_BASE_URL, LLM_API_KEY (OpenAI-compatible Apertus endpoint)
+make test                     # unit tests in a Python container, no model calls
 make run                      # Docker: default pipeline on the test split data/v1/test_v11.jsonl (493 claims, OST v1.1)
 make run LIMIT=30             # quick check
 make run MODES=retrieval,baseline   # plus the whole-booklet baseline (~20 k tokens per claim)
+make ost ROWS=20              # OST's contract: 20 test rows as task A and B through the image, scored like evaluate.py
 ```
+
+All targets run in Docker and also work from the repository root.
 
 `make run` prints a table (macro-F1 with 95 % bootstrap interval, F1 per class, macro-F1 for same- and
 cross-language claims, retrieval hit@5, tokens (all and input only) and Apertus calls per claim, Apertus
@@ -96,9 +100,12 @@ Output, one line per case (`--format json` writes one JSON list instead):
   answered neutral with empty evidence, zero metrics and an extra field `error`, and a line goes to stderr.
   The run exits with code 0.
 
-**Check it like OST.** `python experiments/v1/ost_cases.py --split test_v11 --rows 40 --out <dir>/data` writes
-OST-format cases with their booklets; move `expected-labels.jsonl` out of the mounted folder, run the image as
-above and score with `evaluate.py` from OST's starter repository.
+**Check it like OST.** `make ost ROWS=20` writes OST-format cases with their booklets
+(`experiments/v1/ost_cases.py`), runs the image exactly as above with `/data` read-only and scores the output with
+`experiments/v1/ost_score.py`, which applies the rules of `evaluate.py` from OST's starter repository (macro-F1 per
+task, evidence found if one of the first five quotes lies in the gold passage). On all 986 cases of the test split
+(every row as task A and as task B) it gives the same numbers as OST's script: task A 0.965 with 312 of 324 evidence
+cases, task B 0.974 (70B, run of 14 October, `runs/v1/test_v11/ost-docker-full-1014b/`).
 
 **Paths.** A relative booklet path is read below `BOOKLET_ROOT`; a path that does not exist there is also looked
 up relative to the working directory, below `/work`, `/work/booklets`, `/data`, `/booklets` and next to the case
@@ -189,7 +196,7 @@ Measurements: `docs/EXPERIMENTS-v1.md`; how the defaults improved round by round
 Requirements: Docker; network access to bk.admin.ch (booklets are downloaded and cached, not
 shipped); an OpenAI-compatible endpoint serving Apertus v1.5 (8B or 70B). No GPU and no local
 model weights are needed. Without Docker: `pip install -e .[test]`, then `booklint …` and
-`python -m pytest`.
+`python -m pytest`. `python experiments/check_hashes.py` checks the recorded SHA-256 of the data files.
 
 ## Data
 
@@ -199,6 +206,8 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 | `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test (493 in v1.1, `test_v11.jsonl`); ids `v1-NNNN` added | MIT (derived) |
 | `data/archive/demo-2026-10-01/`                | the earlier 28-row demo and its cross-lingual variants (archived)                                                                 | MIT           |
 | `data/edge_cases.jsonl`                        | 24 synthetic stress pairs (ours, written by Gemini 3.8 Flash via Antigravity, not reviewed by a person, not part of the OST benchmark), see `data/README.md` | CDLA-Permissive-2.0 |
+| `data/holdout-synth/`                          | 89 synthetic claims on three voting dates of 2018/2019 (not OST), evaluated once after the defaults were fixed | CDLA-Permissive-2.0 |
+| `data/stress-synth/`                           | two synthetic stress sets, 802 claims on 26 voting dates 1998–2018 (not OST; open-model generator and judges), with split and freeze manifests; generation scripts in `experiments/stress/generate/` | CDLA-Permissive-2.0 |
 
 The `data/` directory must not exceed 100 MB.
 

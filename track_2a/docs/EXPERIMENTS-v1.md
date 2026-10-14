@@ -1,5 +1,9 @@
 # Experiments on OST v1.0 (2026-10-02)
 
+> **Historical log.** These are the first ablations on OST v1.0 (2–4 October). Numbers on this page are superseded:
+> the current results are in `technical_report.md` and, round by round, in `ITERATIONS.md`. The page is kept for the
+> ablation, recall and calibration tables that the report cites.
+
 > **Update 2026-10-04 (afternoon):** the defaults changed after six further rounds on `dev_s`, confirmed on test:
 > passages and evidence sentences from the section the claim names (summary, committee, voting text, Federal
 > Council). Test: Advanced **8B 0.953, 70B 0.968** (was 0.941 / 0.951), evidence sentence in the gold section
@@ -343,8 +347,8 @@ cd track_2a
 export PYTHONPATH=src CACHE_DIR=.cache BOOKLINT_ENV_FILE=.env      # LLM_BASE_URL, LLM_API_KEY
 python experiments/v1/split.py                                     # data/v1/{dev,dev_s,test}.jsonl + split.json
 python experiments/v1/recall.py --split dev                        # retrieval recall, no LLM
-bash experiments/v1/queue1.sh; bash experiments/v1/queue2.sh       # dev_s ablations (see queue3/4 for the rest)
-bash experiments/v1/queue3.sh; bash experiments/v1/queue4.sh       # 70B steps, then test
+python experiments/v1/run.py --split dev_s --model apertus-v1.5-8b --name <run> --opts '{...}'   # one ablation; each
+                                                                   # stored run keeps its exact options in <run>.config.json
 python experiments/v1/analyze.py calib|numbers|errors dev_s apertus-v1.5-8b <run>
 python experiments/v1/baseline_score.py dev_s apertus-v1.5-70b baseline
 python experiments/v1/table.py test
