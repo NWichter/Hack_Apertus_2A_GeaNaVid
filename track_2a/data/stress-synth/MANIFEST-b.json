@@ -1,0 +1,152 @@
+{
+  "frozen_at": "2026-10-14T16:18:08+00:00",
+  "note": "Zweiter Stresstest-Satz (2026-10-14b). Eingefroren, bevor irgendetwas diese Daten nutzt; booklint/Apertus liefen nie darauf. Synthetisch, nicht OST.",
+  "counts": {
+    "candidates": 756,
+    "passed_text_checks": 740,
+    "clean": 504,
+    "disputed": 236,
+    "clean_labels": {
+      "contradiction": 161,
+      "neutral": 186,
+      "entailment": 157
+    },
+    "clean_same_language": 180,
+    "clean_by_date": {
+      "1998-09-27": 27,
+      "1999-02-07": 37,
+      "2000-05-21": 31,
+      "2001-03-04": 33,
+      "2003-05-18": 27,
+      "2004-09-26": 30,
+      "2006-09-24": 30,
+      "2007-06-17": 31,
+      "2009-11-29": 32,
+      "2011-02-13": 33,
+      "2012-03-11": 38,
+      "2013-09-22": 38,
+      "2015-06-14": 36,
+      "2016-09-25": 26,
+      "2017-09-24": 29,
+      "2018-09-23": 26
+    },
+    "clean_by_booklet_language": {
+      "de": 181,
+      "fr": 163,
+      "it": 160
+    },
+    "clean_by_claim_language": {
+      "de": 173,
+      "it": 178,
+      "fr": 153
+    }
+  },
+  "files": {
+    "generated.jsonl": {
+      "sha256": "8b111d75c2851e8a246bca8268df5ec83ca357b559d8631cc00a2c588fe2aee2",
+      "bytes": 1396751
+    },
+    "generated_neutral.jsonl": {
+      "sha256": "8729e31c40814d5c8ed4202ffaf61f7aaa9dc900bbdde4e296ddb3b5ed6cde0d",
+      "bytes": 282989
+    },
+    "candidates.jsonl": {
+      "sha256": "07d7fe96e441c7fcd0935bce4abae40f071cbc6e28b757eddc69db80b0321c92",
+      "bytes": 2481985
+    },
+    "judge_gemma.jsonl": {
+      "sha256": "746e66b3449b0a43270dd9e29e0c427f0b1d674050c2b865e3bdbe92ca982529",
+      "bytes": 912333
+    },
+    "judge_qwen.jsonl": {
+      "sha256": "dfc1d1964b132b23dbba907f6819c40af0350244d61b67a71ef159dd3dc374a5",
+      "bytes": 1029309
+    },
+    "clean.jsonl": {
+      "sha256": "545e2717e34a8e54e57a6ae194427aaff5e7d69ed61ec6485bf4b9c64f07d3bf",
+      "bytes": 2041135
+    },
+    "disputed.jsonl": {
+      "sha256": "7b27fabfed993b9916a3fe6a73d3d8aeadf7840dad3ef81bd60893a836ed2e7e",
+      "bytes": 981180
+    },
+    "cases_A.jsonl": {
+      "sha256": "7f604a8c052b550090a86d16e989a4401e9197790acaac2ab8f204ccdf901eca",
+      "bytes": 180865
+    },
+    "cases_B.jsonl": {
+      "sha256": "fa9e53dffc530927da4b5f6fed248c8377b36d6850cf3d542850b880cb85f0c0",
+      "bytes": 1165078
+    },
+    "download.log": {
+      "sha256": "ce65cc3987325e04167f73c80d2289f0c56a80db063cfde52f7265ea073332b4",
+      "bytes": 6368
+    },
+    "download_unbenutzt.log": {
+      "sha256": "a3c8019acfc2f0a7b74a686a33faacd3afab4d610b2a61fdece5e8ad44bcc587",
+      "bytes": 1590
+    },
+    "generate.log": {
+      "sha256": "4dd6b3b711874f5dc37087e8d2120182ad0a885e0fa76e4903d850066410d323",
+      "bytes": 5918
+    },
+    "generate_neutral.log": {
+      "sha256": "26210106edd8ccc9781911496d90f37913a2a065b2f93354518453b48e187065",
+      "bytes": 2666
+    },
+    "costs.jsonl": {
+      "sha256": "f0a9e2826a8b2f2008928078f9cd3cf04303a193a3d4111fc99c4710a1835085",
+      "bytes": 261994
+    }
+  },
+  "booklets": {
+    "1998-09-27_de.pdf": "cd646d70be4150843410f10809849166d83c26e85e3a9fa64190d458f3eaeb7d",
+    "1998-09-27_fr.pdf": "57643823cea7892f9a34732eb47b7d078b0fb6de7969a7c8d55637520eda1d37",
+    "1998-09-27_it.pdf": "ed73b4e9f436a7558a2821a76a9800b01fd81e94c87fe632c09f75a763d85f67",
+    "1999-02-07_de.pdf": "d3a8e0b4147335c97962d48ef70eb7b1723c201897d9947fc609571c0f2de2f7",
+    "1999-02-07_fr.pdf": "de53c95d321e3e61a20cab236e4341998d1c5bd48020e635092577a8144b9900",
+    "1999-02-07_it.pdf": "f8323614342950c9ee7e9fb8d2c54ff5b481b40b24a03d4d79ff8e1640926ded",
+    "2000-05-21_de.pdf": "62c10440905437ca7d73a5a777aad41c4ac145e6642355d2dac0b3e87dcabb2b",
+    "2000-05-21_fr.pdf": "2658ba9ab4dc6b29df15877e84f6c89bc837583eda1c39420c0cc9b1562b27a9",
+    "2000-05-21_it.pdf": "ef976761c9442c928ae082f626ea67bd34e27eba1b761db8bfa2028cc6f05f59",
+    "2001-03-04_de.pdf": "56cb69eb438de1e18e4284d712bbd2979284baca91745bbdf4953a0bfef65c3d",
+    "2001-03-04_fr.pdf": "881e494e0cf72f72978c85e7be9abf4f0cde3b94417be5a75a8f403f9c1a5626",
+    "2001-03-04_it.pdf": "9911afe96d2b4fdb57d1068b616c79e0c3b08c7e018a1f1aec8c75122fe52811",
+    "2003-05-18_de.pdf": "3b26e70057020aa1229a3af4b20e3ba53cc4adcbc4ead66a278611ea373d4d5e",
+    "2003-05-18_fr.pdf": "331b270c2d63656678da0d8ac5c784ebe7bd9f7109a267f66bc549729ee558b5",
+    "2003-05-18_it.pdf": "bf7aaae4186f8b77d54963c33967ac23620d03f552f64d6752de7f14e14ab418",
+    "2004-09-26_de.pdf": "ab706562712b4c17cc12c6a57d45bb1da409ab097b1185d8fc3b25f553f324d2",
+    "2004-09-26_fr.pdf": "2e9868a1684f619a11b1077cbaefe7935d6739ace1a46bc30672781046b661f4",
+    "2004-09-26_it.pdf": "0923b8b6910565abb3c80aaacead1b2c1f0fdeac76a16ec3ae8666b630aa2afa",
+    "2006-09-24_de.pdf": "e451a3effc4485f64eaf80d798c6f4e5ba707e2ee81e37cc0e0a4815c705dbba",
+    "2006-09-24_fr.pdf": "9b55e347cf13a781407a28312b950acf2829e401faf6966e9c1dcf7d57b2dc40",
+    "2006-09-24_it.pdf": "f123699dbc4dcd301cdee342cbd342ea62dff2f7e4c9bb605576156eeaef9cc1",
+    "2007-06-17_de.pdf": "7d3b5ddb2e5b680a6d89c2fe03e72f5b3c864df512ea70216d704783a2b5eb4e",
+    "2007-06-17_fr.pdf": "ef0274e101d9dc94bd0e6667813efe8036fad78cebfbd89c0c5b28eb0d3aeae4",
+    "2007-06-17_it.pdf": "129aff71b2bcc17637be13d64753e40d390058e01b2d28f22203ce4a6a1e1511",
+    "2009-11-29_de.pdf": "a8405270d23ebba695019bfc0fcfc19319621f76cf168f8d1e44d4a57544bb37",
+    "2009-11-29_fr.pdf": "736e3c437a7dc686898b1b73a9ae1dcae6a2591a5be2acd4fd2bd4a4eb19dcdd",
+    "2009-11-29_it.pdf": "e2770fe0d07ce888e10e0549f4e7ec3ea5761baefaf7ed9f62c6a963895e150c",
+    "2011-02-13_de.pdf": "43814116b239ebbe35dd4461303cfea85cd865501e2880b4b3645e60ae22fe09",
+    "2011-02-13_fr.pdf": "34ffc720d5de57b4e89f7e72e5b3345e387f48b1995c6b132e9aeb7664c72ce7",
+    "2011-02-13_it.pdf": "ff72a5cb004286d7e85d25367e0fd22d46697161116bbdb610fe54235a560493",
+    "2012-03-11_de.pdf": "47391d991b50823e24c193811ae5d59c218fbecba977f7854da41d98c10a7396",
+    "2012-03-11_fr.pdf": "09532089de671986555011558d00c6445960ae7bde8336bcf185a199e90ca0fc",
+    "2012-03-11_it.pdf": "05032bba3baea563e742181e3ccf17a5fc8056fc05146d8ab4d8552eea54be6c",
+    "2013-09-22_de.pdf": "31db95ad3b6beb07bb310fd7d9055856fcb29ca6dc64cc55b9f2f4683575efc2",
+    "2013-09-22_fr.pdf": "6092b536bdbd644a2dedc87d5cb8d52f643f80a96aabe8e0210027e636f66068",
+    "2013-09-22_it.pdf": "ac24da5640518cdff1b165731e1b56d5d7943a7a6d917eb1da70ca897634e8ea",
+    "2015-06-14_de.pdf": "bcec0f29ed29eed926e3fd810733ab708df6f28a05490b57294ab74739fba34c",
+    "2015-06-14_fr.pdf": "54c8058981905abf62907e7e37ab73d3a91b7c1af7059bb65bb90038afa19daa",
+    "2015-06-14_it.pdf": "dbf1745626ce893cbee13bf868e8d5c5d6ad3df988cd21e164b87165760a2850",
+    "2016-09-25_de.pdf": "c1beaad292144288fe1cc35647c9aabfccc6d731ada5726f5fcb7588b641e9c0",
+    "2016-09-25_fr.pdf": "a9599523d1fcf15501b28f59b2d51e9df90a4f38dfa50198d76a7bae532181e3",
+    "2016-09-25_it.pdf": "4278ac82028eaac4d1b696e0130e448dab0dfaeeba1fdd0a9377291f116d1390",
+    "2017-09-24_de.pdf": "22a9b058c4588e862ecbd16bf71a8b168776c3fa82ab769f5cea302a36c0a1a2",
+    "2017-09-24_fr.pdf": "f62261805f92a060cec4a51c319757b2c8ce6d03d397ed8ac7fc7f0a312f14a3",
+    "2017-09-24_it.pdf": "1b52df48fe0a61a71bf66aff7d08b11f0463a9a82c656ec811e0858be26845b5",
+    "2018-09-23_de.pdf": "fb8565b0a1b68ee331d63887f4db368e20b3ce4ded8cdc25a53cc5f81e0906be",
+    "2018-09-23_fr.pdf": "7ee348a85b776f803125f86dca419750e618978446f0051e0202909d7af13681",
+    "2018-09-23_it.pdf": "f8bacaabb9cd150f11e7626386641f4457c6c9f57825de3399460f88df0ca170"
+  }
+}

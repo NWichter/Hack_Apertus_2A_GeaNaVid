@@ -139,15 +139,14 @@ What we found (2026-10-04), without legal assessment:
 
 Consequences here: the PDFs are not committed (`booklets/` is git-ignored); the data
 files contain the URLs plus the verbatim excerpts in `reference_string` and `evidence`,
-in the same way as OST v1.0. Whether these excerpts may be published needs a decision
-before any release.
+in the same way as OST v1.0. Decision (14 October): the excerpts are published as official texts in the sense of
+Art. 5 URG (not protected by copyright); see `LICENSE`.
 
 ## Licence
 
-Our claims, labels and judge outputs: CDLA-Permissive-2.0, as for `edge_cases.jsonl`
-(text in `../LICENSE-edge_cases`). The scripts in `experiments/holdout/` fall under the
-repository's Apache-2.0 licence. The booklet excerpts in `reference_string` and `evidence` are not
-relicensed; see "Terms of use".
+The whole folder is licensed under CDLA-Permissive-2.0 (text and notes in [`LICENSE`](LICENSE)). The booklet
+excerpts in `reference_string` and `evidence` are official texts in the sense of Art. 5 URG and are included as such.
+The scripts in `experiments/holdout/` fall under the repository's Apache-2.0 licence.
 
 ## Results (evaluated once, 2026-10-04)
 

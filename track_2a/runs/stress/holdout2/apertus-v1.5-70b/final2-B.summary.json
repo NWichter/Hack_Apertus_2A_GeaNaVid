@@ -1,0 +1,19 @@
+{
+ "n": 252,
+ "macro_f1": 0.9482,
+ "evidence_score": 0.939,
+ "input_tokens_mean": 792,
+ "ms_mean": 1555,
+ "ms_p95": 3830,
+ "errors": {
+  "2->1": 10,
+  "2->0": 2,
+  "1->2": 1
+ },
+ "model": "apertus-v1.5-70b",
+ "split": "holdout2",
+ "task": "B",
+ "name": "final2",
+ "extra": [],
+ "opts": ""
+}

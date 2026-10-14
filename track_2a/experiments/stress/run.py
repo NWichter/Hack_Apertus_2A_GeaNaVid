@@ -81,21 +81,24 @@ def main():
     argv = argv[: argv.index("--")] if "--" in argv else argv
     ap = argparse.ArgumentParser()
     ap.add_argument("model")
-    ap.add_argument("split", choices=["dev", "holdout"])
+    ap.add_argument("split", choices=["dev", "holdout", "dev2", "holdout2"])
     ap.add_argument("task", choices=["A", "B"])
     ap.add_argument("name")
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--no-cache", action="store_true")
     ap.add_argument("--score-only", action="store_true")
+    ap.add_argument("--src", default=str(ROOT / "src"), help="booklint source tree (e.g. an older commit's worktree)")
     ap.add_argument("--opts", default="", help="JSON object of Options fields (BOOKLINT_OPTIONS)")
     a = ap.parse_args(argv)
-    dates = set(json.loads((D / "split.json").read_text())[a.split])
-    rows = [json.loads(x) for x in (D / "clean.jsonl").open(encoding="utf-8")]
+    sp = json.loads((D / "split.json").read_text())
+    suffix = "-b" if a.split.endswith("2") else ""  # second set (14b): clean-b.jsonl, cases_A-b.jsonl
+    dates = set(sp["set_b"][a.split] if suffix else sp[a.split])
+    rows = [json.loads(x) for x in (D / f"clean{suffix}.jsonl").open(encoding="utf-8")]
     rows = [r for r in rows if r["booklet_date"] in dates]
     keep = {f"{r['id']}-{a.task}" for r in rows}
     cases = [
         x
-        for x in (D / f"cases_{a.task}.jsonl").open(encoding="utf-8")
+        for x in (D / f"cases_{a.task}{suffix}.jsonl").open(encoding="utf-8")
         if json.loads(x)["id"] in keep
     ]
     out = ROOT / "runs/stress" / a.split / a.model / f"{a.name}-{a.task}.jsonl"
@@ -103,7 +106,7 @@ def main():
     if not a.score_only:
         env = dict(
             os.environ,
-            PYTHONPATH=str(ROOT / "src"),
+            PYTHONPATH=a.src,
             BOOKLINT_ENV_FILE=str(ENV),
             BOOKLET_ROOT=str(D / "booklets"),
             PYTHONIOENCODING="utf-8",

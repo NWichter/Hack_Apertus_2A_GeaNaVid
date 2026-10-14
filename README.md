@@ -15,10 +15,11 @@ subset give a second check (0.971 / 0.971). By the rule of OST's evaluation scri
 sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the 324 gold entailment and contradiction cases.
 Run as OST runs it (Docker, all 493 test rows as task A and as task B, OST's `evaluate.py`): task A 0.961 / 0.965,
 task B 0.977 / 0.976 (8B / 70B).
-Older booklets (1999–2018), which OST v1.1 does not cover, are checked on a synthetic stress set (claims by an open
-model, labels agreed by two other open models, no human; [`track_2a/data/stress-synth/`](track_2a/data/stress-synth/)):
-reading the proposal structure of older layouts raised task A on held-out voting dates from 0.819 / 0.828 to
-0.864 / 0.915 (8B / 70B, 141 claims); OST results are unchanged.
+Older booklets (1998–2018), which OST v1.1 does not cover, are checked on two synthetic stress sets (26 voting dates,
+802 claims by an open model, labels agreed by two other open models, no human;
+[`track_2a/data/stress-synth/`](track_2a/data/stress-synth/)): reading the proposal structure of older layouts raised
+task A from 0.793 / 0.815 to 0.836 / 0.890 (8B / 70B); OST results are unchanged. Details and the held-out protocol
+are in the technical report, §4.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
@@ -37,10 +38,11 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
   geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
 ```
 
-**Model.** `LLM_NAME` selects the Apertus model: `apertus-v1.5-8b` (image default) or `apertus-v1.5-70b`
-(`-e LLM_NAME=apertus-v1.5-70b`). Recommended for the evaluation: [[NIKLAS: Modellwahl]]. 8B: macro-F1 0.959, 2,159
-input tokens, 366 / 545 ms (mean / p95); 70B: 0.965, 1,461 tokens, 1,274 / 2,197 ms (test split and cold runs, see
-the technical report).
+**Model.** The image runs **Apertus v1.5 70B** (`LLM_NAME=swiss-ai/Apertus-v1.5-70B`, the name format of OST's Solution
+API Guide; other spellings are resolved from the endpoint's `/models`). Why 70B: macro-F1 0.965 on the test split,
+fewer input tokens (1,461 vs 2,159) and more robust on older booklets (stress set below). 8B stays available with
+`-e LLM_NAME=apertus-v1.5-8b` and is faster: 8B 0.959, 366 / 545 ms (mean / p95); 70B 1,274 / 2,197 ms (cold runs,
+see the technical report).
 
 Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path",
 "language"}}` and task B with `"reference": {"text", "language"}` instead of `booklet`, mixed in one file (flat
@@ -83,6 +85,7 @@ Licences follow the Hack Apertus Terms & Conditions (6. What you build is open s
 | Code: `track_2a/` (package `booklint`, `data_prep`, experiments, tests, demo), `website/` | Apache-2.0 | [`LICENSE`](LICENSE) |
 | Documentation and technical report: README files, `track_2a/docs/`, `track_2a/technical_report.md`, `track_2a/report/`, `track_2a/Apertool_Report.pdf`, pitch slides | CC-BY-4.0 | [`LICENSE-docs`](LICENSE-docs) |
 | Submitted dataset: 24 synthetic edge cases, `track_2a/data/edge_cases.jsonl` | CDLA-Permissive-2.0 | [`track_2a/data/LICENSE-edge_cases`](track_2a/data/LICENSE-edge_cases) |
+| Synthetic hold-out `track_2a/data/holdout-synth/` and stress sets `track_2a/data/stress-synth/` (claims, labels, judge outputs; quoted booklet passages are official texts under Art. 5 URG) | CDLA-Permissive-2.0 | [`holdout-synth/LICENSE`](track_2a/data/holdout-synth/LICENSE), [`stress-synth/LICENSE`](track_2a/data/stress-synth/LICENSE) |
 
 Third-party material keeps its own licence and is not relicensed:
 

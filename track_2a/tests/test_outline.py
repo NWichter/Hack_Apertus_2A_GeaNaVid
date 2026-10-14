@@ -88,3 +88,9 @@ def test_split_is_fixed():
         "2014-02-09",
         "2017-05-21",
     ]
+
+
+@pytest.mark.skipif(not (STRESS / "2007-06-17_de.pdf").is_file(), reason="stress-set PDFs not downloaded")
+def test_single_proposal_booklet_has_no_outline():
+    # explanation and voting text of one proposal must not become two proposals
+    assert ingest(str(STRESS / "2007-06-17_de.pdf")).outline == []

@@ -686,6 +686,15 @@ tbody tr:last-child {
   cursor: pointer;
 }
 
+.tabs .tab-note {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-left: 6px;
+  opacity: 0.8;
+}
+
 .tabs [role="tab"]:hover {
   border-color: var(--accent);
 }

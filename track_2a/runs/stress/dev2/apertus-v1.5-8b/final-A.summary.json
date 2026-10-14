@@ -1,0 +1,22 @@
+{
+ "n": 252,
+ "macro_f1": 0.8608,
+ "evidence_score": 0.8117,
+ "input_tokens_mean": 2299,
+ "ms_mean": 1107,
+ "ms_p95": 2413,
+ "errors": {
+  "2->0": 10,
+  "0->1": 9,
+  "2->1": 7,
+  "0->2": 3,
+  "1->0": 3,
+  "1->2": 2
+ },
+ "model": "apertus-v1.5-8b",
+ "split": "dev2",
+ "task": "A",
+ "name": "final",
+ "extra": [],
+ "opts": ""
+}

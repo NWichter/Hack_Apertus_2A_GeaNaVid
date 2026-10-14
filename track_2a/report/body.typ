@@ -44,9 +44,9 @@ Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980. On
 0.971 / 0.971, and on a synthetic hold-out from booklets outside OST
 v1.1 the gap to the baseline carries over (8B 0.874 in its second
 evaluation, first 0.845, vs 0.665; 70B 0.932 vs 0.872). On older
-booklets (1999--2018, a synthetic stress set) task A first fell to 0.79;
-reading the proposal structure of older layouts raised it to 0.864 (8B)
-\/ 0.915 (70B) on dates held out. The output is never a voting
+booklets (1998--2018, two synthetic stress sets, 802 claims) task A was
+0.79 / 0.82; reading the proposal structure of older layouts raised it
+to 0.84 / 0.89 (8B / 70B; §4). The output is never a voting
 recommendation: every yes or no comes with a quote from the booklet; a
 neutral answer ("blank") cites nothing.
 
@@ -348,46 +348,58 @@ GeaNaVid 0.845 / 0.932 at 9 % / 7 % of the tokens, Beginner 0.855 /
 0.931 (`data/holdout-synth/`). The 8B neutral re-check, added later, was
 evaluated there once more: 0.874 (contradiction F1 0.735 → 0.793).
 
-#strong[Older booklets (stress set, 14 October).] OST v1.1 covers
-2020--2026 only. A second synthetic set covers 10 voting dates from 1999
-to 2018 (298 claims, `data/stress-synth/`): claims written by Nemotron 3
-Ultra from one booklet page each, kept only where two blind judges of
-other model families (Gemma 4 31B, Qwen3-235B) agree; no human checked
-them, and the judges dropped more than half of the generated neutral
-claims, so the scores are rather too high. Task A fell to 0.788 (8B) /
-0.791 (70B), while task B held (0.889 / 0.976). Causes: page headers
-that name no proposal (2008--2018: retrieval over the whole booklet) or
-are font-encoding garbage (2005: the wrong proposal), and the section
-boost, whose headings the older layouts lack. Fix, without LLM calls:
-when the headers give fewer than two readable proposal names, proposals
-start at lines such as "Erste Vorlage / Premier objet / Primo oggetto"
-or at the explanation page ranges of the overview ("Seiten 4--11");
-garbled text is dropped; the section boost is skipped; 70B reads 7
-instead of 5 passages there. No OST booklet takes these paths: an
-offline replay of all OST splits gives the same labels (the 26th test
-evaluation, 0.959 / 0.965). Protocol: the set was split by voting date
-before any change (seeded and stratified; 5 dates to develop on, 5 held
-out), the held-out half was run once:
+#strong[Older booklets (stress sets, 14 October).] OST v1.1 covers
+2020--2026 only. Two synthetic sets cover 26 other voting dates from
+1998 to 2018 (802 claims, `data/stress-synth/`): claims written by
+Nemotron 3 Ultra from one booklet page each, kept only where two blind
+judges of other model families (Gemma 4 31B, Qwen3-235B) agree; no human
+checked them, and the judges dropped about half of the generated neutral
+claims, so the scores are rather too high. On the first set (10 dates)
+task A fell to 0.788 (8B) / 0.791 (70B), while task B held (0.889 /
+0.976). Causes: page headers that name no proposal (retrieval over the
+whole booklet) or are font-encoding garbage (the wrong proposal), and
+the section boost, whose headings older layouts lack. Fix, without LLM
+calls: when the headers give fewer than two readable proposal names,
+proposals start at lines such as "Erste Vorlage / Premier objet / Primo
+oggetto" or at the overview's page ranges ("Seiten 4--11"); garbled text
+is dropped; no section boost; 70B reads 7 instead of 5 passages there.
+Each set was split by voting date before it was used (seeded); changes
+were developed on the first set's dev half only, every other half was
+run once:
 
 #figure(
   align(center)[#table(
-    columns: 3,
-    align: (auto,auto,auto,),
-    table.header([Task A, macro-F1 (8B / 70B)], [Dev half
-      (157)], [Held-out half (141)],),
+    columns: (25%, 25%, 25%, 25%),
+    align: (auto,auto,auto,auto,),
+    table.header([Task A macro-F1, 8B / 70B], [Before], [First
+      run], [After the fix below],),
     table.hline(),
-    [Before], [0.760 / 0.757], [0.819 / 0.828],
-    [After], [0.864 / 0.955], [#strong[0.864 / 0.915]],
+    [Set 1, dev half (157)], [0.760 / 0.757], [0.864 / 0.955], [0.877 /
+    0.955],
+    [Set 1, held out (141)], [0.819 / 0.828], [#strong[0.864 /
+    0.915]], [0.849 / 0.922],
+    [Set 2, half 1 (252)], [0.824 / 0.845], [#strong[0.861 /
+    0.881]], [0.861 / 0.881],
+    [Set 2, half 2 (252)], [0.767 / 0.813], [#strong[0.728 /
+    0.777]], [0.776 / 0.841],
+    [All 802], [0.793 / 0.815], [--], [0.836 / 0.890],
   )]
   , kind: table
   )
 
-On the held-out half input tokens rise from 2,509 / 1,778 to 2,674 /
-2,073 and the evidence score (gold page as passage) from 0.67 / 0.68 to
-0.80 / 0.84; task B is unchanged (0.888 / 0.964). The held-out half is
-not fully clean: the first stress report, read before the split,
-described the failure of every date. Rejected: re-checking every neutral
-8B answer (stress dev 0.858, `dev_s` +0.002 at +21 % tokens).
+The last half exposed a regression: in a booklet with a single proposal
+(2007) the overview fallback took explanation and voting text for two
+proposals and the title picked the voting text; the fallback now needs
+two proposal ordinals on the overview. That fix was found on held-out
+data, so the last column is not a clean estimate; the bold first runs
+are. Over all 802 claims input tokens rise from 2,267 / 1,543 to 2,341 /
+1,779 and the evidence score (gold page as passage) from 0.62 / 0.63 to
+0.77 / 0.78; task B is unchanged (0.889 / 0.963). No OST booklet takes
+these paths: an offline replay of all OST splits gives the stored labels
+(the 26th test evaluation, 0.959 / 0.965). The first set's held-out half
+is not fully clean either: its first report, read before the split,
+described every date's failure. Rejected: re-checking every neutral 8B
+answer (set 1 dev 0.858, `dev_s` +0.002 at +21 % tokens).
 
 #strong[Evidence (task A).] With OST's rule, our quotes score
 #strong[0.969 (8B) and 0.963 (70B)] on the 324 gold entailment and
@@ -483,17 +495,18 @@ predictions, so the reported numbers can be recomputed without any model
 call (`experiments/v1/report_tables_v11.py`, `generalization.py`,
 `ost_evidence.py`). For OST's cases the image runs as OST specifies:
 `docker run -e BASE_URL -e API_KEY -v <cases>:/data:ro -v <out>:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
-(details in `track_2a/README.md`). `LLM_NAME` selects the model (image
-default `apertus-v1.5-8b`, `-e LLM_NAME=apertus-v1.5-70b` for 70B);
-recommended for the evaluation: \[\[NIKLAS: Modellwahl\]\]. Both models
-are reported throughout. Settings: prompt `nli-v1`, k = 5, one
-neighbour, temperature 0, JSON schema. Replaying the stored test runs
-from the response cache with the current code gives the same labels on
-all test rows for both models; each run in `runs/v1/` stores its
-options, split seed and command. At temperature 0 the endpoint is not
-fully deterministic: a cold rerun of 50 cases gave the same label on
-50/50 (8B) and 49/50 (70B). Commit of the submission: \[\[NIKLAS:
-submission commit\]\].
+(details in `track_2a/README.md`). `LLM_NAME` selects the model; the
+submitted image runs 70B (`swiss-ai/Apertus-v1.5-70B`, resolved via
+`/models` if the endpoint names it differently): higher macro-F1, fewer
+tokens and more robust on older booklets than 8B, which is faster
+(`-e LLM_NAME=apertus-v1.5-8b`). Both models are reported throughout.
+Settings: prompt `nli-v1`, k = 5, one neighbour, temperature 0, JSON
+schema. Replaying the stored test runs from the response cache with the
+current code gives the same labels on all test rows for both models;
+each run in `runs/v1/` stores its options, split seed and command. At
+temperature 0 the endpoint is not fully deterministic: a cold rerun of
+50 cases gave the same label on 50/50 (8B) and 49/50 (70B). Commit of
+the submission: \[\[NIKLAS: submission commit\]\].
 
 = 6. Limitations
 <limitations>
@@ -573,9 +586,11 @@ without a text layer.
 <license>
 This report and the documentation: Creative Commons Attribution 4.0
 (CC-BY-4.0). Code: Apache-2.0. Our edge-case set
-(`data/edge_cases.jsonl`): CDLA-Permissive-2.0. The OST benchmark and
-the splits derived from it keep their MIT licence. All HackApertus
-projects are open-sourced.
+(`data/edge_cases.jsonl`), the synthetic hold-out and the stress sets
+(`data/holdout-synth/`, `data/stress-synth/`): CDLA-Permissive-2.0;
+their quoted booklet passages are official texts under Art. 5 URG. The
+OST benchmark and the splits derived from it keep their MIT licence. All
+HackApertus projects are open-sourced.
 
 = References
 <references>

@@ -206,9 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
         models.forEach((m) => {
           const opt = document.createElement("option");
           opt.value = m;
-          opt.textContent = /70b/i.test(m) ? `${m} (70B)` : /8b/i.test(m) ? `${m} (8B)` : m;
+          opt.textContent = /70b/i.test(m) ? `${m} (70B, submitted default)` : /8b/i.test(m) ? `${m} (8B)` : m;
           modelSelect.appendChild(opt);
         });
+        const big = models.find((m) => /70b/i.test(m));
+        if (big) modelSelect.value = big;
         modelGroup.classList.toggle("hidden", models.length < 2);
         bookletSources = data.booklet_sources || {};
         if (data.booklets && data.booklets.length) {

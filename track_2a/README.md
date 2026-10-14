@@ -50,14 +50,13 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
   geanavid --input /data/cases.jsonl --output /output/predictions.jsonl
 ```
 
-**Model.** `LLM_NAME` selects the model: `apertus-v1.5-8b` (image default) or `apertus-v1.5-70b`. Recommended for the
-evaluation: [[NIKLAS: Modellwahl]]. To make 70B the image default, uncomment `# ENV LLM_NAME=apertus-v1.5-70b` in the
-`Dockerfile`.
+**Model.** The image default is Apertus v1.5 70B (`ENV LLM_NAME=swiss-ai/Apertus-v1.5-70B` in the `Dockerfile`):
+macro-F1 0.965 on the OST v1.1 test split, fewer input tokens than 8B (1,461 vs 2,159) and more robust on older
+booklets (stress set). `-e LLM_NAME=apertus-v1.5-8b` runs the faster 8B pipeline.
 
 `BASE_URL` and `API_KEY` (injected by OST at run time) take precedence over `LLM_BASE_URL` / `LLM_API_KEY` and
 any `.env`; no key is baked into the image. `booklet.path` is relative to `/data` (`BOOKLET_ROOT=/data` in the
-image). The model is `LLM_NAME` (default `apertus-v1.5-8b`; to submit with 70B, uncomment
-`# ENV LLM_NAME=apertus-v1.5-70b` in the `Dockerfile`). At start one test call checks the name. If the endpoint answers
+image). The model is `LLM_NAME` (image default `swiss-ai/Apertus-v1.5-70B`). At start one test call checks the name. If the endpoint answers
 that the model does not exist (400/404/422, or 401/403 naming the model), the Apertus model of the same size is
 taken from its `/models` list, or, without a list, the first of the known spellings it accepts
 (`swiss-ai/Apertus-v1.5-70B`, `swiss-ai/Apertus-70B-Instruct-2509`, `apertus-70b`, ... and the 8B forms;

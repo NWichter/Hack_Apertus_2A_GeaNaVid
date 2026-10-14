@@ -333,3 +333,34 @@ Final run on `dev` with the kept options: 0.864 (8B, run-to-run noise against 0.
 All 298 claims (dev + held-out): task A 0.788 → 0.864 (8B), 0.791 → 0.936 (70B). Times in these runs come from
 up to eight parallel requests and are not comparable. OST test: the replay is the 26th test evaluation (no new
 configuration on OST): 0.959 / 0.965, unchanged.
+
+### Second stress set (16 more dates, 1998–2018) and one regression fix
+
+A second set by the same method (504 claims, 16 voting dates; `clean-b.jsonl`, OpenRouter cost 0.81 USD) was split by a
+rule fixed in the README before the data existed (seed 20261015): half 1 = 1999-02, 2000, 2003, 2004, 2009, 2011, 2015,
+2018-09 (252 claims), half 2 = 1998, 2001, 2006, 2007, 2012, 2013-09, 2016-09, 2017-09 (252). Both halves were run once
+with the code of round 22, and with the code before round 20 for comparison (`--src` worktree of `30f58d5`):
+
+| task A, 8B / 70B | before | first run (round 22 code) |
+| --- | --- | --- |
+| half 1 (252) | 0.824 / 0.845 | 0.861 / 0.881 |
+| half 2 (252) | 0.767 / 0.813 | **0.728 / 0.777** |
+
+Half 2 got worse. Per date, 2007-06-17 fell from 0.84 / 0.94 to 0.41 / 0.32: it has a single proposal, the overview
+fallback read its explanation (pp. 6–15) and its voting text (pp. 16–40) as two proposals, and the title matched the
+voting text. Round 24: the overview fallback now needs at least two distinct proposal ordinals ("Erste/Zweite Vorlage",
+"Premier/Deuxième objet", ...) on the overview pages (NUL characters removed first, as in 2018 FR). This fix was found
+on held-out data. Rerun of all four halves with it (`final2`):
+
+| task A, 8B / 70B | before | after round 24 |
+| --- | --- | --- |
+| set 1 dev (157) | 0.760 / 0.757 | 0.877 / 0.955 |
+| set 1 held out (141) | 0.819 / 0.828 | 0.849 / 0.922 |
+| set 2 half 1 (252) | 0.824 / 0.845 | 0.861 / 0.881 |
+| set 2 half 2 (252) | 0.767 / 0.813 | 0.776 / 0.841 |
+| all 802 | 0.793 / 0.815 | 0.836 / 0.890 |
+
+Task B on all 802: 0.889 / 0.963 (code path unchanged). OST guard after round 24: 0 of 1,488 regions differ, outline
+used for 0 of 60 OST booklets. Still wrong after the fix and left alone (seen only on held-out data): 2006-09-24, where
+running headers name two of three proposals (header structure wins over the outline), and 2015/2016 FR/IT with partial
+header structure.

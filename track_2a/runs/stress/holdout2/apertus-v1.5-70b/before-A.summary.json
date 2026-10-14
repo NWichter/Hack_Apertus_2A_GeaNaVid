@@ -1,0 +1,21 @@
+{
+ "n": 252,
+ "macro_f1": 0.8129,
+ "evidence_score": 0.6037,
+ "input_tokens_mean": 1525,
+ "ms_mean": 4080,
+ "ms_p95": 9090,
+ "errors": {
+  "2->1": 26,
+  "0->1": 14,
+  "2->0": 5,
+  "1->0": 1,
+  "1->2": 1
+ },
+ "model": "apertus-v1.5-70b",
+ "split": "holdout2",
+ "task": "A",
+ "name": "before",
+ "extra": [],
+ "opts": ""
+}

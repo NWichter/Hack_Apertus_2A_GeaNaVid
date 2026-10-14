@@ -1,7 +1,7 @@
 {
   "dataset_name": "GeaNaVid OST Voting NLI Benchmark",
   "version": "1.0.0",
-  "license": "MIT (OST v1.0 and derived splits); edge cases: CDLA-Permissive-2.0 (LICENSE-edge_cases)",
+  "license": "MIT (OST v1.0 and derived splits); edge cases: CDLA-Permissive-2.0 (LICENSE-edge_cases); holdout-synth/ and stress-synth/: CDLA-Permissive-2.0 (LICENSE in each folder)",
   "benchmark_source": {
     "huggingface": "OSTswiss/MNLIoverSwissVotingBooklets",
     "commit": "adca9a5",

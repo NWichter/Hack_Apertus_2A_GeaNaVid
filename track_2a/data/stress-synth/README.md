@@ -21,10 +21,21 @@ separately and never mix them with OST benchmark numbers.
   stratified and seeded: `dev` 2005, 2008, 2010, 2016, 2018 (157 rows); `holdout` 1999, 2002, 2013, 2014, 2017
   (141 rows). Changes are developed on `dev` and on OST development data only; `holdout` is evaluated once.
 
-Data license: to be decided (prepared for CDLA-Permissive-2.0, not yet declared). The booklets are official
-publications of the Swiss Confederation; see `../holdout-synth/README.md` for their terms of use.
+Licence: CDLA-Permissive-2.0 for the whole folder ([`LICENSE`](LICENSE)). The booklet excerpts in
+`reference_string` and `evidence` are official texts in the sense of Art. 5 URG and are included as such; the PDFs
+are not part of the repository.
 
 **Second set (pre-registered 14 October, before its data exists).** A second synthetic set on 12–16 further voting
 dates (about 1995–2019) is being built by the same method with open-weight generator and judges. Its dates will be
 split by a seeded draw (seed 20261015, dates sorted, shuffled, first half `dev2`, rest `holdout2`). Neither half is
 used to develop anything in the round of 14 October; both are evaluated once with the defaults fixed below.
+
+**Second set (built 14 October afternoon, files `*-b`).** 16 further voting dates (1998-09-27 to 2018-09-23, 28
+proposals, DE/FR/IT; booklets before late 1998 have no text layer): 504 clean rows (E 157 / N 186 / C 161, 64 %
+cross-lingual) in `clean-b.jsonl`, 236 disputed rows in `disputed-b.jsonl`, OST-format cases in `cases_A-b.jsonl` /
+`cases_B-b.jsonl`, freeze manifest `MANIFEST-b.json` (its SHA-256 in `MANIFEST-b.sha256`), URLs in `download-b.log`.
+Same generator, judges and rule as the first set; this time Qwen judged every candidate. OpenRouter cost 0.81 USD
+(first set: 0.53 USD). Split by the pre-registered rule into `set_b.dev2` and `set_b.holdout2` in `split.json`
+(252 rows each). Quirks seen: broken font encoding in the 2004 voting texts, `¶` for the apostrophe in 2006 and 2009
+FR/IT, "Paragraphzeichen" for `§` in 2013 DE/IT, split umlauts in 2017/2018 DE titles.
+

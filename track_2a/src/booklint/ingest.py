@@ -16,7 +16,7 @@ from .config import cache_dir
 from .textnorm import clean, detect_language
 
 INGEST_VERSION = "ingest-v5"
-OUTLINE_VERSION = "outline-v1"
+OUTLINE_VERSION = "outline-v3"
 _ORDINAL = re.compile(
     r"^(\d+\s+)?((erste|zweite|dritte|vierte|fünfte|sechste)\s+vorlage"
     r"|(premier|deuxième|troisième|quatrième|cinquième|sixième)\s+objet"
@@ -166,6 +166,11 @@ _ORDINAL_LINE = re.compile(
     r"|^(\d+\s+)?(Premier|Deuxième|Troisième|Quatrième|Cinquième|Sixième)\s+objet\b"
     r"|^(\d+\s+)?(Primo|Secondo|Terzo|Quarto|Quinto|Sesto)\s+oggetto\b"
 )
+_ORDINAL_WORD = re.compile(
+    r"\b(Erste|Zweite|Dritte|Vierte|Fünfte|Sechste)\s+Vorlage"
+    r"|\b(Premier|Deuxième|Troisième|Quatrième|Cinquième|Sixième)\s+objet"
+    r"|\b(Primo|Secondo|Terzo|Quarto|Quinto|Sesto)\s+oggetto"
+)
 _RANGE = re.compile(r"(?:Seiten|pages|pagine)\s+(\d{1,3})\s*[–-]\s*(\d{1,3})")
 
 
@@ -206,10 +211,14 @@ def _outline(doc):
     if len(starts) >= 2:
         return starts
     off = _page_offset(doc)
-    ranges = []
+    ranges, ordinals = [], set()
     for pno in range(1, min(4, len(doc))):
-        text = clean(doc[pno].get_text("text"))
+        text = clean(doc[pno].get_text("text").replace("\x00", ""))
         ranges += [(int(a), int(b)) for a, b in _RANGE.findall(text)]
+        ordinals |= {m.group(0).lower() for m in _ORDINAL_WORD.finditer(text)}
+    if len(ordinals) < 2:
+        # one proposal only: its explanation and its voting text are not two proposals (2007-06-17)
+        return []
     out, end = [], 0
     for a, b in sorted(set(ranges)):
         if b - a >= 5 and a > end:
