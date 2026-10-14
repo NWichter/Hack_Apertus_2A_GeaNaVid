@@ -167,13 +167,15 @@ re-check did not pay on test for 70B (`docs/EXPERIMENTS-v1.md`,
 
 The label probability is read from the first token of the label value.
 No other model takes part in the default path. Other models only
-supported development: Claude (Anthropic) wrote the claims of the
-synthetic hold-out; only open-weight models judged labels blindly:
-Nemotron 3.5 Lightning and a panel of GLM-5.3, DeepSeek V3.2 and
-Qwen3-235B (hold-out), Gemma 4 31B and Qwen3-235B (stress sets, written
-by Nemotron 3 Ultra); none of them runs in the pipeline or produces a
-reported OST number. Every call is cached on disk by a hash of model,
-messages and parameters, which makes reruns free and reproducible.
+supported development and evaluation data, never the pipeline: Claude
+(Anthropic) drafted the claims of the synthetic hold-out as a
+development aid (a closed model, used only to write evaluation data);
+only open-weight models judged labels blindly: Nemotron 3.5 Lightning
+and a panel of GLM-5.3, DeepSeek V3.2 and Qwen3-235B (hold-out), Gemma 4
+31B and Qwen3-235B (stress sets, written by Nemotron 3 Ultra); none of
+them runs in the pipeline or produces a reported OST number. Every call
+is cached on disk by a hash of model, messages and parameters, which
+makes reruns free and reproducible.
 
 = 4. Evaluation
 <evaluation>
@@ -183,7 +185,7 @@ has 1,488 claim-booklet pairs, 60 booklets from 20 voting dates
 v1.0 without 7 rows whose vote text was missing (removed by OST on 6
 October; `data/v1/v1.1-removed.json`). We split v1.0 by voting date
 (seed 2026), so the DE/FR/IT versions of a booklet never cross splits:
-998 development pairs (13 dates; 996 in v1.1), of which a stratified
+998 development pairs (13 dates; 995 in v1.1), of which a stratified
 subset of 450 (`dev_s`, 449 in v1.1) was used for all ablations, and 497
 test pairs (7 dates, 21 booklets; 493 in v1.1). Dropping the removed
 rows changes no prediction, so all v1.1 numbers are recomputed from the
@@ -198,13 +200,14 @@ and 14 October), plus cold runs on 50 test cases (all stored in
 decisions used them: the section step was kept because test agreed, and
 compact headers and the ungated neutral re-check were not adopted for
 70B on 4 October because test disagreed. Test is therefore not
-untouched. Two checks that did not steer any option: (a)
+untouched. Two checks that never chose between variants: (a)
 #strong[`dev_rest`], the 546 development claims outside `dev_s` (same 13
-dates; only the claim-cue → section mapping was read off all development
-claims), evaluated once with the final defaults: #strong[0.971 (8B) /
-0.971 (70B)], 0.968 / 0.972 without claims that also occur in another
-split; (b) the synthetic hold-out below (0.874 / 0.932; the 8B value is
-its second evaluation, after the re-check was added). Over all 20 voting
+dates; the claim-cue → section mapping was read off all development
+claims), used only to confirm options chosen on `dev_s` (an option was
+kept only if `dev_rest` did not get worse): #strong[0.971 (8B) / 0.971
+(70B)], 0.968 / 0.972 without claims that also occur in another split;
+(b) the synthetic hold-out below (0.874 / 0.932; the 8B value is its
+second evaluation, after the re-check was added). Over all 20 voting
 dates (dev + test, 1,488 claims) the defaults score 0.967 / 0.971 with a
 per-date spread of 0.87--1.00 (s.d. 0.030 / 0.028;
 `runs/v1/generalization.json`): a hidden set of a few voting dates can
@@ -274,7 +277,7 @@ by every setup below.
 #strong[Main results] (test v1.1, 493 pairs, macro-F1; input tokens per
 claim, 8B / 70B where they differ;
 `runs/v1/test/report-tables-v11.json`, the two default rows
-`runs/v1/test_v11/*/final-v4.summary.json`):
+`runs/v1/test_v11/*/final-v5.summary.json`):
 
 #figure(
   align(center)[#table(
@@ -342,14 +345,14 @@ are identical (detection right on all test claims).
 
 #strong[Synthetic hold-out.] To check that our choices did not fit OST's
 20 voting dates, we built 89 claims on five proposals of three voting
-dates outside v1.0 (2018--2019, older layouts; written by Claude, labels
-confirmed blindly by Nemotron and an open panel of GLM-5.3, DeepSeek
-V3.2 and Qwen3-235B, one row dropped; not human-annotated, never mixed
-with OST numbers) and evaluated them once after all defaults were fixed:
-whole booklet 0.665 (8B) / 0.872 (70B), GeaNaVid 0.845 / 0.932 at 9 % /
-7 % of the tokens, Beginner 0.855 / 0.931 (`data/holdout-synth/`). The
-8B neutral re-check, added later, was evaluated there once more: 0.874
-(contradiction F1 0.735 → 0.793).
+dates outside v1.0 (2018--2019, older layouts; claims drafted with
+Claude as a development aid, labels confirmed blindly by Nemotron and an
+open panel of GLM-5.3, DeepSeek V3.2 and Qwen3-235B, one row dropped;
+not human-annotated, never mixed with OST numbers) and evaluated them
+once after all defaults were fixed: whole booklet 0.665 (8B) / 0.872
+(70B), GeaNaVid 0.845 / 0.932 at 9 % / 7 % of the tokens, Beginner 0.855
+\/ 0.931 (`data/holdout-synth/`). The 8B neutral re-check, added later,
+was evaluated there once more: 0.874 (contradiction F1 0.735 → 0.793).
 
 #strong[Older booklets (stress sets, 14 October).] OST v1.1 covers
 2020--2026 only. Two synthetic sets cover 26 other voting dates from
@@ -580,9 +583,10 @@ proxy's name for the model by itself.
 - #strong[Read the scoring script.] OST counts a case if any of the
   first five quotes matches; returning five sentences instead of at most
   two raised the evidence score by about four points without a token.
-- #strong[Keep a split nobody looked at.] Test was evaluated 26 times;
-  the 546 development claims no option was chosen on (0.971 / 0.971) are
-  the more honest estimate for unseen claims on the same booklets.
+- #strong[Keep a split nobody looked at.] Test was evaluated 26 times
+  for 24 configurations; the 546 development claims that only confirmed
+  options chosen elsewhere (0.971 / 0.971) are the more honest estimate
+  for unseen claims on the same booklets.
 
 Next steps: extend to Romansh @stuessi2026votingbooklets and to booklets
 without a text layer.

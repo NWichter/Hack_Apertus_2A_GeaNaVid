@@ -1,13 +1,14 @@
 # holdout-synth: synthetic hold-out set
 
-**Synthetic data. Not part of the OST benchmark.** 90 claim/booklet pairs written by
-Claude for three federal voting dates that the OST benchmark v1.0 does not cover. The
+**Synthetic data. Not part of the OST benchmark.** 90 claim/booklet pairs drafted with Claude (a closed model, used
+only as a development aid to write evaluation data; the pipeline calls only Apertus) for three federal voting dates
+that the OST benchmark v1.0 does not cover. The
 labels were cross-checked blindly by open-weight models only: NVIDIA Nemotron and a panel of GLM-5.3,
 DeepSeek V3.2 and Qwen3-235B; the 89 rows where Nemotron and the panel majority agree with the generator form
 `holdout.jsonl`. No human annotated
 these rows. Report numbers on this set separately and never mix them with OST benchmark
-numbers. It was built after the pipeline's defaults were fixed and evaluated once
-(results below); nothing was tuned on it.
+numbers. It was built after the pipeline's defaults were fixed and first evaluated then (results below; the 8B
+pipeline was evaluated once more after the neutral re-check was added); nothing was tuned on it.
 
 ## Files
 

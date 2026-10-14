@@ -63,7 +63,7 @@ any `.env`; no key is baked into the image. `booklet.path` is relative to `/data
 image). The model is `LLM_NAME` (image default `swiss-ai/Apertus-v1.5-70B`). At start one test call checks the name. If the endpoint answers
 that the model does not exist (400/404/422, or 401/403 naming the model), the Apertus model of the same size is
 taken from its `/models` list, or, without a list, the first of the known spellings it accepts
-(`swiss-ai/Apertus-v1.5-70B`, `swiss-ai/Apertus-70B-Instruct-2509`, `apertus-70b`, ... and the 8B forms;
+(`swiss-ai/Apertus-v1.5-70B`, `swiss-ai/Apertus-v1.5-70B-Instruct`, `apertus-v1.5-70b`, ... and the 8B forms; v1.5 names only;
 `CANDIDATES` in `src/booklint/llm.py`). Every switch and every failure is printed on stderr with `WARNING`, and
 the run ends with a count of failed cases, so a wrong name never turns into silent neutral answers.
 The same works without Docker as `booklint --input cases.jsonl --output predictions.jsonl`.
@@ -105,7 +105,8 @@ Output, one line per case (`--format json` writes one JSON list instead):
 `experiments/v1/ost_score.py`, which applies the rules of `evaluate.py` from OST's starter repository (macro-F1 per
 task, evidence found if one of the first five quotes lies in the gold passage). On all 986 cases of the test split
 (every row as task A and as task B) it gives the same numbers as OST's script: task A 0.965 with 312 of 324 evidence
-cases, task B 0.974 (70B, run of 14 October, `runs/v1/test_v11/ost-docker-full-1014b/`).
+cases, task B 0.974 (70B, run of 14 October evening, `runs/v1/test_v11/ost-docker-full-1014b/`; the earlier run of
+the same day, `ost-docker-full-1014/`, gave task A 0.965 and task B 0.976: the endpoint is not fully deterministic).
 
 **Paths.** A relative booklet path is read below `BOOKLET_ROOT`; a path that does not exist there is also looked
 up relative to the working directory, below `/work`, `/work/booklets`, `/data`, `/booklets` and next to the case
@@ -193,8 +194,10 @@ recommends), `easy` (Beginner task: the reference text, in v1.0 `reference_strin
 Beginner (`easy`): the reference is the context, the claim is not translated; 8B with the same 3 examples.
 Measurements: `docs/EXPERIMENTS-v1.md`; how the defaults improved round by round: `docs/ITERATIONS.md`.
 
-Requirements: Docker; network access to bk.admin.ch (booklets are downloaded and cached, not
-shipped); an OpenAI-compatible endpoint serving Apertus v1.5 (8B or 70B). No GPU and no local
+Requirements: Docker and an OpenAI-compatible endpoint serving Apertus v1.5 (8B or 70B). In OST's evaluation the
+image needs no network besides `BASE_URL`: the booklets are read from `/data`. Network access to bk.admin.ch is only
+needed when a case names a booklet by URL (our benchmark files `data/v1/*.jsonl`, `make run`, `make ost` preparation
+and the demo); downloaded booklets are cached, not shipped. No GPU and no local
 model weights are needed. Without Docker: `pip install -e .[test]`, then `booklint …` and
 `python -m pytest`. `python experiments/check_hashes.py` checks the recorded SHA-256 of the data files.
 
@@ -206,7 +209,7 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 | `data/v1/{dev,dev_s,test}.jsonl`, `split.json` | split by voting date (seed 2026, `experiments/v1/split.py`): 998 dev, 450 dev subset for ablations, 497 test (493 in v1.1, `test_v11.jsonl`); ids `v1-NNNN` added | MIT (derived) |
 | `data/archive/demo-2026-10-01/`                | the earlier 28-row demo and its cross-lingual variants (archived)                                                                 | MIT           |
 | `data/edge_cases.jsonl`                        | 24 synthetic stress pairs (ours, written by Gemini 3.8 Flash via Antigravity, not reviewed by a person, not part of the OST benchmark), see `data/README.md` | CDLA-Permissive-2.0 |
-| `data/holdout-synth/`                          | 89 synthetic claims on three voting dates of 2018/2019 (not OST), evaluated once after the defaults were fixed | CDLA-Permissive-2.0 |
+| `data/holdout-synth/`                          | 89 synthetic claims on three voting dates of 2018/2019 (not OST), first evaluated after the defaults were fixed (8B once more after the re-check was added) | CDLA-Permissive-2.0 |
 | `data/stress-synth/`                           | two synthetic stress sets, 802 claims on 26 voting dates 1998–2018 (not OST; open-model generator and judges), with split and freeze manifests; generation scripts in `experiments/stress/generate/` | CDLA-Permissive-2.0 |
 
 The `data/` directory must not exceed 100 MB.

@@ -72,6 +72,8 @@ and exits with 0. Details: [`track_2a/README.md`](track_2a/README.md), section "
 3. Data, splits, synthetic sets and provenance: [`track_2a/data/README.md`](track_2a/data/README.md)
 4. Early ablations on OST v1.0 (2–4 October, superseded numbers): [`track_2a/docs/EXPERIMENTS-v1.md`](track_2a/docs/EXPERIMENTS-v1.md)
 5. Project page with pitch, demo video and web demo: https://geanavid.apertool.ch (demo code in [`track_2a/demo/`](track_2a/demo/))
+   The public web demo shares one Apertus key and is capped at 20 requests per minute per visitor and 300 requests
+   per hour overall (`/api/info` shows both limits); that is enough for judging, and the CLI has no such cap.
 
 GeaNaVid reads the booklet; it never tells anyone how to vote.
 
