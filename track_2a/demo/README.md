@@ -30,6 +30,7 @@ credentials and the LLM key never leaves the server.
 | ----------------------------------------- | ------- | ---------------------------------------------------------- |
 | `BASIC_AUTH_USER`, `BASIC_AUTH_PASSWORD`  | –       | required, no default                                       |
 | `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW`     | 20, 60  | requests per client IP and window (s), then HTTP 429       |
+| `GLOBAL_LIMIT_MAX`, `GLOBAL_LIMIT_WINDOW` | 300, 3600 | requests over all clients and window (s), then HTTP 429 with a friendly message |
 | `TRUST_PROXY`                             | off     | `1`: take the client IP from the last `X-Forwarded-For` hop |
 | `DEMO_LLM_CACHE`                          | off     | `1`: reuse cached LLM answers (then the time is not inference time) |
 
@@ -48,7 +49,8 @@ credentials and the LLM key never leaves the server.
 Online at `https://geanavid.apertool.ch/demo/`, public (no Basic Auth, no `noindex`). `website/docker-compose.yml`
 runs two services: `web` (nginx, static site and `website/demo/`) and `demo` (`server.py`, built from
 `track_2a/` with `demo/Dockerfile`). nginx forwards `/api/` to `demo:8080`; the `demo` container starts with `--no-auth` and publishes no port, so
-only nginx reaches it. The per-IP rate limit (`RATE_LIMIT_MAX` per `RATE_LIMIT_WINDOW`, then HTTP 429) and the
+only nginx reaches it. The per-IP rate limit (`RATE_LIMIT_MAX` per `RATE_LIMIT_WINDOW`, then HTTP 429), the
+overall cap (`GLOBAL_LIMIT_MAX` per `GLOBAL_LIMIT_WINDOW`, default 300 per hour, then HTTP 429), the
 input limits (16 KB body, 1,000 claim characters) protect the LLM key. The CSP allows inline styles only under
 `/demo/`. `TRUST_PROXY=1` is set in Compose because nginx always stands in front of the demo service; nginx
 passes on the `X-Forwarded-For` header from the reverse proxy unchanged, so the rate limit counts per client.

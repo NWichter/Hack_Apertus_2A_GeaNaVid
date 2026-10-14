@@ -235,3 +235,22 @@ def test_public_mode_without_auth_keeps_rate_limit(base_url, monkeypatch):
     with pytest.raises(HTTPError) as exc:
         _post(base_url, payload, auth=False)
     assert exc.value.code == 429
+
+
+def test_global_limit_caps_all_clients(base_url, monkeypatch):
+    """Overall hourly cap: once reached, every client gets a friendly 429, even with a fresh per-IP budget."""
+    monkeypatch.setattr(demo_server, "AUTH_ENABLED", False)
+    payload = {"mode": "beginner", "claim": "x", "reference": "y"}
+    demo_server._rate_limits.clear()
+    monkeypatch.setattr(demo_server, "_global_hits", [])
+    assert _post(base_url, payload, auth=False).status == 200
+    demo_server._global_hits[:] = [time.time()] * demo_server.GLOBAL_LIMIT_MAX_REQUESTS
+    demo_server._rate_limits.clear()
+    with pytest.raises(HTTPError) as exc:
+        _post(base_url, payload, auth=False)
+    assert exc.value.code == 429
+    assert "hourly limit" in exc.value.read().decode()
+    # old hits fall out of the window again
+    demo_server._global_hits[:] = [time.time() - demo_server.GLOBAL_LIMIT_WINDOW_SECONDS - 1] * demo_server.GLOBAL_LIMIT_MAX_REQUESTS
+    demo_server._rate_limits.clear()
+    assert _post(base_url, payload, auth=False).status == 200

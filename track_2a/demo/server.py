@@ -44,6 +44,8 @@ AUTH_ENABLED = True
 
 RATE_LIMIT_MAX_REQUESTS = int(os.environ.get("RATE_LIMIT_MAX", "20"))
 RATE_LIMIT_WINDOW_SECONDS = int(os.environ.get("RATE_LIMIT_WINDOW", "60"))
+GLOBAL_LIMIT_MAX_REQUESTS = int(os.environ.get("GLOBAL_LIMIT_MAX", "300"))
+GLOBAL_LIMIT_WINDOW_SECONDS = int(os.environ.get("GLOBAL_LIMIT_WINDOW", "3600"))
 TRUST_PROXY = os.environ.get("TRUST_PROXY", "") == "1"
 USE_LLM_CACHE = os.environ.get("DEMO_LLM_CACHE", "") == "1"
 
@@ -56,6 +58,7 @@ DATASET_FILE = TRACK2A_ROOT / "data" / "v1" / "v1.0.jsonl"
 
 _rate_limits = defaultdict(list)
 _rate_lock = threading.Lock()
+_global_hits = []
 _pipeline_lock = threading.Lock()
 
 
@@ -69,6 +72,18 @@ def check_rate_limit(client_ip):
         if allowed:
             recent.append(now)
         _rate_limits[client_ip] = recent
+        return allowed
+
+
+def check_global_limit():
+    """Overall cap across all clients, so the LLM key cannot be burned through many IPs."""
+    now = time.time()
+    with _rate_lock:
+        recent = [t for t in _global_hits if t > now - GLOBAL_LIMIT_WINDOW_SECONDS]
+        allowed = len(recent) < GLOBAL_LIMIT_MAX_REQUESTS
+        if allowed:
+            recent.append(now)
+        _global_hits[:] = recent
         return allowed
 
 
@@ -314,6 +329,16 @@ class DemoHandler(SimpleHTTPRequestHandler):
                     "error": f"Rate limit: at most {RATE_LIMIT_MAX_REQUESTS} requests per {RATE_LIMIT_WINDOW_SECONDS} s."
                 },
                 {"Retry-After": str(RATE_LIMIT_WINDOW_SECONDS)},
+            )
+            return
+        if not check_global_limit():
+            self._send_json(
+                429,
+                {
+                    "error": "The public demo has reached its hourly limit of "
+                    f"{GLOBAL_LIMIT_MAX_REQUESTS} requests. Please try again later."
+                },
+                {"Retry-After": str(GLOBAL_LIMIT_WINDOW_SECONDS)},
             )
             return
 
