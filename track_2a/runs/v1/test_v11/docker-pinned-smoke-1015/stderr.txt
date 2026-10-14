@@ -1,0 +1,2 @@
+WARNING: model 'swiss-ai/Apertus-v1.5-70B' is not served by the endpoint (403: Error code: 403 - {'error': {'message': "The requested model 'swiss-ai/Apertus-v1.5-70B' is not available for this API key, or the model name is invalid. Check )
+WARNING: using 'apertus-v1.5-70b' from the endpoint's model list
