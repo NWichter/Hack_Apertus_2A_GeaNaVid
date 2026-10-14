@@ -2,8 +2,9 @@
 
 **Synthetic data. Not part of the OST benchmark.** 90 claim/booklet pairs written by
 Claude for three federal voting dates that the OST benchmark v1.0 does not cover. The
-labels were cross-checked blindly by two other models (Codex CLI, NVIDIA Nemotron); the
-89 rows on which generator and both judges agree form `holdout.jsonl`. No human annotated
+labels were cross-checked blindly by open-weight models only: NVIDIA Nemotron and a panel of GLM-5.3,
+DeepSeek V3.2 and Qwen3-235B; the 89 rows where Nemotron and the panel majority agree with the generator form
+`holdout.jsonl`. No human annotated
 these rows. Report numbers on this set separately and never mix them with OST benchmark
 numbers. It was built after the pipeline's defaults were fixed and evaluated once
 (results below); nothing was tuned on it.
@@ -12,9 +13,9 @@ numbers. It was built after the pipeline's defaults were fixed and evaluated onc
 
 | File | Content |
 | --- | --- |
-| `holdout.jsonl` | **the hold-out**: 89 rows on which Claude, Codex and Nemotron agree |
-| `holdout-dropped.jsonl` | 1 row where a judge disagreed (`ho-009`, neutral; Nemotron: contradiction) |
-| `holdout-candidates.jsonl` | all 90 rows with gold label, reference text, evidence, provenance, `judge_codex`, `judge_nemotron` |
+| `holdout.jsonl` | **the hold-out**: 89 rows where Nemotron and at least 2 of the 3 panel judges agree with the generator (Claude) |
+| `holdout-dropped.jsonl` | 1 row that failed this rule (`ho-009`, neutral; Nemotron: contradiction; the panel: neutral) |
+| `holdout-candidates.jsonl` | all 90 rows with gold label, reference text, evidence, provenance, `judge_nemotron`, `judge_glm`, `judge_deepseek`, `judge_qwen` |
 | `judge-cases.jsonl` | Blind input for more judges: `id`, `claim`, `claim_language`, `booklet_language`, `reference_string` only |
 | `booklets/` | The 9 downloaded PDFs (git-ignored, see below for the URLs) |
 
@@ -26,9 +27,9 @@ Scripts are in `experiments/holdout/`:
 | `pdftext.py` | PyMuPDF text extraction, line joining and the loose normalisation used for checks |
 | `build_candidates.py` | Builds `holdout-candidates.jsonl` from `spec.py` and the PDFs (keeps existing `judge_*` fields) |
 | `verify.py` | Checks that every `reference_string` line and every evidence text occur in the PDF (evidence on the stated page) and prints the counts |
-| (not in the repository) | the blind Codex judge (a CLI agent run); its answers are stored in `judge_codex` |
 | `export_judge_cases.py` | Writes `judge-cases.jsonl` |
-| `run_nemotron.py` | Blind Nemotron judge on OpenRouter, writes `judge_nemotron`, `holdout.jsonl`, `holdout-dropped.jsonl` |
+| `run_nemotron.py` | Blind Nemotron judge on OpenRouter, writes `judge_nemotron` |
+| `run_panel.py` | Blind panel GLM-5.3, DeepSeek V3.2, Qwen3-235B on OpenRouter, writes `judge_glm`, `judge_deepseek`, `judge_qwen`, `holdout.jsonl`, `holdout-dropped.jsonl` |
 | `evaluate.py` | The one-time evaluation with booklint (`runs/holdout-synth/<model>/<mode>.*`) |
 
 Rebuild: download the PDFs (URLs below) to `booklets/<date>_<lang>.pdf`, then
@@ -72,7 +73,7 @@ All three dates are absent from OST v1.0 (which covers 2020-02-09 to 2026-06-14)
 | `reference_string` | Proposal title, a blank block, then the verbatim booklet section the claim was written from (summary, details, committee arguments, Federal Council arguments or legal text). One line per page part |
 | `evidence` | List of `{page, text}`: 1-based PDF page and a verbatim sentence or clause. Required for entailment and contradiction, empty for neutral |
 | `provenance` | `generator` = `claude`, `generator_model`, `generated_at`, `prompt_version` = `holdout-v1` |
-| `judge_codex` | `{model, label, label_name, reason}` from the blind Codex pass |
+| `judge_nemotron`, `judge_glm`, `judge_deepseek`, `judge_qwen` | `{model, label, label_name, reason}` from each blind judge |
 
 Label rules follow OST v1.0: neutral claims are on topic but not answerable from the
 reference (invented but plausible numbers, actors or facts); contradictions change a
@@ -91,13 +92,16 @@ artefacts, mainly in the 2018-06-10 German booklet (for example `abzu lehnen`,
 
 ## Judges
 
-- **Codex** (`judge_codex`): `codex exec -s read-only` run from an empty temporary folder,
-  10 cases per call. The prompt contains only claim and `reference_string`, no label and
-  no evidence (an empty evidence list would reveal "neutral"; the evidence is part of
-  `reference_string` anyway). Model `gpt-6.1-sol` (Codex CLI 0.160.0, reasoning effort medium), run 2026-10-04: raw agreement with the gold labels 90/90 (100 %). A perfect score from a strong model on self-written claims mostly shows that the labels are unambiguous to that model; it is not a measure of difficulty.
 - **Nemotron** (`judge_nemotron`): `nvidia/nemotron-3.5-lightning:free` on OpenRouter (open weights), temperature 0,
   one case per call, same blind input (claim and `reference_string`). Agreement 89/90; the one disagreement
   (`ho-009`, gold neutral, Nemotron contradiction) was dropped, not fixed.
+- **Panel** (`judge_glm`, `judge_deepseek`, `judge_qwen`; `run_panel.py`, 14 October): `z-ai/glm-5.3`,
+  `deepseek/deepseek-v3.2` and `qwen/qwen3-235b-a22b-2507` on OpenRouter (all open weights), same prompt and blind
+  input as Nemotron, temperature 0. Agreement with the generator: GLM 89/90, DeepSeek 90/90, Qwen 82/90; all three
+  agree with it on 81/90. Rule: keep a row if Nemotron and at least two of the three agree with the generator.
+  Result: the same 89 rows as before. Cost 0.42 USD.
+- An earlier blind pass by Codex CLI (a closed model) was replaced by this panel; it is no longer part of the
+  data. It agreed 90/90 and therefore changed no row.
 
 The model under test (Apertus) was not used for generation or judging.
 

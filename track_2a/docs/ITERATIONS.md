@@ -197,8 +197,10 @@ slower; the local part is 48 ms.
 To check that the rounds above did not fit OST's 20 voting dates, a new set was built after the defaults were
 fixed: 89 claims on five proposals of three voting dates that OST v1.0 does not contain (2018-06-10, 2019-02-10,
 2019-05-19; older booklet layouts), DE/FR/IT booklets, two thirds cross-lingual, 30 / 29 / 30 labels. Claims,
-labels, reference sections and evidence were written by Claude; every label was checked blindly by Codex
-(GPT-6.1-sol, 90/90 agreement) and NVIDIA Nemotron 3.5 Lightning (89/90); the one disagreement was dropped.
+labels, reference sections and evidence were written by Claude; every label was checked blindly by open-weight
+models: NVIDIA Nemotron 3.5 Lightning (89/90) and, since 14 October, a panel of GLM-5.3 (89/90), DeepSeek V3.2 (90/90)
+and Qwen3-235B (82/90); a row is kept if Nemotron and the panel majority agree, which drops the same single row
+(an earlier Codex pass, a closed model, was replaced by the panel and changed nothing).
 It is synthetic, not human-annotated, and its numbers are never mixed with OST numbers
 (`data/holdout-synth/README.md`). Evaluated once, 679 Apertus calls:
 

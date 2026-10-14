@@ -1,8 +1,8 @@
 """Second blind judge for holdout-candidates.jsonl: an NVIDIA Nemotron model on OpenRouter (open weights).
 
 The key is read from the env file named by HOLDOUT_ENV_FILE (OPENROUTER_API_KEY), never printed.
-The judge sees claim and reference_string only. Writes judge_nemotron into each row, then holdout.jsonl
-(rows where generator, Codex and Nemotron agree) and holdout-dropped.jsonl.
+The judge sees claim and reference_string only. Writes judge_nemotron into each row; run_panel.py adds the open-model panel
+and writes holdout.jsonl and holdout-dropped.jsonl.
 
 python experiments/holdout/run_nemotron.py [--model nvidia/...]
 """
@@ -113,34 +113,8 @@ def main():
     with path.open("w", encoding="utf-8", newline="\n") as fh:
         for r in rows:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-    keep, drop = [], []
-    for r in rows:
-        votes = [
-            (r.get("judge_codex") or {}).get("label"),
-            (r.get("judge_nemotron") or {}).get("label"),
-        ]
-        (keep if all(v == r["entailment_label"] for v in votes) else drop).append(r)
-    for name, part in (("holdout.jsonl", keep), ("holdout-dropped.jsonl", drop)):
-        with (DIR / name).open("w", encoding="utf-8", newline="\n") as fh:
-            for r in part:
-                fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-    agree = sum(
-        (r["judge_nemotron"] or {}).get("label") == r["entailment_label"] for r in rows
-    )
-    print(f"nemotron agrees {agree}/{len(rows)}; kept {len(keep)}, dropped {len(drop)}")
-    for r in drop:
-        print(
-            " drop",
-            r["id"],
-            r["label_name"],
-            "codex",
-            r["judge_codex"].get("label_name"),
-            "nemotron",
-            r["judge_nemotron"].get("label_name"),
-            "|",
-            r["judge_nemotron"].get("reason", "")[:120],
-        )
-
+    agree = sum((r["judge_nemotron"] or {}).get("label") == r["entailment_label"] for r in rows)
+    print(f"nemotron agrees {agree}/{len(rows)}; holdout.jsonl is written by run_panel.py")
 
 if __name__ == "__main__":
     main()

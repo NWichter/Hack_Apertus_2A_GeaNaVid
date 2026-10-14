@@ -167,11 +167,12 @@ re-check did not pay on test for 70B (`docs/EXPERIMENTS-v1.md`,
 The label probability is read from the first token of the label value.
 No other model takes part in the default path. Other models only
 supported development: Claude (Anthropic) wrote the claims of the
-synthetic hold-out, and Codex CLI (GPT-6.1-sol) and NVIDIA Nemotron 3.5
-Lightning (open weights) checked its labels as blind judges; none of
-them runs in the pipeline or produces a reported OST number. Every call
-is cached on disk by a hash of model, messages and parameters, which
-makes reruns free and reproducible.
+synthetic hold-out; only open-weight models judged labels blindly:
+Nemotron 3.5 Lightning and a panel of GLM-5.3, DeepSeek V3.2 and
+Qwen3-235B (hold-out), Gemma 4 31B and Qwen3-235B (stress sets, written
+by Nemotron 3 Ultra); none of them runs in the pipeline or produces a
+reported OST number. Every call is cached on disk by a hash of model,
+messages and parameters, which makes reruns free and reproducible.
 
 = 4. Evaluation
 <evaluation>
@@ -341,12 +342,13 @@ are identical (detection right on all test claims).
 #strong[Synthetic hold-out.] To check that our choices did not fit OST's
 20 voting dates, we built 89 claims on five proposals of three voting
 dates outside v1.0 (2018--2019, older layouts; written by Claude, labels
-confirmed blindly by Codex and Nemotron, one disagreement dropped; not
-human-annotated, never mixed with OST numbers) and evaluated them once
-after all defaults were fixed: whole booklet 0.665 (8B) / 0.872 (70B),
-GeaNaVid 0.845 / 0.932 at 9 % / 7 % of the tokens, Beginner 0.855 /
-0.931 (`data/holdout-synth/`). The 8B neutral re-check, added later, was
-evaluated there once more: 0.874 (contradiction F1 0.735 → 0.793).
+confirmed blindly by Nemotron and an open panel of GLM-5.3, DeepSeek
+V3.2 and Qwen3-235B, one row dropped; not human-annotated, never mixed
+with OST numbers) and evaluated them once after all defaults were fixed:
+whole booklet 0.665 (8B) / 0.872 (70B), GeaNaVid 0.845 / 0.932 at 9 % /
+7 % of the tokens, Beginner 0.855 / 0.931 (`data/holdout-synth/`). The
+8B neutral re-check, added later, was evaluated there once more: 0.874
+(contradiction F1 0.735 → 0.793).
 
 #strong[Older booklets (stress sets, 14 October).] OST v1.1 covers
 2020--2026 only. Two synthetic sets cover 26 other voting dates from
