@@ -30,7 +30,8 @@ whole-booklet baseline (20,242 input tokens). Apertus 70B reaches 0.963 [0.942�
 against 0.889. With OST's own evidence rule (one of the first five quotes inside the gold passage), our quotes
 score 0.969 (8B) and 0.960 (70B). In the Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980.
 On 546 development claims outside the tuning subset, the defaults reach 0.971 / 0.967, and on a synthetic
-hold-out from booklets outside OST v1.1 the gap to the baseline carries over (8B 0.874 vs 0.665, 70B 0.932 vs 0.872).
+hold-out from booklets outside OST v1.1 the gap to the baseline carries over (8B 0.874 in its second evaluation, first
+0.845, vs 0.665; 70B 0.932 vs 0.872).
 The output is never a voting recommendation: every yes or no comes with a quote from the booklet; a neutral
 answer ("blank") cites nothing.
 
@@ -130,20 +131,21 @@ voting date (seed 2026), so the DE/FR/IT versions of a booklet never cross split
 and 497 test pairs (7 dates, 21 booklets; 493 in v1.1). Dropping the removed rows changes no prediction, so
 all v1.1 numbers are recomputed from the stored runs without new calls (`experiments/v1/replay_v11.py`).
 
-**How often test was used.** Variants were developed on `dev_s`, but test results were looked at for 23
-configurations over the project (14 with 8B, 9 with 70B, plus cold runs on 50 test cases; all stored in
-`runs/v1/test/` and `runs/v1/test_v11/`), and at least three default decisions used them: the section step was kept because test agreed, and compact headers and the neutral
+**How often test was used.** Variants were developed on `dev_s`, but test was evaluated 24 times
+over the project, for 23 configurations (14 with 8B, 9 with 70B; the 70B compact headers twice, on 4 and 14
+October), plus cold runs on 50 test cases (all stored in `runs/v1/test/` and `runs/v1/test_v11/`), and at least
+three default decisions used them: the section step was kept because test agreed, and compact headers and the neutral
 re-check were not adopted for 70B because test disagreed. Test is therefore not untouched. Two checks that
 did not steer any option: (a) **`dev_rest`**, the 546 development claims outside `dev_s` (same 13 dates; only
 the claim-cue → section mapping was read off all development claims), evaluated once with the final defaults:
 **0.971 (8B) / 0.967 (70B)**, 0.968 / 0.970 without claims that also occur in another split; (b) the synthetic
-hold-out below (0.874 / 0.932, evaluated after the defaults were fixed). Over all 20 voting dates (dev + test, 1,488 claims) the defaults score 0.967
+hold-out below (0.874 / 0.932; the 8B value is its second evaluation, after the re-check was added). Over all 20 voting dates (dev + test, 1,488 claims) the defaults score 0.967
 / 0.968 with a per-date spread of 0.87–1.00 (s.d. 0.030 / 0.033; `runs/v1/generalization.json`): a hidden set
 of a few voting dates can land several points lower or higher than our test split.
 
 **Tokens and time (14 October).** Because OST scores tokens and time relative to the other teams, one more round
-cut both, with the same protocol: choose on `dev_s`, confirm once on `dev_rest`, then run once on test (the 23rd
-test look). (1) 8B re-checks a neutral verdict only when p(label) < 0.999: only 8 of 154 neutral answers on `dev_s`
+cut both, with the same protocol: choose on `dev_s`, confirm once on `dev_rest`, then run once on test (the 24th
+test evaluation). (1) 8B re-checks a neutral verdict only when p(label) < 0.999: only 8 of 154 neutral answers on `dev_s`
 qualify, 6 of the 7 correct flips stay; `dev_s` 0.973 → 0.971, `dev_rest` 0.971 → 0.971, test 0.957 → 0.959, input
 tokens −19 %. (2) 70B uses compact passage headers: `dev_s` 0.966 → 0.973, `dev_rest` 0.965 → 0.967, test 0.967 →
 0.963 (within the interval), tokens −7 %. Rejected on `dev_s`: compact headers for 8B (0.960), two or one few-shot
@@ -266,8 +268,8 @@ label on 50/50 (8B) and 49/50 (70B). Commit of the submission: [[NIKLAS: submiss
 ## 6. Limitations
 
 493 test claims (371 distinct) from 7 voting dates: differences below about 0.02–0.03 macro-F1 are within
-the cluster-bootstrap interval (the defaults differ by 0.004, 70B − 8B), and test was consulted for 23
-configurations (§4); per voting date the defaults range from 0.87 to 1.00. The model-aware defaults (examples,
+the cluster-bootstrap interval (the defaults differ by 0.004, 70B − 8B), and test was evaluated 24 times
+(§4); per voting date the defaults range from 0.87 to 1.00. The model-aware defaults (examples,
 decomposition and neutral re-check only for 8B) were chosen on 450 development claims. The section keywords cover the federal booklet
 layouts of 2018–2026; other layouts fall back to plain BM25. Main error sources are topical but unsupported claims, attribution (committee vs.
 Federal Council) and contradictions that change one detail, which Apertus calls neutral with high confidence
@@ -307,7 +309,7 @@ configured model name nor a model list, the container cannot find the proxy's na
   to the booklet language).
 - **Read the scoring script.** OST counts a case if any of the first five quotes matches; returning five
   sentences instead of at most two raised the evidence score by about four points without a token.
-- **Keep a split nobody looked at.** Test was consulted for 23 configurations; the 546 development claims no
+- **Keep a split nobody looked at.** Test was evaluated 24 times; the 546 development claims no
   option was chosen on (0.971 / 0.967) are the more honest estimate for unseen claims on the same booklets.
 
 Next steps: extend to Romansh [@stuessi2026votingbooklets] and to booklets without a text layer.

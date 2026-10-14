@@ -2,7 +2,7 @@
 
 How the pipeline improved after the first complete version (`docs/EXPERIMENTS-v1.md`, state of 2026-10-04 05:00).
 Each round: error analysis on development data, one idea, measured on `dev_s` (450 development claims), kept only
-if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was looked at for 23
+if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was evaluated 24 times, for 23
 configurations and decided some defaults, see the technical report, §4). All numbers come from
 `runs/v1/<split>/<model>/<run>.summary.json`; `python experiments/v1/run.py --base default ...` reproduces them
 from the response cache.
@@ -241,7 +241,7 @@ test v1.1 macro-F1 8B 0.957, 70B 0.967, whole booklet 0.720 / 0.889, Beginner 0.
 
 ## 14 October: fewer tokens and less time (OST scores both relative to the other teams)
 
-Protocol as above: choose on `dev_s` (v1.1, 449), confirm once on `dev_rest` (546), then one test run (the 23rd test
+Protocol as above: choose on `dev_s` (v1.1, 449), confirm once on `dev_rest` (546), then one test run (the 24th test evaluation; for 70B the compact headers had been seen on test once before, round 2
 look). Labels and tokens from `runs/v1/{dev_s,dev_rest,test}_v11/<model>/*.summary.json`; latency from cold runs on 50
 seeded `dev_rest` cases with old and new default interleaved (`runs/v1/dev_rest_v11/cold-*-1014.json`).
 

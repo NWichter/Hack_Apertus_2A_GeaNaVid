@@ -1,7 +1,7 @@
 """How well do the defaults carry over? Stored predictions only, no calls.
 
 OST v1.1: dev_s (449, options chosen here), dev_rest (546 other dev rows, never used to choose an option), test (493,
-seen for 22 configurations). Per split: macro-F1, without rows that copy a claim of another split, and the spread over
+evaluated 24 times for 23 configurations). Per split: macro-F1, without rows that copy a claim of another split, and the spread over
 voting dates. Output: runs/v1/generalization.json
 python experiments/v1/generalization.py [--name final-v2]
 """
