@@ -168,7 +168,7 @@ reimplements it); input tokens per claim (OST's proxy counts them); mean and p95
 validity thresholds (macro-F1 ≥ 0.60 on A, ≥ 0.70 on B) are passed by every setup below.
 
 **Main results** (test v1.1, 493 pairs, macro-F1; input tokens per claim, 8B / 70B where they differ;
-`runs/v1/test/report-tables-v11.json`):
+`runs/v1/test/report-tables-v11.json`, the two default rows `runs/v1/test_v11/*/final-v4.summary.json`):
 
 | Setup | 8B | 70B | Input tok. |
 | --- | --- | --- | --- |
@@ -190,7 +190,7 @@ the 70B baseline; 70B gains +0.074. Both need 1.4–2.2 k instead of 20 k input 
 +0.013 / +0.017 on test; the neutral re-check with the committee words added +0.016 / +0.009 on development data
 and +0.004 / −0.002 on test, so 70B does not use it (a decision that used test).
 
-**By language** (test v1.1, macro-F1; claim or booklet language, n in brackets):
+**By language** (test v1.1, macro-F1; claim or booklet language, n in brackets; `runs/v1/test_v11/final-v4-languages.json`):
 
 | Group (n) | Adv. 8B | Adv. 70B | Beg. 8B | Beg. 70B |
 | --- | --- | --- | --- | --- |

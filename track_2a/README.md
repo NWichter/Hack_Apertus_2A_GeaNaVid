@@ -164,8 +164,8 @@ BM25 passages and the 4 best blocks of the section the claim names are split int
 that covers most of the (translated) claim wins (idf-weighted word stems plus character 5-grams, so split words
 still match; cited passages get a 1.2 bonus, sentences of the named section a factor 2); the next best sentences
 of other passages follow, up to five. On the v1.1 test split the first sentence lies in OST's gold section for 86 %
-(8B) and 88 % (70B) of the entailment/contradiction answers, and by the rule of OST's `evaluate.py` one of the
-five does for 97 % / 96 % of the gold entailment/contradiction cases (`runs/v1/ost-evidence-test_v11.json`).
+(8B) and 86 % (70B) of the entailment/contradiction answers, and by the rule of OST's `evaluate.py` one of the
+five does for 97 % / 96 % of the gold entailment/contradiction cases (`runs/v1/ost-evidence-test_v11-v4.json`).
 
 Default pipeline (`--mode retrieval`): find the proposal by its title (or, without a title, from the claim;
 no LLM), let Apertus translate cross-lingual claims into the booklet language, retrieve 5 passages with BM25

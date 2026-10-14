@@ -2,7 +2,8 @@
 
 How the pipeline improved after the first complete version (`docs/EXPERIMENTS-v1.md`, state of 2026-10-04 05:00).
 Each round: error analysis on development data, one idea, measured on `dev_s` (450 development claims), kept only
-if it helps there, then confirmed once on `test` (497 held-out claims). All numbers come from
+if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was looked at for 23
+configurations and decided some defaults, see the technical report, §4). All numbers come from
 `runs/v1/<split>/<model>/<run>.summary.json`; `python experiments/v1/run.py --base default ...` reproduces them
 from the response cache.
 
@@ -220,7 +221,7 @@ section 0.80. 70B is unchanged (0.932). `runs/holdout-synth/apertus-v1.5-8b/retr
 
 Apertus calls in this log: 4,243 of 8,000 (rounds 0–6 and the first hold-out) and 1,941 of 3,500 (rounds 7–12).
 
-## 13 October: OST's scoring script, v1.1 and an untouched development split
+## 13 October: OST's scoring script, v1.1 and a development split outside the tuning subset
 
 OST published a Solution API Guide (7 October), a starter repository with `evaluate.py` (8 October) and dataset
 v1.1 (6 October, 7 faulty rows removed, 4 of them in our test split). No call was spent on test in this block.

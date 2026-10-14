@@ -354,6 +354,9 @@ CACHE_DIR=<cache without llm/> python experiments/v1/ost_checks.py cold
 
 ## Draft for the technical report (section "Results on OST v1.0")
 
+Superseded by `technical_report.md`: test was later looked at for 23 configurations and decided some defaults
+(report, §4), so "held-out" and "run once" below describe the state of 4 October only.
+
 > We evaluate on OST's v1.0 benchmark (1,495 claims, 60 booklets, two thirds cross-lingual), split by voting
 > date into 998 development and 497 held-out test claims; all design decisions were taken on a 450-claim
 > development subset and each configuration was run once on the test set. Following OST, the baseline gives Apertus the whole

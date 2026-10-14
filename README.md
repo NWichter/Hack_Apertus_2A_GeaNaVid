@@ -10,7 +10,7 @@ makes every decision; the booklet is narrowed to the proposal named by `vote`, c
 translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
 committee, voting text, Federal Council), so a claim costs about 1.4–2.2 k instead of 20 k input tokens. On the
 test split of OST v1.1 (493 pairs) the macro-F1 is 0.959 (8B) and 0.963 (70B), against 0.720 and 0.889 for the
-whole booklet. The test split was looked at for 22 configurations; 546 development claims outside the tuning
+whole booklet. The test split was looked at for 23 configurations; 546 development claims outside the tuning
 subset give a second check (0.971 / 0.967). By the rule of OST's evaluation script, one of our five quoted
 sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
 
