@@ -2,7 +2,8 @@
   Voting Booklets
 - #strong[Event:] Online
 - #strong[Team:] Apertool --- Niklas Wichter
-- #strong[Demo:] \[\[NIKLAS: video link\]\] · `make run` in `track_2a/`
+- #strong[Demo:] https:/\/geanavid.apertool.ch/\#video · `make run` in
+  `track_2a/`
 
 #emph[State of 14 October 2026. All numbers are on OST v1.1 (v1.0
 without the 7 faulty rows OST removed on 6 October) and come from runs
@@ -510,7 +511,7 @@ current code gives the same labels on all test rows for both models;
 each run in `runs/v1/` stores its options, split seed and command. At
 temperature 0 the endpoint is not fully deterministic: a cold rerun of
 50 cases gave the same label on 50/50 (8B) and 49/50 (70B). Commit of
-the submission: \[\[NIKLAS: submission commit\]\].
+the submission: `054088e1f128`.
 
 = 6. Limitations
 <limitations>

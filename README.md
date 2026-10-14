@@ -23,7 +23,7 @@ are in the technical report, §4.
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
-Demo video: [[NIKLAS: video link]] · submitted commit: [[NIKLAS: submission commit]]
+Demo video: https://geanavid.apertool.ch/#video · submitted commit: `054088e1f128`
 
 ## Judges start here
 
