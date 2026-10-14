@@ -1,0 +1,30 @@
+{
+  "test_v11/apertus-v1.5-8b/final-v3": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9691,
+    "first_item_matches": 0.8488,
+    "items_per_case": 4.77,
+    "chars_per_case": 811
+  },
+  "test_v11/apertus-v1.5-8b/final-v4": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9691,
+    "first_item_matches": 0.8488,
+    "items_per_case": 4.77,
+    "chars_per_case": 811
+  },
+  "test_v11/apertus-v1.5-70b/final-v3": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9599,
+    "first_item_matches": 0.8549,
+    "items_per_case": 4.71,
+    "chars_per_case": 793
+  },
+  "test_v11/apertus-v1.5-70b/final-v4": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9599,
+    "first_item_matches": 0.8457,
+    "items_per_case": 4.73,
+    "chars_per_case": 798
+  }
+}

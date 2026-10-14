@@ -43,6 +43,7 @@ def options_from(args, mode=None):
         "tau",
         "tau_decompose",
         "tau_recheck",
+        "recheck_below",
         "cascade",
         "tau_cascade",
         "neutral_bias",
@@ -610,6 +611,13 @@ def add_common(p):
     p.add_argument("--no-recheck", dest="recheck", action="store_false")
     p.add_argument("--tau-recheck", dest="tau_recheck", type=float, default=None)
     p.add_argument(
+        "--recheck-below",
+        dest="recheck_below",
+        type=float,
+        default=None,
+        help="re-check only neutral verdicts with p(label) below this (default 0.999; 1.01 = every neutral)",
+    )
+    p.add_argument(
         "--committee-terms",
         dest="committee_terms",
         action="store_true",
@@ -655,8 +663,8 @@ def add_common(p):
     p.add_argument(
         "--render",
         default=None,
-        choices=["full", "compact"],
-        help="passage headers: full (default) or compact (proposal title once, section type instead of the page note)",
+        choices=["auto", "full", "compact"],
+        help="passage headers: auto (default: compact for 70B, full for 8B), full or compact (proposal title once, section type instead of the page note)",
     )
 
 

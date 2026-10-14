@@ -22,7 +22,7 @@ class Settings:
     base_url: str
     api_key: str
     cache_dir: Path
-    timeout: float = 120.0
+    timeout: float = 60.0
 
     @classmethod
     def from_env(cls, model=None):
@@ -45,7 +45,7 @@ class Settings:
             base_url=base_url,
             api_key=api_key,
             cache_dir=cache_dir(),
-            timeout=float(os.environ.get("LLM_TIMEOUT", "120")),
+            timeout=float(os.environ.get("LLM_TIMEOUT", "60")),
         )
 
 

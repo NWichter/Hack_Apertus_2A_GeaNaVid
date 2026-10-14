@@ -97,13 +97,14 @@ class Options:
     section_boost: float = 1.5
     evidence_section: float = 2.0
     evidence_section_pool: int = 4
-    render: str = "full"
+    render: str = "auto"  # auto: compact passage headers for 70B, full for 8B (14.10., dev_s + dev_rest)
     translate_reference: bool = False
     committee_terms: object = None
     translate_passages: bool = False
     recheck: object = None
     recheck_min_bm25: float = 0.0
     tau_recheck: float = 0.5
+    recheck_below: float = 0.999  # re-check a neutral verdict only if Apertus is less sure than this (14.10., dev_s)
     recheck_context: str = "all"
     recheck_entailment: bool = False
     tau_recheck_entailment: float = 0.5
@@ -157,6 +158,22 @@ def load_examples(n):
     if n <= 0 or not FEWSHOT_FILE.is_file():
         return []
     return json.loads(FEWSHOT_FILE.read_text(encoding="utf-8"))[:n]
+
+
+_NOTE = re.compile(r"Doppelseite|double page|doppia pagina|stammt vom|provient du|proviene dal|figurant sur cette", re.I)
+
+
+def compact_example(passage):
+    """A few-shot passage header in the compact form of Pipeline._render: the committee note becomes the section type."""
+    m = re.match(r"\((.*?)\) (.*)", passage, re.S)
+    if not m:
+        return passage
+    parts = [x.strip() for x in m.group(1).replace(" / ", "; ").split("; ")]
+    note = [x for x in parts if _NOTE.search(x)]
+    parts = [x for x in parts if not _NOTE.search(x) and not x.startswith(("Es ist", "Il est", "È "))]
+    if note:
+        parts.append(SECTION_NAMES["committee"])
+    return f"({'; '.join(parts)}) {m.group(2)}"
 
 
 def apply_bias(probs, bias):
@@ -227,6 +244,9 @@ class Pipeline:
         self.recheck = options.recheck if options.recheck is not None else small
         self.committee_terms = options.committee_terms if options.committee_terms is not None else small
         self.examples = load_examples(fewshot_for(options.fewshot, getattr(llm, "model", "")))
+        self.render = options.render if options.render != "auto" else ("full" if small else "compact")
+        if self.render == "compact":
+            self.examples = [dict(e, passages=[compact_example(x) for x in e["passages"]]) for e in self.examples]
 
     def booklet(self, source):
         if source not in self._booklets:
@@ -242,7 +262,7 @@ class Pipeline:
     def _render(self, booklet, ids):
         """Passages for the prompt. "compact": the proposal title only when it changes, the section type instead of
         the page note (which repeats a whole sentence on every committee passage)."""
-        if self.opt.render != "compact":
+        if self.render != "compact":
             return [booklet.chunks[i].render() for i in ids]
         kinds = self.kinds(booklet)
         out, last = [], None
@@ -708,6 +728,7 @@ class Pipeline:
             and mode not in ("claim-only", "baseline", "easy", "oracle")
             and state.get("passages")
             and best >= self.opt.recheck_min_bm25
+            and (result["confidence"] is None or result["confidence"] < self.opt.recheck_below)
         ):
             ids, passages = state.get("ids") or [], state["passages"]
             if self.opt.recheck_context == "hits" and booklet is not None and hits:

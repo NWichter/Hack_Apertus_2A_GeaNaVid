@@ -37,14 +37,14 @@
   },
   "input_tokens_sum": 669503,
   "input_tokens_mean": 1491.1,
-  "inference_ms_mean": 108.3,
-  "inference_ms_p95": 256,
+  "inference_ms_mean": 79.8,
+  "inference_ms_p95": 198,
   "recall_hit": 0.9443,
   "gold_coverage": 0.3652,
   "evidence_n": 296,
   "evidence_first_in_gold": 0.875,
   "evidence_page_gold": 0.8919,
-  "evidence_any_in_gold": 0.9223,
+  "evidence_any_in_gold": 0.9696,
   "retries": {
     "rate_limit": 0,
     "other": 0,
@@ -55,6 +55,6 @@
   "model": "apertus-v1.5-70b",
   "name": "final-v2",
   "split": "dev_s_v11",
-  "wall_s": 15.8,
+  "wall_s": 11.2,
   "uncached_calls": 0
 }

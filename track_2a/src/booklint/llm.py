@@ -4,6 +4,7 @@ import json
 import random
 import re
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 
@@ -180,8 +181,13 @@ class LLM:
             ).encode()
         ).hexdigest()
         path = self.cache / f"{key[:2]}" / f"{key}.json"
+        rec = None
         if self.use_cache and path.is_file():
-            rec = json.loads(path.read_text(encoding="utf-8"))
+            try:
+                rec = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                rec = None  # a broken cache file is a miss
+        if rec is not None:
             usage.add(
                 Call(
                     purpose,
@@ -230,7 +236,7 @@ class LLM:
                 time.sleep(1 + 2 * random.random())
             except (APIConnectionError, APITimeoutError, InternalServerError) as exc:
                 RETRIES["other"] += 1
-                if attempt == 9:
+                if attempt >= 3:  # a hanging endpoint must not stall a case for many minutes
                     raise RuntimeError(redact(exc)) from None
                 time.sleep(min(30, 2 ** attempt) * (0.5 + random.random()))
         seconds = time.perf_counter() - t0
@@ -252,8 +258,13 @@ class LLM:
             "completion_tokens": resp.usage.completion_tokens if resp.usage else 0,
             "seconds": round(seconds, 3),
         }
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(rec, ensure_ascii=False), encoding="utf-8")
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
+            tmp.write_text(json.dumps(rec, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp, path)  # atomic: workers asking the same prompt never interleave their writes
+        except OSError:
+            pass
         usage.add(
             Call(
                 purpose,
