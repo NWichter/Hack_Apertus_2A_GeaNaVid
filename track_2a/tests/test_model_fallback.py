@@ -161,12 +161,12 @@ def test_list_without_the_size_takes_the_first_apertus_model_and_says_so(stderr)
 @pytest.mark.parametrize("status", [400, 403, 404])
 def test_without_a_model_list_known_spellings_are_tried(stderr, status):
     ep = Endpoint(
-        ["swiss-ai/Apertus-70B-Instruct-2509"], list_models=False, unknown_status=status
+        ["Apertus-v1.5-70B-Instruct"], list_models=False, unknown_status=status
     )
     try:
         assert (
             llm_module.resolve_model(ep.client(), "apertus-v1.5-70b")
-            == "swiss-ai/Apertus-70B-Instruct-2509"
+            == "Apertus-v1.5-70B-Instruct"
         )
         err = stderr.getvalue()
         assert "no model list" in err and "first known Apertus name" in err

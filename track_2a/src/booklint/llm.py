@@ -54,17 +54,17 @@ class Usage:
 
 _RESOLVED = {}
 
-# Spellings of the Apertus models seen in the Hack Apertus guide, OST's Solution API Guide
-# ("swiss-ai/Apertus-v1.5-..."), Hugging Face and the hackathon endpoint; {size} is 8 or 70.
+# Spellings of the Apertus v1.5 models seen in the Hack Apertus guide, OST's Solution API Guide
+# ("swiss-ai/Apertus-v1.5-..."), Hugging Face and the hackathon endpoint; {size} is 8 or 70. Only v1.5 names:
+# the challenge allows Apertus v1.5 only.
 CANDIDATES = (
     "swiss-ai/Apertus-v1.5-{size}B",
     "swiss-ai/Apertus-v1.5-{size}B-Instruct",
     "apertus-v1.5-{size}b",
     "swiss-ai/apertus-v1.5-{size}b",
     "Apertus-v1.5-{size}B",
-    "swiss-ai/Apertus-{size}B-Instruct-2509",
-    "Apertus-{size}B-Instruct-2509",
-    "apertus-{size}b",
+    "Apertus-v1.5-{size}B-Instruct",
+    "apertus-v1.5-{size}b-instruct",
 )
 
 
