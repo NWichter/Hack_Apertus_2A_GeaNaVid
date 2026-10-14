@@ -1,0 +1,26 @@
+{
+ "apertus-v1.5-8b/A": {
+  "n": 493,
+  "input_tokens_mean": 2163,
+  "ms_mean": 469,
+  "ms_p95": 1443
+ },
+ "apertus-v1.5-8b/B": {
+  "n": 493,
+  "input_tokens_mean": 2675,
+  "ms_mean": 171,
+  "ms_p95": 305
+ },
+ "apertus-v1.5-70b/A": {
+  "n": 493,
+  "input_tokens_mean": 1417,
+  "ms_mean": 1140,
+  "ms_p95": 2495
+ },
+ "apertus-v1.5-70b/B": {
+  "n": 493,
+  "input_tokens_mean": 2093,
+  "ms_mean": 533,
+  "ms_p95": 1024
+ }
+}

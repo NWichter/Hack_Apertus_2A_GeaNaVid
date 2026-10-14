@@ -218,14 +218,14 @@
                 <caption class="sr-only">Results with Apertus 8B</caption>
                 <tbody>
                   <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td><strong>0.959</strong> <span class="ci">[0.933–0.980]</span></td></tr>
-                  <tr><th scope="row">Whole booklet, same model (baseline)</th><td>0.720 <span class="ci">at 20,242 tokens</span></td></tr>
+                  <tr><th scope="row">Whole booklet, same model, test split (493)</th><td>0.720 <span class="ci">at 20,242 tokens</span></td></tr>
                   <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td>0.971</td></tr>
-                  <tr><th scope="row">Macro-F1, Beginner task (reference given)</th><td>0.977</td></tr>
-                  <tr><th scope="row">OST evidence score (quote inside the gold passage)</th><td>96.9 %</td></tr>
-                  <tr><th scope="row">Input tokens per claim</th><td>2,159</td></tr>
+                  <tr><th scope="row">Macro-F1, Beginner task, test split (493)</th><td>0.977</td></tr>
+                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td>96.9 %</td></tr>
+                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td>2,159</td></tr>
                   <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td>366 / 545 ms</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A / B macro-F1 (40 + 40 cases)</th><td>0.897 / 0.978</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A evidence, tokens, time</th><td>26 of 26 · 2,460 tokens · 487 ms</td></tr>
+                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td>0.961 / 0.977</td></tr>
+                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td>314 of 324 · 2,163 · 469 / 1,443 ms</td></tr>
                 </tbody>
               </table>
             </div>
@@ -234,14 +234,14 @@
                 <caption class="sr-only">Results with Apertus 70B</caption>
                 <tbody>
                   <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td><strong>0.963</strong> <span class="ci">[0.942–0.981]</span></td></tr>
-                  <tr><th scope="row">Whole booklet, same model (baseline)</th><td>0.889 <span class="ci">at 20,242 tokens</span></td></tr>
+                  <tr><th scope="row">Whole booklet, same model, test split (493)</th><td>0.889 <span class="ci">at 20,242 tokens</span></td></tr>
                   <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td>0.967</td></tr>
-                  <tr><th scope="row">Macro-F1, Beginner task (reference given)</th><td>0.980</td></tr>
-                  <tr><th scope="row">OST evidence score (quote inside the gold passage)</th><td>96.0 %</td></tr>
-                  <tr><th scope="row">Input tokens per claim</th><td>1,418</td></tr>
+                  <tr><th scope="row">Macro-F1, Beginner task, test split (493)</th><td>0.980</td></tr>
+                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td>96.0 %</td></tr>
+                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td>1,418</td></tr>
                   <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td>1,342 / 2,015 ms</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A / B macro-F1 (40 + 40 cases)</th><td>0.978 / 0.978</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A evidence, tokens, time</th><td>25 of 26 · 1,791 tokens · 1,278 ms</td></tr>
+                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td>0.963 / 0.974</td></tr>
+                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td>311 of 324 · 1,417 · 1,140 / 2,495 ms</td></tr>
                 </tbody>
               </table>
             </div>
@@ -252,14 +252,14 @@
                   <thead><tr><th scope="col">Measure</th><th scope="col">8B</th><th scope="col">70B</th></tr></thead>
                   <tbody>
                   <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td data-label="8B"><strong>0.959</strong> <span class="ci">[0.933–0.980]</span></td><td data-label="70B"><strong>0.963</strong> <span class="ci">[0.942–0.981]</span></td></tr>
-                  <tr><th scope="row">Whole booklet, same model (baseline)</th><td data-label="8B">0.720 <span class="ci">at 20,242 tokens</span></td><td data-label="70B">0.889 <span class="ci">at 20,242 tokens</span></td></tr>
+                  <tr><th scope="row">Whole booklet, same model, test split (493)</th><td data-label="8B">0.720 <span class="ci">at 20,242 tokens</span></td><td data-label="70B">0.889 <span class="ci">at 20,242 tokens</span></td></tr>
                   <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td data-label="8B">0.971</td><td data-label="70B">0.967</td></tr>
-                  <tr><th scope="row">Macro-F1, Beginner task (reference given)</th><td data-label="8B">0.977</td><td data-label="70B">0.980</td></tr>
-                  <tr><th scope="row">OST evidence score (quote inside the gold passage)</th><td data-label="8B">96.9 %</td><td data-label="70B">96.0 %</td></tr>
-                  <tr><th scope="row">Input tokens per claim</th><td data-label="8B">2,159</td><td data-label="70B">1,418</td></tr>
+                  <tr><th scope="row">Macro-F1, Beginner task, test split (493)</th><td data-label="8B">0.977</td><td data-label="70B">0.980</td></tr>
+                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td data-label="8B">96.9 %</td><td data-label="70B">96.0 %</td></tr>
+                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td data-label="8B">2,159</td><td data-label="70B">1,418</td></tr>
                   <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td data-label="8B">366 / 545 ms</td><td data-label="70B">1,342 / 2,015 ms</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A / B macro-F1 (40 + 40 cases)</th><td data-label="8B">0.897 / 0.978</td><td data-label="70B">0.978 / 0.978</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A evidence, tokens, time</th><td data-label="8B">26 of 26 · 2,460 tokens · 487 ms</td><td data-label="70B">25 of 26 · 1,791 tokens · 1,278 ms</td></tr>
+                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td data-label="8B">0.961 / 0.977</td><td data-label="70B">0.963 / 0.974</td></tr>
+                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td data-label="8B">314 of 324 · 2,163 · 469 / 1,443 ms</td><td data-label="70B">311 of 324 · 1,417 · 1,140 / 2,495 ms</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -270,18 +270,19 @@
             <li>
               <strong>Less context, better verdicts:</strong> 8B with the
               selected passages (0.959) beats 70B with the whole booklet
-              (0.889), at 7 to 11 % of the tokens.
+              (0.889), at 7 to 11 % of the tokens (test split, 493 pairs).
             </li>
             <li>
               <strong>Translation is the largest step:</strong> cross-lingual
-              claims with 8B rise from 0.70 to 0.94 once Apertus translates them
-              into the booklet language.
+              claims (330 of the 493 test pairs) rise from 0.70 to 0.94 with 8B
+              and from 0.74 to 0.94 with 70B once Apertus translates them into the
+              booklet language.
             </li>
             <li>
               <strong>Evidence as OST scores it:</strong> one of the first five
               quoted sentences lies in OST's gold passage for 97 % (8B) and 96 %
-              (70B) of the entailment and contradiction cases, by the rule of
-              OST's own evaluation script.
+              (70B) of the 324 gold entailment and contradiction cases of the test
+              split, by the rule of OST's own evaluation script.
             </li>
             <li>
               <strong>Claims outside the tuning subset:</strong> 546 development claims

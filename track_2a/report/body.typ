@@ -38,14 +38,14 @@ tokens per claim, against 0.720 for the whole-booklet baseline (20,242
 input tokens). Apertus 70B reaches 0.963 \[0.942--0.981\] with 1,418
 input tokens, against 0.889. With OST's own evidence rule (one of the
 first five quotes inside the gold passage), our quotes score 0.969 (8B)
-and 0.960 (70B). In the Beginner task (gold reference given), 8B reaches
-0.977 and 70B 0.980. On 546 development claims outside the tuning
-subset, the defaults reach 0.971 / 0.967, and on a synthetic hold-out
-from booklets outside OST v1.1 the gap to the baseline carries over (8B
-0.874 in its second evaluation, first 0.845, vs 0.665; 70B 0.932 vs
-0.872). The output is never a voting recommendation: every yes or no
-comes with a quote from the booklet; a neutral answer ("blank") cites
-nothing.
+and 0.960 (70B) of the 324 gold entailment/contradiction cases. In the
+Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980. On
+546 development claims outside the tuning subset, the defaults reach
+0.971 / 0.967, and on a synthetic hold-out from booklets outside OST
+v1.1 the gap to the baseline carries over (8B 0.874 in its second
+evaluation, first 0.845, vs 0.665; 70B 0.932 vs 0.872). The output is
+never a voting recommendation: every yes or no comes with a quote from
+the booklet; a neutral answer ("blank") cites nothing.
 
 = 2. System design and architecture
 <system-design-and-architecture>
@@ -323,7 +323,8 @@ GeaNaVid 0.845 / 0.932 at 9 % / 7 % of the tokens, Beginner 0.855 /
 evaluated there once more: 0.874 (contradiction F1 0.735 → 0.793).
 
 #strong[Evidence (task A).] With OST's rule, our quotes score
-#strong[0.969 (8B) and 0.960 (70B)] on test v1.1
+#strong[0.969 (8B) and 0.960 (70B)] on the 324 gold entailment and
+contradiction cases of test v1.1
 (`runs/v1/ost-evidence-test_v11-v4.json`); the misses are mostly gold
 entailments or contradictions that we answer neutral, which cite
 nothing. Up to 4 October we returned at most two sentences (0.932 /
@@ -368,17 +369,38 @@ only same-session comparisons are meaningful. OST scores tokens and time
 with its own proxy and relative to the other teams; those scores exist
 only in OST's evaluation.
 
-#strong[End-to-end as OST runs it] (14 October, current defaults): a
-fresh clone, `docker build --platform linux/amd64`, and
+#strong[End-to-end as OST runs it] (14 October, current defaults,
+`runs/v1/test_v11/ost-docker-full-1014/`): a fresh clone,
+`docker build --platform linux/amd64`, and
 `docker run -e BASE_URL -e API_KEY -v data:/data:ro -v output:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl`
-on 80 cases in OST's format (40 seeded test rows as task A and as task
-B, `experiments/v1/ost_cases.py`), no response cache: exit code 0 and 80
-lines for both models. OST's `evaluate.py`: 8B task A 0.897 (n = 40; the
-sample holds 4 of the stored errors), evidence 26 of 26, task B 0.978,
-self-reported 2,460 input tokens and 487 ms per case (44 s in total);
-70B task A 0.978, evidence 25 of 26, task B 0.978, 1,791 tokens and
-1,278 ms. Task B cases carry the three examples for 8B, which raises its
-mean.
+on the whole test split in OST's format, every row once as task A
+(booklet) and once as task B (reference), 986 cases
+(`experiments/v1/ost_cases.py`), no response cache, the two models run
+side by side: exit code 0, 986 lines, no error for either model. OST's
+`evaluate.py` gives:
+
+#figure(
+  align(center)[#table(
+    columns: (16.67%, 16.67%, 16.67%, 16.67%, 16.67%, 16.67%),
+    align: (auto,auto,auto,auto,auto,auto,),
+    table.header([Model], [Task A macro-F1 (493)], [Task A
+      evidence], [Task B macro-F1 (493)], [Task A input tok.], [Task A
+      ms mean / p95],),
+    table.hline(),
+    [8B], [0.961], [314 of 324], [0.977], [2,163], [469 / 1,443],
+    [70B], [0.963], [311 of 324], [0.974], [1,417], [1,140 / 2,495],
+  )]
+  , kind: table
+  )
+
+The labels equal those of the stored runs except for 1 of 986 (8B) and 3
+of 986 (70B) cases (the endpoint is not fully deterministic at
+temperature 0). Times here include parsing each of the 21 booklets on
+first use and two runs sharing the endpoint, so they are higher than the
+cold runs above. An earlier check on only 40 + 40 of these cases had
+shown 8B task A at 0.897: that sample happened to hold 4 of the 8B
+errors (10 % instead of 4 %), with labels identical to the full run; 40
+cases are too few for a macro-F1.
 
 = 5. Reproducibility
 <reproducibility>

@@ -12,7 +12,9 @@ committee, voting text, Federal Council), so a claim costs about 1.4–2.2 k ins
 test split of OST v1.1 (493 pairs) the macro-F1 is 0.959 (8B) and 0.963 (70B), against 0.720 and 0.889 for the
 whole booklet. The test split was evaluated 24 times (23 configurations); 546 development claims outside the tuning
 subset give a second check (0.971 / 0.967). By the rule of OST's evaluation script, one of our five quoted
-sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the entailment and contradiction cases.
+sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the 324 gold entailment and contradiction cases.
+Run as OST runs it (Docker, all 493 test rows as task A and as task B, OST's `evaluate.py`): task A 0.961 / 0.963,
+task B 0.977 / 0.974 (8B / 70B).
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
