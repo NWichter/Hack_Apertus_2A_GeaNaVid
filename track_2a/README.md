@@ -1,22 +1,8 @@
-# Academia Challenges
+# GeaNaVid – Track 2A (OST): NLI over Swiss voting booklets
 
-Submissions must use the Apertus model family.
-For Track 2 this means that submitted solutions must be built with Apertus. Other open-weights models can be used to support development, e.g. as automatic judges during evaluation. Their role must be clearly described in the submission report.
-
-💬 In case you have questions, join the conversation on Discord or send an email to “hello@hackapertus.ch”
-
-## How it works
-
-Pick from 5 academia challenges provided by Swiss academic institutions:
-
-- **FHGR:** AI-Powered Job Interview Coach
-- **OpenParlData:** Extracting Parliamentary Affairs from PDFs into One Common Structure
-- **OST:** Multilingual Natural Language Inference over Swiss Official Voting Booklets
-- **UZH:** Detecting Cross-Lingual Semantic Differences in Swiss Government Websites
-- **ZHAW:** See It, Say It, Pick It: Vision-Language Grounding for a Real Robot Arm
-
-The challenges incl. submission and judging criteria are described in our **Getting Started guide**:
-https://hackapertus.notion.site/getting-started-guide-onlinehack
+GeaNaVid checks a claim in German, French or Italian against a Swiss federal voting booklet with Apertus v1.5 and
+returns entailment / neutral / contradiction with the booklet sentences and PDF pages behind it, plus tokens and time.
+Results, method and limits: [`technical_report.md`](technical_report.md) and [`Apertool_Report.pdf`](Apertool_Report.pdf).
 
 ## Run it
 
@@ -200,6 +186,8 @@ needed when a case names a booklet by URL (our benchmark files `data/v1/*.jsonl`
 and the demo); downloaded booklets are cached, not shipped. No GPU and no local
 model weights are needed. Without Docker: `pip install -e .[test]`, then `booklint …` and
 `python -m pytest`. `python experiments/check_hashes.py` checks the recorded SHA-256 of the data files.
+The Docker image installs the exact versions in `requirements.lock` (pip freeze of the image); `uv.lock` is only
+for local development and may resolve newer versions.
 
 ## Data
 
@@ -214,27 +202,51 @@ model weights are needed. Without Docker: `pip install -e .[test]`, then `bookli
 
 The `data/` directory must not exceed 100 MB.
 
-## 📦 Submission Requirements & Deliverables
+---
+
+## Template text (Hack Apertus project template)
+
+### Academia Challenges
+
+Submissions must use the Apertus model family.
+For Track 2 this means that submitted solutions must be built with Apertus. Other open-weights models can be used to support development, e.g. as automatic judges during evaluation. Their role must be clearly described in the submission report.
+
+💬 In case you have questions, join the conversation on Discord or send an email to “hello@hackapertus.ch”
+
+### How it works
+
+Pick from 5 academia challenges provided by Swiss academic institutions:
+
+- **FHGR:** AI-Powered Job Interview Coach
+- **OpenParlData:** Extracting Parliamentary Affairs from PDFs into One Common Structure
+- **OST:** Multilingual Natural Language Inference over Swiss Official Voting Booklets
+- **UZH:** Detecting Cross-Lingual Semantic Differences in Swiss Government Websites
+- **ZHAW:** See It, Say It, Pick It: Vision-Language Grounding for a Real Robot Arm
+
+The challenges incl. submission and judging criteria are described in our **Getting Started guide**:
+https://hackapertus.notion.site/getting-started-guide-onlinehack
+
+### 📦 Submission Requirements & Deliverables
 
 ❗️ Submissions are not handled on Devpost. Submit through our website only:
 http://hackapertus.ch/online-hack/submissions
 
 Requirements differ by challenge. See the description of the challenge you are entering for the exact deliverables.
 
-## ⚖️ Judging Criteria
+### ⚖️ Judging Criteria
 
 Judging criteria also differ by challenge. See the respective challenge description.
 
-## Support
+### Support
 
 **Licensing requirements**
 Please check our Terms & Conditions (6. What you build is open source):
 https://hackapertus.ch/terms-and-conditions
 
-## FAQ
+### FAQ
 
 💡 https://hackapertus.ch/faq
 
-## Contact
+### Contact
 
 💬 In case you have questions, join the conversation on Discord or send an email to “hello@hackapertus.ch”

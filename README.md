@@ -91,7 +91,7 @@ Licences follow the Hack Apertus Terms & Conditions (6. What you build is open s
 Third-party material keeps its own licence and is not relicensed:
 
 - OST benchmark `OSTswiss/MNLIoverSwissVotingBooklets` v1.0 (`track_2a/data/v1/`), our splits derived from it and the archived kickoff demo (`track_2a/data/archive/demo-2026-10-01/`): MIT, as published by OST.
-- Federal voting booklets (bk.admin.ch): downloaded and cached at run time, not shipped.
+- Federal voting booklets (bk.admin.ch): not shipped; our benchmark scripts and the web demo download and cache them, OST's evaluation reads them from `/data`.
 - VotingBooklets-v1 (Stüssi & Vamvas, SwissText 2026): CC BY 4.0; one quoted Romansh sentence on a pitch slide, with attribution; the corpus is not shipped.
 - `intfloat/multilingual-e5-small` (optional dense retrieval): MIT, downloaded on demand, not shipped.
 - Fonts in `website/assets/fonts/`: SIL Open Font License 1.1, see `LICENSE-fonts.txt`.

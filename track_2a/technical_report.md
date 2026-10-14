@@ -103,8 +103,8 @@ at most two left the first quote unchanged and were chosen on development data (
 Apertus reranking, label calibration, number rules, compact passage headers for 8B, fewer few-shot examples,
 fewer passages without neighbours, splitting more claims (p < 0.99), re-checking entailments for a contradiction, translating the
 passages instead of the claim and a sharper contradiction/neutral definition in the prompt are flags or were
-dropped; on development data none paid for its cost, and the neutral re-check did not pay on test for 70B
-(`docs/EXPERIMENTS-v1.md`, `docs/ITERATIONS.md`).
+dropped; on development data none paid for its cost. The ungated neutral re-check did not pay on test for 70B;
+the shipped 70B default uses it only below p < 0.999 (§4; `docs/EXPERIMENTS-v1.md`, `docs/ITERATIONS.md`).
 
 ## 3. Use of Apertus
 
@@ -133,12 +133,13 @@ and 497 test pairs (7 dates, 21 booklets; 493 in v1.1). Dropping the removed row
 all v1.1 numbers are recomputed from the stored runs without new calls (`experiments/v1/replay_v11.py`).
 
 **How often test was used.** Variants were developed on `dev_s`, but test was evaluated 26 times
-over the project, for 24 configurations (the 26th, on 14 October, reproduced the stored labels, see "Older booklets") (14 with 8B, 10 with 70B; the 70B compact headers twice, on 4 and 14
-October), plus cold runs on 50 test cases (all stored in `runs/v1/test/` and `runs/v1/test_v11/`), and at least
+over the project, for 24 configurations: 14 with 8B, 10 with 70B, the 70B compact headers twice (4 and 14
+October); the 26th evaluation, on 14 October, only reproduced the stored labels (see "Older booklets"). Add cold runs on 50 test cases (all stored in `runs/v1/test/` and `runs/v1/test_v11/`), and at least
 three default decisions used them: the section step was kept because test agreed, and compact headers and the ungated neutral
-re-check were not adopted for 70B on 4 October because test disagreed. Test is therefore not untouched. Two checks that never chose between variants: (a) **`dev_rest`**, the 546
-development claims outside `dev_s` (same 13 dates; the claim-cue → section mapping was read off all development
-claims), used only to confirm options chosen on `dev_s` (an option was kept only if `dev_rest` did not get worse):
+re-check were not adopted for 70B on 4 October because test disagreed. Test is therefore not untouched. Two less exposed checks: (a) **`dev_rest`**, the 546 development claims
+outside `dev_s` from the same 13 dates. It served only as a veto: an option chosen on `dev_s` stayed only if `dev_rest`
+did not get worse; it never selected between variants. The claim-cue → section mapping was read off all development
+claims. Scores:
 **0.971 (8B) / 0.971 (70B)**, 0.968 / 0.972 without claims that also occur in another split; (b) the synthetic
 hold-out below (0.874 / 0.932; the 8B value is its second evaluation, after the re-check was added). Over all 20 voting dates (dev + test, 1,488 claims) the defaults score 0.967
 / 0.971 with a per-date spread of 0.87–1.00 (s.d. 0.030 / 0.028; `runs/v1/generalization.json`): a hidden set
@@ -296,7 +297,8 @@ clone, `docker build --platform linux/amd64`, and `docker run -e BASE_URL -e API
 output:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl` on the whole test split in
 OST's format, every row once as task A (booklet) and once as task B (reference), 986 cases
 (`experiments/v1/ost_cases.py`), no response cache, the two models run side by side (70B rerun alone after the gated re-check): exit code 0, 986 lines, no
-error for either model. OST's `evaluate.py` gives:
+error for either model. OST's `evaluate.py` gives (a second 70B run the same evening, `…-1014b`, gave task A 0.965,
+312 of 324, task B 0.974):
 
 | Model | Task A macro-F1 (493) | Task A evidence | Task B macro-F1 (493) | Task A input tok. | Task A ms mean / p95 |
 | --- | --- | --- | --- | --- | --- |
@@ -347,7 +349,8 @@ configured model name nor a model list, the container cannot find the proxy's na
 - **Narrow first, then read.** Locating the proposal by its title costs nothing; with translation it beats
   the whole booklet by +0.22 (8B) and +0.06 (70B) with 1.6 k instead of 20 k input tokens. 8B with this context
   (0.939) beats 70B with the whole booklet (0.889).
-- **Translation is the largest single step** for cross-lingual claims (8B cross-lingual 0.696 → 0.938).
+- **Translation is the largest single step** for cross-lingual claims (ablation, 8B cross-lingual 0.696 → 0.938;
+  the full defaults reach 0.943).
 - **Prompt rules move the boundary instead of sharpening it.** Rules for "neutral" made 8B call real
   contradictions neutral; three worked examples helped on development data but not on test for the
   Advanced task. Apertus is very confident (p > 0.9 for 94–98 % of answers), so probability gates rarely
