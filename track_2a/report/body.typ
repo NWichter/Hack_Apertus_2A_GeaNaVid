@@ -243,7 +243,8 @@ by every setup below.
 
 #strong[Main results] (test v1.1, 493 pairs, macro-F1; input tokens per
 claim, 8B / 70B where they differ;
-`runs/v1/test/report-tables-v11.json`):
+`runs/v1/test/report-tables-v11.json`, the two default rows
+`runs/v1/test_v11/*/final-v4.summary.json`):
 
 #figure(
   align(center)[#table(
@@ -279,7 +280,7 @@ added +0.011 (8B) and +0.015 (70B) on development data and +0.013 /
 does not use it (a decision that used test).
 
 #strong[By language] (test v1.1, macro-F1; claim or booklet language, n
-in brackets):
+in brackets; `runs/v1/test_v11/final-v4-languages.json`):
 
 #figure(
   align(center)[#table(
