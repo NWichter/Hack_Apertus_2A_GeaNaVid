@@ -8,6 +8,8 @@ services:
       - LLM_NAME
       - LLM_BASE_URL
       - LLM_API_KEY
+      - BASE_URL
+      - API_KEY
       - BOOKLET_ROOT
       - CACHE_DIR=/work/.cache
     volumes:
