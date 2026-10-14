@@ -263,3 +263,14 @@ def test_global_limit_caps_all_clients(base_url, monkeypatch):
     demo_server._global_hits[:] = [time.time() - demo_server.GLOBAL_LIMIT_WINDOW_SECONDS - 1] * demo_server.GLOBAL_LIMIT_MAX_REQUESTS
     demo_server._rate_limits.clear()
     assert _post(base_url, payload, auth=False).status == 200
+
+
+def test_titles_are_readable_and_map_back_to_ost():
+    split = "Bundesbeschluss \u00fcber die Beschaffung neuer Kampf flugzeuge"
+    joined = "Bundesbeschluss \u00fcber die Beschaffung neuer Kampfflugzeuge"
+    assert demo_server.shown_title(split) == joined
+    assert demo_server.original_title(joined) == split
+    shown = {v for votes in demo_server.VOTES.values() for v in votes}
+    assert joined in shown and split not in shown
+    assert not any("\ufffd" in v for v in shown)
+    assert "Volksinitiative \u00abMehr bezahlbare Wohnungen\u00bb" in shown

@@ -55,6 +55,8 @@ MAX_REFERENCE_CHARS = 8_000
 
 PRESETS_FILE = TRACK2A_ROOT / "data" / "edge_cases.jsonl"
 DATASET_FILE = TRACK2A_ROOT / "data" / "v1" / "v1.0.jsonl"
+# readable proposal titles (experiments/v1/vote_titles.py): words split by the PDF layout in OST's `vote` field joined
+TITLES_FILE = TRACK2A_ROOT / "data" / "v1" / "vote-titles.json"
 
 _rate_limits = defaultdict(list)
 _rate_lock = threading.Lock()
@@ -107,6 +109,26 @@ def url_lang(url):
     return ""
 
 
+def load_titles():
+    try:
+        return json.loads(TITLES_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+TITLES = load_titles()
+ORIGINAL_TITLE = {v: k for k, v in TITLES.items()}
+
+
+def shown_title(vote):
+    """The title shown in the demo; the pipeline still gets OST's original string (see original_title)."""
+    return TITLES.get(vote, vote)
+
+
+def original_title(vote):
+    return ORIGINAL_TITLE.get(vote, vote)
+
+
 def booklet_index(rows):
     """Official booklet URLs of the OST v1.0 dataset, keyed by (date, language), and the vote titles per booklet.
     Nothing else may be fetched."""
@@ -116,7 +138,7 @@ def booklet_index(rows):
         if url and date:
             urls[(date, url_lang(url))] = url
             if row.get("vote"):
-                votes[(date, url_lang(url))].add(row["vote"].strip())
+                votes[(date, url_lang(url))].add(shown_title(row["vote"].strip()))
     return urls, votes
 
 
@@ -134,7 +156,7 @@ def ost_examples(rows):
                 "claim_language": r["claim_language"],
                 "booklet": r["booklet_publish_date"],
                 "booklet_lang": url_lang(r["booklet_url"]),
-                "vote": r["vote"],
+                "vote": shown_title(r["vote"]),
                 "label": r["entailment_label"],
                 "source": "OST v1.0, development split",
             }
@@ -401,7 +423,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
                 )
                 return
             kwargs["booklet_source"] = url
-            kwargs["vote"] = str(payload.get("vote") or "").strip()[:300] or None
+            kwargs["vote"] = original_title(str(payload.get("vote") or "").strip()[:300]) or None
         else:
             self._send_json(400, {"error": "'mode' must be 'beginner' or 'advanced'."})
             return
