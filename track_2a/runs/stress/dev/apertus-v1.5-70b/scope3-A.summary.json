@@ -1,0 +1,20 @@
+{
+ "n": 157,
+ "macro_f1": 0.9549,
+ "evidence_score": 0.8725,
+ "input_tokens_mean": 1802,
+ "ms_mean": 906,
+ "ms_p95": 1991,
+ "errors": {
+  "2->0": 3,
+  "0->1": 2,
+  "0->2": 1,
+  "1->2": 1
+ },
+ "model": "apertus-v1.5-70b",
+ "split": "dev",
+ "task": "A",
+ "name": "scope3",
+ "extra": [],
+ "opts": "{\"k_outline\": 7}"
+}

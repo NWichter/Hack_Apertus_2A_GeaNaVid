@@ -1,0 +1,57 @@
+{
+ "apertus-v1.5-8b/A": {
+  "n": 157,
+  "macro_f1": 0.76,
+  "evidence_score": 0.4804,
+  "input_tokens_mean": 1997,
+  "ms_mean": 510,
+  "ms_p95": 1377,
+  "errors": {
+   "0->1": 14,
+   "2->1": 14,
+   "2->0": 5,
+   "0->2": 2,
+   "1->0": 1,
+   "1->2": 1
+  }
+ },
+ "apertus-v1.5-8b/B": {
+  "n": 157,
+  "macro_f1": 0.8821,
+  "evidence_score": 0.9216,
+  "input_tokens_mean": 1324,
+  "ms_mean": 214,
+  "ms_p95": 241,
+  "errors": {
+   "2->1": 8,
+   "2->0": 8,
+   "1->0": 1
+  }
+ },
+ "apertus-v1.5-70b/A": {
+  "n": 157,
+  "macro_f1": 0.7571,
+  "evidence_score": 0.4902,
+  "input_tokens_mean": 1276,
+  "ms_mean": 1199,
+  "ms_p95": 1859,
+  "errors": {
+   "0->1": 18,
+   "2->1": 15,
+   "2->0": 3,
+   "0->2": 1,
+   "1->2": 1
+  }
+ },
+ "apertus-v1.5-70b/B": {
+  "n": 157,
+  "macro_f1": 0.9868,
+  "evidence_score": 1.0,
+  "input_tokens_mean": 742,
+  "ms_mean": 560,
+  "ms_p95": 656,
+  "errors": {
+   "2->0": 2
+  }
+ }
+}

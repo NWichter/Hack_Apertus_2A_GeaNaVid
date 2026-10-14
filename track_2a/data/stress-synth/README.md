@@ -23,3 +23,8 @@ separately and never mix them with OST benchmark numbers.
 
 Data license: to be decided (prepared for CDLA-Permissive-2.0, not yet declared). The booklets are official
 publications of the Swiss Confederation; see `../holdout-synth/README.md` for their terms of use.
+
+**Second set (pre-registered 14 October, before its data exists).** A second synthetic set on 12–16 further voting
+dates (about 1995–2019) is being built by the same method with open-weight generator and judges. Its dates will be
+split by a seeded draw (seed 20261015, dates sorted, shuffled, first half `dev2`, rest `holdout2`). Neither half is
+used to develop anything in the round of 14 October; both are evaluated once with the defaults fixed below.

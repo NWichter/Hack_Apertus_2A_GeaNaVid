@@ -1,0 +1,21 @@
+{
+ "n": 157,
+ "macro_f1": 0.8772,
+ "evidence_score": 0.7941,
+ "input_tokens_mean": 2153,
+ "ms_mean": 406,
+ "ms_p95": 1350,
+ "errors": {
+  "2->1": 6,
+  "2->0": 4,
+  "1->0": 4,
+  "0->2": 2,
+  "0->1": 2,
+  "1->2": 1
+ },
+ "model": "apertus-v1.5-8b",
+ "split": "dev",
+ "task": "A",
+ "name": "scope2",
+ "extra": []
+}

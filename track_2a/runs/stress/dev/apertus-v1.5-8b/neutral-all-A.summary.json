@@ -1,0 +1,22 @@
+{
+ "n": 157,
+ "macro_f1": 0.8579,
+ "evidence_score": 0.8137,
+ "input_tokens_mean": 2548,
+ "ms_mean": 228,
+ "ms_p95": 653,
+ "errors": {
+  "1->2": 6,
+  "2->0": 5,
+  "2->1": 4,
+  "1->0": 3,
+  "0->2": 2,
+  "0->1": 2
+ },
+ "model": "apertus-v1.5-8b",
+ "split": "dev",
+ "task": "A",
+ "name": "neutral-all",
+ "extra": [],
+ "opts": "{\"recheck_below\": 1.01}"
+}

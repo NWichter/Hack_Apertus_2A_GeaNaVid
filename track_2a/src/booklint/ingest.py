@@ -6,7 +6,8 @@ import os
 import re
 import time
 import urllib.request
-from dataclasses import asdict, dataclass
+from collections import Counter
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import pymupdf as fitz
@@ -15,6 +16,7 @@ from .config import cache_dir
 from .textnorm import clean, detect_language
 
 INGEST_VERSION = "ingest-v5"
+OUTLINE_VERSION = "outline-v1"
 _ORDINAL = re.compile(
     r"^(\d+\s+)?((erste|zweite|dritte|vierte|fünfte|sechste)\s+vorlage"
     r"|(premier|deuxième|troisième|quatrième|cinquième|sixième)\s+objet"
@@ -49,6 +51,8 @@ class Booklet:
     pages: int
     chunks: list
     ingest_seconds: float
+    outline: list = field(default_factory=list)  # [pdf page, label] where a proposal starts (older booklets)
+
 
     def group_of(self, chunk_ids):
         return {self.chunks[i].group for i in chunk_ids}
@@ -156,6 +160,67 @@ def _blocks(page):
     return out
 
 
+# a line that is exactly "Erste Vorlage" / "Premier objet" / "Primo oggetto" (capitalised), optionally after a page no.
+_ORDINAL_LINE = re.compile(
+    r"^(\d+\s+)?(Erste|Zweite|Dritte|Vierte|Fünfte|Sechste)\s+Vorlage\b"
+    r"|^(\d+\s+)?(Premier|Deuxième|Troisième|Quatrième|Cinquième|Sixième)\s+objet\b"
+    r"|^(\d+\s+)?(Primo|Secondo|Terzo|Quarto|Quinto|Sesto)\s+oggetto\b"
+)
+_RANGE = re.compile(r"(?:Seiten|pages|pagine)\s+(\d{1,3})\s*[–-]\s*(\d{1,3})")
+
+
+def garbled(text):
+    """Text from a broken font encoding (e.g. the 2005 voting texts): few letters or few vowels."""
+    t = re.sub(r"\s+", "", text)
+    if len(t) < 40:
+        return False
+    letters = sum(ch.isalpha() for ch in t)
+    vowels = sum(ch.lower() in "aeiouàèéìòùäöüâêîôûy" for ch in t)
+    return letters / len(t) < 0.6 or vowels / max(letters, 1) < 0.25
+
+
+def _page_offset(doc):
+    """Printed page number minus PDF page number (0 for most booklets, 1 for 2005)."""
+    votes = Counter()
+    for pno, page in enumerate(doc, start=1):
+        lines = [x.strip() for x in page.get_text("text").split("\n") if x.strip()]
+        for x in lines[:1] + lines[-1:]:
+            if x.isdigit() and int(x) < 400:
+                votes[int(x) - pno] += 1
+                break
+    return votes.most_common(1)[0][0] if votes else 0
+
+
+def _outline(doc):
+    """Where each proposal starts, for booklets whose page headers carry no proposal name: pages that open with
+    "Erste Vorlage" / "Premier objet" / "Primo oggetto" on a line of their own, else the explanation page ranges of
+    the overview on pages 2-3 ("Seiten 4–11"; ranges of 6+ pages, not nested in an earlier one). Empty if neither
+    gives at least two proposals."""
+    starts = []
+    for pno, page in enumerate(doc, start=1):
+        lines = [x.strip() for x in page.get_text("text").split("\n") if x.strip()][:12]
+        hits = [i for i, x in enumerate(lines) if _ORDINAL_LINE.match(x)]
+        if len(hits) == 1:
+            label = " ".join(lines[max(0, hits[0] - 1) : hits[0] + 3])
+            starts.append([pno, clean(label)])
+    if len(starts) >= 2:
+        return starts
+    off = _page_offset(doc)
+    ranges = []
+    for pno in range(1, min(4, len(doc))):
+        text = clean(doc[pno].get_text("text"))
+        ranges += [(int(a), int(b)) for a, b in _RANGE.findall(text)]
+    out, end = [], 0
+    for a, b in sorted(set(ranges)):
+        if b - a >= 5 and a > end:
+            first = a - off
+            if 1 <= first <= len(doc):
+                lines = [x.strip() for x in doc[first - 1].get_text("text").split("\n") if x.strip()]
+                out.append([first, clean(" ".join(lines[:4]))])
+            end = b
+    return out if len(out) >= 2 else []
+
+
 def _strip_page_no(text):
     return re.sub(r"^(\d+\s+)+|(\s+\d+)+$", "", text).strip()
 
@@ -217,7 +282,10 @@ def ingest(source, use_cache=True):
         raw = json.loads(target.read_text(encoding="utf-8"))
         raw["chunks"] = [Chunk(**c) for c in raw["chunks"]]
         raw["source"] = source
-        return Booklet(**raw)
+        raw.pop("outline", None)
+        booklet = Booklet(**raw)
+        booklet.outline = _cached_outline(path, sha, use_cache)
+        return booklet
     t0 = time.perf_counter()
     chunks, pages, lang = _parse(path)
     if sum(len(c.text) for c in chunks) < 500:
@@ -229,5 +297,19 @@ def ingest(source, use_cache=True):
     )
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = asdict(booklet)
+    payload.pop("outline", None)
     target.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    booklet.outline = _cached_outline(path, sha, use_cache)
     return booklet
+
+
+def _cached_outline(path, sha, use_cache=True):
+    """Kept apart from the chunk cache so that adding it did not re-parse (and change) any cached booklet."""
+    target = cache_dir() / "booklets" / f"{sha[:20]}.{OUTLINE_VERSION}.json"
+    if use_cache and target.is_file():
+        return json.loads(target.read_text(encoding="utf-8"))
+    with fitz.open(path) as doc:
+        outline = _outline(doc)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(outline, ensure_ascii=False), encoding="utf-8")
+    return outline

@@ -28,7 +28,7 @@ from .nli import (
     verify_facts_params,
     yes_prob,
 )
-from .proposal import locate
+from .proposal import locate, uses_outline
 from .retrieval_eval import gold_chunks
 from .retrieve import Retriever, map_parallel, parallel_url
 from .sections import PREFER, claim_cue, classify, factors
@@ -95,6 +95,8 @@ class Options:
     evidence_spans: int = 5
     evidence_min_share: float = 0.0
     section_boost: float = 1.5
+    k_outline: int = -1  # passages for older layouts (proposals from the outline); 0 = k; -1 = auto: 7 for 70B, k for 8B (stress dev half)
+    outline_no_boost: bool = True  # no section boost when the proposals come from the outline (older layouts)
     evidence_section: float = 2.0
     evidence_section_pool: int = 4
     render: str = "auto"  # auto: compact passage headers for 70B, full for 8B (14.10., dev_s + dev_rest)
@@ -245,6 +247,7 @@ class Pipeline:
         self.decompose = options.decompose if options.decompose is not None else small
         self.recheck = options.recheck if options.recheck is not None else True
         self.tau_recheck = options.tau_recheck if options.tau_recheck >= 0 else (0.5 if small else 0.999)
+        self.k_outline = options.k_outline if options.k_outline >= 0 else (0 if small else 7)
         self.committee_terms = options.committee_terms if options.committee_terms is not None else small
         self.examples = load_examples(fewshot_for(options.fewshot, getattr(llm, "model", "")))
         if options.fewshot_ids and self.examples:
@@ -423,10 +426,12 @@ class Pipeline:
         translation,
         usage,
     ):
-        k = self.opt.k
+        k = self.k_outline if self.k_outline and uses_outline(booklet) else self.opt.k
         anchor = "direct"
         ranked, best = self._rank(booklet, retriever, queries, region)
-        if self.opt.section_boost != 1.0:
+        # section types are read from the headings of header-structured booklets; on older layouts (proposals from
+        # the outline) they mislead: gold page in the hits 0.57 -> 0.75 without the boost (stress dev half, 70B)
+        if self.opt.section_boost != 1.0 and not (self.opt.outline_no_boost and uses_outline(booklet)):
             want = PREFER.get(claim_cue(*queries), set())
             kinds = self.kinds(booklet)
             score = {i: (self.opt.section_boost if kinds[i] in want else 1.0) / (60 + r) for r, i in enumerate(ranked)}

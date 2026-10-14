@@ -60,6 +60,8 @@ def options_from(args, mode=None):
         kw["route"] = False
     if getattr(args, "calib", None):
         kw["calib"] = json.loads(args.calib)
+    if os.environ.get("BOOKLINT_OPTIONS"):  # experiments only: JSON object of further Options fields
+        kw.update(json.loads(os.environ["BOOKLINT_OPTIONS"]))
     return Options(mode=mode or args.mode or Options.mode, **kw)
 
 
