@@ -5,10 +5,10 @@
   "tasks": {
     "A": {
       "cases": 493,
-      "macro_f1": 0.9632914439790072,
+      "macro_f1": 0.9653253534536238,
       "threshold": 0.6,
       "passes_threshold": true,
-      "accuracy": 0.9634888438133874,
+      "accuracy": 0.9655172413793104,
       "per_class": {
         "entailment": {
           "precision": 0.9629629629629629,
@@ -17,31 +17,31 @@
           "support": 160
         },
         "neutral": {
-          "precision": 0.9542857142857143,
+          "precision": 0.9597701149425287,
           "recall": 0.9881656804733728,
-          "f1": 0.9709302325581395,
+          "f1": 0.9737609329446064,
           "support": 169
         },
         "contradiction": {
-          "precision": 0.9743589743589743,
-          "recall": 0.926829268292683,
-          "f1": 0.95,
+          "precision": 0.9745222929936306,
+          "recall": 0.9329268292682927,
+          "f1": 0.9532710280373832,
           "support": 164
         }
       },
-      "evidence_score": 0.9598765432098766,
+      "evidence_score": 0.9629629629629629,
       "evidence": {
         "cases": 324,
-        "found": 311,
+        "found": 312,
         "without_gold_passage": 0
       }
     },
     "B": {
       "cases": 493,
-      "macro_f1": 0.9737863680181035,
+      "macro_f1": 0.9757862373238085,
       "threshold": 0.7,
       "passes_threshold": true,
-      "accuracy": 0.973630831643002,
+      "accuracy": 0.9756592292089249,
       "per_class": {
         "entailment": {
           "precision": 0.9875776397515528,
@@ -50,15 +50,15 @@
           "support": 160
         },
         "neutral": {
-          "precision": 0.9593023255813954,
-          "recall": 0.9763313609467456,
-          "f1": 0.967741935483871,
+          "precision": 0.9595375722543352,
+          "recall": 0.9822485207100592,
+          "f1": 0.9707602339181286,
           "support": 169
         },
         "contradiction": {
-          "precision": 0.975,
+          "precision": 0.9811320754716981,
           "recall": 0.9512195121951219,
-          "f1": 0.9629629629629629,
+          "f1": 0.9659442724458205,
           "support": 164
         }
       }
@@ -71,7 +71,7 @@
     },
     "A de->fr": {
       "cases": 58,
-      "macro_f1": 0.9654096293799697
+      "macro_f1": 0.980562122406094
     },
     "A de->it": {
       "cases": 38,
@@ -123,7 +123,7 @@
     },
     "B fr->it": {
       "cases": 74,
-      "macro_f1": 0.9564402810304449
+      "macro_f1": 0.9716320659896717
     },
     "B it->de": {
       "cases": 49,
@@ -139,8 +139,8 @@
     }
   },
   "usage_mean_per_case": {
-    "input_tokens": 1755.3823529411766,
-    "output_tokens": 31.342799188640974,
-    "inference_time_ms": 836.2535496957404
+    "input_tokens": 1776.6409736308317,
+    "output_tokens": 32.06795131845842,
+    "inference_time_ms": 784.0
   }
 }

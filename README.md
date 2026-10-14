@@ -8,13 +8,13 @@ GeaNaVid checks a claim in German, French or Italian against a Swiss federal vot
 booklet sentence and PDF page that decide it, the input/output tokens and the time. Apertus v1.5 (8B or 70B)
 makes every decision; the booklet is narrowed to the proposal named by `vote`, cross-lingual claims are
 translated by Apertus, and BM25 picks a few passages, preferring the section the claim names (summary,
-committee, voting text, Federal Council), so a claim costs about 1.4–2.2 k instead of 20 k input tokens. On the
-test split of OST v1.1 (493 pairs) the macro-F1 is 0.959 (8B) and 0.963 (70B), against 0.720 and 0.889 for the
-whole booklet. The test split was evaluated 24 times (23 configurations); 546 development claims outside the tuning
-subset give a second check (0.971 / 0.967). By the rule of OST's evaluation script, one of our five quoted
+committee, voting text, Federal Council), so a claim costs about 1.5–2.2 k instead of 20 k input tokens. On the
+test split of OST v1.1 (493 pairs) the macro-F1 is 0.959 (8B) and 0.965 (70B), against 0.720 and 0.889 for the
+whole booklet. The test split was evaluated 25 times (24 configurations); 546 development claims outside the tuning
+subset give a second check (0.971 / 0.971). By the rule of OST's evaluation script, one of our five quoted
 sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the 324 gold entailment and contradiction cases.
-Run as OST runs it (Docker, all 493 test rows as task A and as task B, OST's `evaluate.py`): task A 0.961 / 0.963,
-task B 0.977 / 0.974 (8B / 70B).
+Run as OST runs it (Docker, all 493 test rows as task A and as task B, OST's `evaluate.py`): task A 0.961 / 0.965,
+task B 0.977 / 0.976 (8B / 70B).
 
 The project lives in [`track_2a/`](track_2a/) (template layout). Details: [`track_2a/README.md`](track_2a/README.md).
 
@@ -35,7 +35,7 @@ docker run --rm --platform linux/amd64 -e BASE_URL -e API_KEY \
 
 **Model.** `LLM_NAME` selects the Apertus model: `apertus-v1.5-8b` (image default) or `apertus-v1.5-70b`
 (`-e LLM_NAME=apertus-v1.5-70b`). Recommended for the evaluation: [[NIKLAS: Modellwahl]]. 8B: macro-F1 0.959, 2,159
-input tokens, 366 / 545 ms (mean / p95); 70B: 0.963, 1,418 tokens, 1,342 / 2,015 ms (test split and cold runs, see
+input tokens, 366 / 545 ms (mean / p95); 70B: 0.965, 1,461 tokens, 1,274 / 2,197 ms (test split and cold runs, see
 the technical report).
 
 Input: one JSON object per line, task A `{"id", "vote", "claim": {"text", "language"}, "booklet": {"path",

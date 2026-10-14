@@ -26,10 +26,10 @@ MAIN = [
     ("Adv.: + 3 ex. + decomp.", "default", None),
     ("Adv.: + sections", "r1-secboost", "r1-secboost"),
     ("Adv.: + neutral re-check", "final-v2", "r9-recheck-terms"),
-    ("Default (14 Oct.): 8B re-check if p < 0.999, 70B compact headers", "final-v4", "final-v4"),
+    ("Default (14 Oct.): 8B re-check if p < 0.999, 70B compact headers + re-check", "final-v5", "final-v5"),
 ]
-LANG = {"Adv.": "final-v4", "Beg.": "beginner-default"}
-SPLIT_DIR = {"final-v4": "test_v11"}  # runs made on v1.1 directly
+LANG = {"Adv.": "final-v5", "Beg.": "beginner-default"}
+SPLIT_DIR = {"final-v4": "test_v11", "final-v5": "test_v11"}  # runs made on v1.1 directly
 
 
 def preds(model, name):

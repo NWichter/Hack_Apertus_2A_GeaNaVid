@@ -152,7 +152,7 @@
           <p class="section-lede">
             Sending the whole booklet to the model costs about 20,000 input
             tokens per claim. GeaNaVid gives Apertus the few passages of the
-            right proposal instead, about 1,400 to 2,200 input tokens per claim.
+            right proposal instead, about 1,500 to 2,200 input tokens per claim.
           </p>
           <ol class="steps">
             <li>
@@ -233,15 +233,15 @@
               <table class="kv">
                 <caption class="sr-only">Results with Apertus 70B</caption>
                 <tbody>
-                  <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td><strong>0.963</strong> <span class="ci">[0.942–0.981]</span></td></tr>
+                  <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td><strong>0.965</strong> <span class="ci">[0.944–0.983]</span></td></tr>
                   <tr><th scope="row">Whole booklet, same model, test split (493)</th><td>0.889 <span class="ci">at 20,242 tokens</span></td></tr>
-                  <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td>0.967</td></tr>
+                  <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td>0.971</td></tr>
                   <tr><th scope="row">Macro-F1, Beginner task, test split (493)</th><td>0.980</td></tr>
-                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td>96.0 %</td></tr>
-                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td>1,418</td></tr>
-                  <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td>1,342 / 2,015 ms</td></tr>
-                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td>0.963 / 0.974</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td>311 of 324 · 1,417 · 1,140 / 2,495 ms</td></tr>
+                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td>96.3 %</td></tr>
+                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td>1,461</td></tr>
+                  <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td>1,274 / 2,197 ms</td></tr>
+                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td>0.965 / 0.976</td></tr>
+                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td>312 of 324 · 1,460 · 1,059 / 2,344 ms</td></tr>
                 </tbody>
               </table>
             </div>
@@ -251,15 +251,15 @@
                   <caption class="sr-only">Apertus 8B and 70B side by side</caption>
                   <thead><tr><th scope="col">Measure</th><th scope="col">8B</th><th scope="col">70B</th></tr></thead>
                   <tbody>
-                  <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td data-label="8B"><strong>0.959</strong> <span class="ci">[0.933–0.980]</span></td><td data-label="70B"><strong>0.963</strong> <span class="ci">[0.942–0.981]</span></td></tr>
+                  <tr><th scope="row">Macro-F1, test split (493 pairs)</th><td data-label="8B"><strong>0.959</strong> <span class="ci">[0.933–0.980]</span></td><td data-label="70B"><strong>0.965</strong> <span class="ci">[0.944–0.983]</span></td></tr>
                   <tr><th scope="row">Whole booklet, same model, test split (493)</th><td data-label="8B">0.720 <span class="ci">at 20,242 tokens</span></td><td data-label="70B">0.889 <span class="ci">at 20,242 tokens</span></td></tr>
-                  <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td data-label="8B">0.971</td><td data-label="70B">0.967</td></tr>
+                  <tr><th scope="row">Macro-F1, 546 dev claims outside the tuning subset</th><td data-label="8B">0.971</td><td data-label="70B">0.971</td></tr>
                   <tr><th scope="row">Macro-F1, Beginner task, test split (493)</th><td data-label="8B">0.977</td><td data-label="70B">0.980</td></tr>
-                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td data-label="8B">96.9 %</td><td data-label="70B">96.0 %</td></tr>
-                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td data-label="8B">2,159</td><td data-label="70B">1,418</td></tr>
-                  <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td data-label="8B">366 / 545 ms</td><td data-label="70B">1,342 / 2,015 ms</td></tr>
-                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td data-label="8B">0.961 / 0.977</td><td data-label="70B">0.963 / 0.974</td></tr>
-                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td data-label="8B">314 of 324 · 2,163 · 469 / 1,443 ms</td><td data-label="70B">311 of 324 · 1,417 · 1,140 / 2,495 ms</td></tr>
+                  <tr><th scope="row">OST evidence score, 324 gold entailments / contradictions of the test split</th><td data-label="8B">96.9 %</td><td data-label="70B">96.3 %</td></tr>
+                  <tr><th scope="row">Input tokens per claim, test split (493)</th><td data-label="8B">2,159</td><td data-label="70B">1,461</td></tr>
+                  <tr><th scope="row">Time per case, mean / p95 (cold, 50 dev cases)</th><td data-label="8B">366 / 545 ms</td><td data-label="70B">1,274 / 2,197 ms</td></tr>
+                  <tr><th scope="row">OST's Docker run with OST's evaluate.py, task A / B macro-F1 (493 + 493 cases)</th><td data-label="8B">0.961 / 0.977</td><td data-label="70B">0.965 / 0.976</td></tr>
+                  <tr><th scope="row">OST's Docker run, task A (493 cases): evidence found; input tokens; time mean / p95</th><td data-label="8B">314 of 324 · 2,163 · 469 / 1,443 ms</td><td data-label="70B">312 of 324 · 1,460 · 1,059 / 2,344 ms</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -286,12 +286,12 @@
             </li>
             <li>
               <strong>Claims outside the tuning subset:</strong> 546 development claims
-              that no option was chosen on give 0.971 (8B) and 0.967 (70B).
+              that no option was chosen on give 0.971 (8B) and 0.971 (70B).
             </li>
             <li>
               <strong>Time as OST measures it:</strong> cold run on 50
               development cases, mean / p95 per claim 366 / 545 ms (8B) and
-              1,342 / 2,015 ms (70B); 48 ms of it is our own code. Re-checking only
+              1,274 / 2,197 ms (70B); 48 ms of it is our own code. Re-checking only
               unsure neutral answers cut the 8B p95 by 44 % at the same F1.
             </li>
             <li>
@@ -303,10 +303,10 @@
           </ul>
           <p class="caveat">
             OST v1.1 repeats 122 of the 493 test pairs, so the 95 % intervals
-            resample copies together: 0.933–0.980 (8B), 0.942–0.981 (70B);
-            without the copies the defaults score 0.957 (8B) and 0.960 (70B).
+            resample copies together: 0.933–0.980 (8B), 0.944–0.983 (70B);
+            without the copies the defaults score 0.957 (8B) and 0.962 (70B).
             8B and 70B do not differ significantly. Variants were built on
-            development data, but test scores were seen 24 times, for 23
+            development data, but test scores were seen 25 times, for 24
             configurations and decided some of them, so the 546
             development claims and the synthetic hold-out are the honest
             checks. The rounds are in docs/ITERATIONS.md.

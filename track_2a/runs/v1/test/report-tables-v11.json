@@ -104,16 +104,16 @@
       }
     },
     {
-      "setup": "Default (14 Oct.): 8B re-check if p < 0.999, 70B compact headers",
+      "setup": "Default (14 Oct.): 8B re-check if p < 0.999, 70B compact headers + re-check",
       "8b": {
-        "run": "final-v4",
+        "run": "final-v5",
         "macro_f1": 0.9589,
         "input_tokens": 2159
       },
       "70b": {
-        "run": "final-v4",
-        "macro_f1": 0.9633,
-        "input_tokens": 1418
+        "run": "final-v5",
+        "macro_f1": 0.9653,
+        "input_tokens": 1461
       }
     }
   ],
@@ -121,7 +121,7 @@
     "All": {
       "n": 493,
       "Adv. 8b": 0.9589,
-      "Adv. 70b": 0.9633,
+      "Adv. 70b": 0.9653,
       "Beg. 8b": 0.9774,
       "Beg. 70b": 0.9798
     },
@@ -135,7 +135,7 @@
     "Cross-ling.": {
       "n": 330,
       "Adv. 8b": 0.9426,
-      "Adv. 70b": 0.9548,
+      "Adv. 70b": 0.9578,
       "Beg. 8b": 0.976,
       "Beg. 70b": 0.9765
     },
@@ -149,14 +149,14 @@
     "Booklet DE": {
       "n": 152,
       "Adv. 8b": 0.9798,
-      "Adv. 70b": 0.9672,
+      "Adv. 70b": 0.9737,
       "Beg. 8b": 0.9733,
       "Beg. 70b": 0.9869
     },
     "Claim FR": {
       "n": 165,
       "Adv. 8b": 0.9453,
-      "Adv. 70b": 0.9585,
+      "Adv. 70b": 0.9642,
       "Beg. 8b": 0.9824,
       "Beg. 70b": 0.9888
     },

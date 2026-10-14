@@ -169,7 +169,7 @@ that covers most of the (translated) claim wins (idf-weighted word stems plus ch
 still match; cited passages get a 1.2 bonus, sentences of the named section a factor 2); the next best sentences
 of other passages follow, up to five. On the v1.1 test split the first sentence lies in OST's gold section for 86 %
 (8B) and 86 % (70B) of the entailment/contradiction answers, and by the rule of OST's `evaluate.py` one of the
-five does for 97 % / 96 % of the gold entailment/contradiction cases (`runs/v1/ost-evidence-test_v11-v4.json`).
+five does for 96.9 % / 96.3 % of the gold entailment/contradiction cases (`runs/v1/ost-evidence-test_v11-v5.json`).
 
 Default pipeline (`--mode retrieval`): find the proposal by its title (or, without a title, from the claim;
 no LLM), let Apertus translate cross-lingual claims into the booklet language, retrieve 5 passages with BM25
@@ -177,7 +177,8 @@ no LLM), let Apertus translate cross-lingual claims into the booklet language, r
 names, such as "the summary", "the committee" or "the voting text", rank higher: `--section-boost 1.5`), and ask
 Apertus for evidence and label under a strict JSON schema. With the 8B model the prompt carries 3 development examples, unsure
 claims (p < 0.9) are split into atomic statements, a "neutral" answer is checked once more only for a contradiction
-(`--recheck`, only when p(label) < 0.999, `--recheck-below`; one more call for about 2 % of the claims), and "Ausschuss" / "commission" in a claim translation is
+(`--recheck`, only when p(label) < 0.999, `--recheck-below`; one more call for about 2 % of the claims; with 70B the
+contradiction is taken only at p ≥ 0.999, `--tau-recheck`), and "Ausschuss" / "commission" in a claim translation is
 set back to the booklet's word for the committee (`--committee-terms`). Other modes: `baseline` (whole booklet, the baseline OST
 recommends), `easy` (Beginner task: the reference text, in v1.0 `reference_string`), `ladder`, `pages`, `section`, `full`, `oracle`,
 `claim-only`. Optional, off by default: `--crossling parallel` (search the other language version),

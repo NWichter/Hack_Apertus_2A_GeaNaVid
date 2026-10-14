@@ -2,7 +2,7 @@
 
 How the pipeline improved after the first complete version (`docs/EXPERIMENTS-v1.md`, state of 2026-10-04 05:00).
 Each round: error analysis on development data, one idea, measured on `dev_s` (450 development claims), kept only
-if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was evaluated 24 times, for 23
+if it helps there, then confirmed once on `test` (497 test claims; over the whole project test was evaluated 25 times, for 24
 configurations and decided some defaults, see the technical report, §4). All numbers come from
 `runs/v1/<split>/<model>/<run>.summary.json`; `python experiments/v1/run.py --base default ...` reproduces them
 from the response cache.
@@ -260,3 +260,40 @@ Also fixed on the way: two workers asking the same prompt had written one cache 
 replay then failed on these two claims); cache files are now written atomically, and a broken one counts as a
 miss. A run hung for over 20 minutes on one request: connection and timeout errors are now retried at most four
 times with a 60 s timeout.
+
+## 14 October: error analysis on development data, one change for 70B
+
+Errors of the defaults before this round on `dev_s` + `dev_rest` (995 claims; test not looked at;
+`experiments/v1/error_types.py` → `runs/v1/error-types-dev.json`, 0 calls). A row can carry several types; the types
+are keyword rules on the claim, not a manual reading.
+
+| type | 8B (29 errors, 25 distinct claims) | 70B (30 errors, 22 distinct claims) | share in all 995 claims |
+| ---- | ---- | ---- | ---- |
+| gold contradiction answered entailment / neutral | 11 / 9 | 7 / 12 | 33 % gold contradiction |
+| gold entailment answered neutral / contradiction | 4 / 3 | 6 / 4 | |
+| gold neutral answered contradiction | 2 | 1 | |
+| p(label) ≥ 0.999 | 19 | 21 | |
+| numbers or amounts in the claim | 13 | 16 | 46 % |
+| cross-lingual | 22 | 20 | 65 % |
+| time expressions | 5 | 7 | 26 % |
+| negation | 5 | 4 | 15 % |
+| no quote inside the gold passage | 2 | 2 | |
+
+Missed contradictions dominate (69 % / 63 % of the errors against 33 % of the data), mostly with high confidence;
+numbers, negation, dates and language pairs are not over-represented.
+
+| # | idea (chosen on `dev_s`) | dev_s 8B / 70B | dev_rest 8B / 70B | test 8B / 70B | input tokens (test) | kept |
+| - | ---- | -------------- | ----------------- | ------------- | ------------------- | ---- |
+| 17 | re-check an entailment whose claim numbers are missing from the passages (option `recheck_numbers="missing"` via `run.py --opts`) | 0.971 → 0.971 / 0.973 → 0.973 | – | – | ± 0 | no (never fires: all 42 numeric entailments on `dev_s` find their numbers in the passages) |
+| 17b | re-check every entailment with a number in the claim (`recheck_numbers="any"`) | 0.924 / 0.960 | – | – | +7 % / +10 % (dev_s) | no |
+| 18 | 8B: swap one few-shot example (v1-1444 → v1-1084) / add it as a fourth | 0.967 / 0.951 | – | – | −5 % / +7 % (dev_s) | no |
+| 19 | 70B: neutral re-check only if p(label) < 0.999, contradiction taken only at p ≥ 0.999 (`--tau-recheck`; at 0.5: 0.973) | – / 0.973 → 0.978 | – / 0.967 → 0.971 | – / 0.963 → **0.965** [0.944–0.983] | 1,418 → **1,461** | **yes** (25th test evaluation) |
+
+Round 19 is round 7 for 70B (same acceptance threshold 0.999) plus the p < 0.999 gate of round 14 and on top of the
+compact headers of round 15; round 7 had been rejected for 70B because of test (round 9, −0.002), so test has now seen
+a related option twice. Round 19 on `dev_rest`: 11 re-checks, 2 flips. On test the OST evidence score goes 0.960 → 0.963, without copies
+0.960 → 0.962; over all 20 voting dates 70B scores 0.971 (s.d. per date 0.028). Cold latency on 50 `dev_rest` cases,
+old and new interleaved in one session: 1,338 / 2,050 → 1,274 / 2,197 ms (mean / p95), tokens 1,276 → 1,319, macro-F1
+0.937 → 0.956 (one flip). OST's Docker run on all 493 test rows (70B, rerun): task A 0.965, 312 of 324 evidence, task B
+0.976, 1,460 tokens, 1,059 / 2,344 ms. Note: the six few-shot rows lie in `dev_rest` (three used by 8B), so `dev_rest`
+is not fully clean for 8B; 8B is unchanged in this round. Calls: several thousand, not counted exactly (dev runs, cold runs, test 70B, Docker 70B).

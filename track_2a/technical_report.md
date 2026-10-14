@@ -23,13 +23,13 @@ Our CLI `booklint` parses the PDF without a language model, narrows the booklet 
 the case's `vote` field, retrieves a few passages with BM25, preferring the section the claim names ("the
 summary", "the committee", "the voting text"), and asks Apertus v1.5 for a strict JSON verdict with evidence
 first and label second. Cross-lingual claims are translated into the booklet language by Apertus before
-retrieval; with 8B, a neutral answer Apertus is not fully sure of is checked once more, only for a contradiction. On the official OST v1.1
+retrieval; a neutral answer Apertus is not fully sure of is checked once more, only for a contradiction. On the official OST v1.1
 benchmark (493 test pairs of our split), Apertus 8B reaches a macro-F1 of
 0.959 [95% CI 0.933–0.980, cluster bootstrap] with 2,159 input tokens per claim, against 0.720 for the
-whole-booklet baseline (20,242 input tokens). Apertus 70B reaches 0.963 [0.942–0.981] with 1,418 input tokens,
+whole-booklet baseline (20,242 input tokens). Apertus 70B reaches 0.965 [0.944–0.983] with 1,461 input tokens,
 against 0.889. With OST's own evidence rule (one of the first five quotes inside the gold passage), our quotes
-score 0.969 (8B) and 0.960 (70B) of the 324 gold entailment/contradiction cases. In the Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980.
-On 546 development claims outside the tuning subset, the defaults reach 0.971 / 0.967, and on a synthetic
+score 0.969 (8B) and 0.963 (70B) of the 324 gold entailment/contradiction cases. In the Beginner task (gold reference given), 8B reaches 0.977 and 70B 0.980.
+On 546 development claims outside the tuning subset, the defaults reach 0.971 / 0.971, and on a synthetic
 hold-out from booklets outside OST v1.1 the gap to the baseline carries over (8B 0.874 in its second evaluation, first
 0.845, vs 0.665; 70B 0.932 vs 0.872).
 The output is never a voting recommendation: every yes or no comes with a quote from the booklet; a neutral
@@ -131,16 +131,16 @@ voting date (seed 2026), so the DE/FR/IT versions of a booklet never cross split
 and 497 test pairs (7 dates, 21 booklets; 493 in v1.1). Dropping the removed rows changes no prediction, so
 all v1.1 numbers are recomputed from the stored runs without new calls (`experiments/v1/replay_v11.py`).
 
-**How often test was used.** Variants were developed on `dev_s`, but test was evaluated 24 times
-over the project, for 23 configurations (14 with 8B, 9 with 70B; the 70B compact headers twice, on 4 and 14
+**How often test was used.** Variants were developed on `dev_s`, but test was evaluated 25 times
+over the project, for 24 configurations (14 with 8B, 10 with 70B; the 70B compact headers twice, on 4 and 14
 October), plus cold runs on 50 test cases (all stored in `runs/v1/test/` and `runs/v1/test_v11/`), and at least
-three default decisions used them: the section step was kept because test agreed, and compact headers and the neutral
-re-check were not adopted for 70B because test disagreed. Test is therefore not untouched. Two checks that
+three default decisions used them: the section step was kept because test agreed, and compact headers and the ungated neutral
+re-check were not adopted for 70B on 4 October because test disagreed. Test is therefore not untouched. Two checks that
 did not steer any option: (a) **`dev_rest`**, the 546 development claims outside `dev_s` (same 13 dates; only
 the claim-cue → section mapping was read off all development claims), evaluated once with the final defaults:
-**0.971 (8B) / 0.967 (70B)**, 0.968 / 0.970 without claims that also occur in another split; (b) the synthetic
+**0.971 (8B) / 0.971 (70B)**, 0.968 / 0.972 without claims that also occur in another split; (b) the synthetic
 hold-out below (0.874 / 0.932; the 8B value is its second evaluation, after the re-check was added). Over all 20 voting dates (dev + test, 1,488 claims) the defaults score 0.967
-/ 0.968 with a per-date spread of 0.87–1.00 (s.d. 0.030 / 0.033; `runs/v1/generalization.json`): a hidden set
+/ 0.971 with a per-date spread of 0.87–1.00 (s.d. 0.030 / 0.028; `runs/v1/generalization.json`): a hidden set
 of a few voting dates can land several points lower or higher than our test split.
 
 **Tokens and time (14 October).** Because OST scores tokens and time relative to the other teams, one more round
@@ -151,11 +151,25 @@ tokens −19 %. (2) 70B uses compact passage headers: `dev_s` 0.966 → 0.973, `
 0.963 (within the interval), tokens −7 %. Rejected on `dev_s`: compact headers for 8B (0.960), two or one few-shot
 examples (0.967 / 0.951 at −11 % / −18 % tokens).
 
+**Error analysis (14 October).** On development data only (995 claims, defaults before this round,
+`experiments/v1/error_types.py`, `runs/v1/error-types-dev.json`), 8B makes 29 errors and 70B 30. Missed contradictions
+dominate: 20 (8B; 11 answered entailment, 9 neutral) and 19 (70B; 7 / 12) of them have gold contradiction, which is
+a third of the data; 19 / 21 are given with p ≥ 0.999. Numbers (13 / 16), dates (5 / 7), negation (5 / 4) and
+cross-lingual pairs (22 / 20) occur about as often among the errors as in the data; in 2 / 2 no quote lies in the gold
+passage. Countermeasures were tried on `dev_s` only. A number check (claim numbers missing from the passages)
+never fires: all 42 numeric entailments find their numbers. Re-checking every numeric entailment for a contradiction
+costs 8B 0.971 → 0.924 and 70B 0.973 → 0.960; another or a fourth example costs 8B 0.967 / 0.951. Kept,
+for 70B only: re-check a neutral verdict with p < 0.999 and accept the contradiction only at p ≥ 0.999: `dev_s`
+0.973 → 0.978, `dev_rest` 0.967 → 0.971 (11 re-checks, 2 flips), then test once (the 25th evaluation) 0.963 →
+0.965, +43 input tokens. The same re-check without the p < 0.999 gate had lost 0.002 on test on 4 October,
+so this is a second test look at a related option. The six few-shot rows lie in `dev_rest` (three used by 8B), so `dev_rest` is not fully
+clean for 8B.
+
 **Copies.** v1.1 contains rows that are exact copies of another row (same claim, booklet and label), 122 of
 them in test (371 distinct pairs). We keep them as published; a plain bootstrap then counts copies as
-independent and its intervals are too narrow. Without copies the defaults score 0.957 (8B) and 0.960 (70B);
-resampling each group of copies as one unit gives [0.933–0.980] and [0.942–0.981]
-(`runs/v1/test_v11/*/final-v4-ci.json`; the method in `experiments/v1/duplicates_ci.py`). Two auxiliary sets written by closed LLMs are used for no reported number: 24 unreviewed
+independent and its intervals are too narrow. Without copies the defaults score 0.957 (8B) and 0.962 (70B);
+resampling each group of copies as one unit gives [0.933–0.980] and [0.944–0.983]
+(`runs/v1/test_v11/final-v5-ci.json`; the method in `experiments/v1/duplicates_ci.py`). Two auxiliary sets written by closed LLMs are used for no reported number: 24 unreviewed
 edge cases (Gemini 3.8 Flash via the Antigravity CLI), demo presets only, and never evaluated because 16 of
 them concern proposals of the test dates; and archived synthetic development sets from before v1.0 (Claude
 Opus 5.5, GPT-5.5). A unit test checks that no stored run contains an edge case; sources and per-row
@@ -184,28 +198,28 @@ validity thresholds (macro-F1 ≥ 0.60 on A, ≥ 0.70 on B) are passed by every 
 | Adv.: + sections | 0.953 | 0.967 | 2,130 / 1,532 |
 | Adv.: + neutral re-check | 0.957 | 0.966 | 2,667 / 2,071 |
 | **Default 8B:** re-check only if p < 0.999 | **0.959** | – | 2,159 |
-| **Default 70B:** sections + compact headers | – | **0.963** | 1,418 |
+| **Default 70B:** sections + compact headers + gated re-check | – | **0.965** | 1,461 |
 
 A dash means the step was not run for that model: the three examples and the decomposition are 8B steps (examples
-cost 70B 0.02 on `dev_s`). Defaults: 8B three examples, decomposition and the gated neutral re-check; 70B sections with compact headers
-(both since 14 October; `runs/v1/test_v11/*/final-v4.*`). The 8B pipeline beats the 8B baseline by +0.239 and even
-the 70B baseline; 70B gains +0.074. Both need 1.4–2.2 k instead of 20 k input tokens per claim. The section step added +0.011 (8B) and +0.015 (70B) on development data and
+cost 70B 0.02 on `dev_s`). Defaults: 8B three examples, decomposition and the gated neutral re-check; 70B sections with compact headers and the gated neutral re-check
+(both since 14 October; `runs/v1/test_v11/*/final-v5.*`). The 8B pipeline beats the 8B baseline by +0.239 and even
+the 70B baseline; 70B gains +0.076. Both need 1.5–2.2 k instead of 20 k input tokens per claim. The section step added +0.011 (8B) and +0.015 (70B) on development data and
 +0.013 / +0.017 on test; the neutral re-check with the committee words added +0.016 / +0.009 on development data
-and +0.004 / −0.002 on test, so 70B does not use it (a decision that used test).
+and +0.004 / −0.002 on test, so 70B did not use it (a decision that used test) until the stricter gate above.
 
-**By language** (test v1.1, macro-F1; claim or booklet language, n in brackets; `runs/v1/test_v11/final-v4-languages.json`):
+**By language** (test v1.1, macro-F1; claim or booklet language, n in brackets; `runs/v1/test_v11/final-v5-languages.json`):
 
 | Group (n) | Adv. 8B | Adv. 70B | Beg. 8B | Beg. 70B |
 | --- | --- | --- | --- | --- |
-| All (493) | 0.959 | 0.963 | 0.977 | 0.980 |
+| All (493) | 0.959 | 0.965 | 0.977 | 0.980 |
 | Claim DE (163) | 0.950 | 0.963 | 0.955 | 0.962 |
-| Claim FR (165) | 0.945 | 0.959 | 0.982 | 0.989 |
+| Claim FR (165) | 0.945 | 0.964 | 0.982 | 0.989 |
 | Claim IT (165) | 0.982 | 0.969 | 0.994 | 0.988 |
-| Booklet DE (152) | 0.980 | 0.967 | 0.973 | 0.987 |
+| Booklet DE (152) | 0.980 | 0.974 | 0.973 | 0.987 |
 | Booklet FR (186) | 0.966 | 0.977 | 0.983 | 0.989 |
 | Booklet IT (155) | 0.926 | 0.940 | 0.974 | 0.965 |
 | Same lang. (163) | 0.993 | 0.980 | 0.979 | 0.987 |
-| Cross-ling. (330) | 0.943 | 0.955 | 0.976 | 0.977 |
+| Cross-ling. (330) | 0.943 | 0.958 | 0.976 | 0.977 |
 
 The whole-booklet baseline drops on cross-lingual pairs (8B 0.794 same vs. 0.684 cross); translation closes
 most of the gap. With the claim language detected instead of read from the data, the Advanced results are
@@ -218,9 +232,9 @@ them once after all defaults were fixed: whole booklet 0.665 (8B) / 0.872 (70B),
 of the tokens, Beginner 0.855 / 0.931 (`data/holdout-synth/`). The 8B neutral re-check, added later, was evaluated
 there once more: 0.874 (contradiction F1 0.735 → 0.793).
 
-**Evidence (task A).** With OST's rule, our quotes score **0.969 (8B) and 0.960 (70B)** on the 324 gold entailment and
+**Evidence (task A).** With OST's rule, our quotes score **0.969 (8B) and 0.963 (70B)** on the 324 gold entailment and
 contradiction cases of test v1.1
-(`runs/v1/ost-evidence-test_v11-v4.json`); the misses are mostly gold entailments or contradictions that we answer
+(`runs/v1/ost-evidence-test_v11-v5.json`); the misses are mostly gold entailments or contradictions that we answer
 neutral, which cite nothing. Up to 4 October we returned at most two sentences (0.932 / 0.920); five sentences
 from different passages were chosen on `dev_s` (8B 0.920 → 0.964, 70B 0.917 → 0.954; whole paragraphs instead of
 sentences: 0.954 / 0.944), confirmed on `dev_rest` (0.893 → 0.940, 0.888 → 0.923) and then run once on test. The
@@ -238,8 +252,10 @@ time of one case (booklet parsed beforehand):
 | --- | --- | --- | --- |
 | 8B | 2,320 → 1,979 | 543 → 366 | 972 → 545 |
 | 70B | 1,383 → 1,279 | 1,407 → 1,342 | 2,056 → 2,015 |
+| 70B + gated re-check | 1,276 → 1,319 | 1,338 → 1,274 | 2,050 → 2,197 |
 
-The macro-F1 on these 50 cases is the same for old and new (8B 0.980, 70B 0.956). Our own code takes 48 ms per
+The macro-F1 on these 50 cases is the same for old and new in the first pair (8B 0.980, 70B 0.956); the gated re-check,
+measured in a later session, flips one of them (0.937 → 0.956). Our own code takes 48 ms per
 claim (parsing is cached per booklet); the rest is Apertus. The endpoint's prefix cache cannot be switched off and
 its speed varies between sessions (the earlier 8B default measured 457, 648 and up to 1,530 ms per case on other
 days), so only same-session comparisons are meaningful. OST scores tokens and time with its own proxy and relative to the
@@ -249,17 +265,17 @@ other teams; those scores exist only in OST's evaluation.
 clone, `docker build --platform linux/amd64`, and `docker run -e BASE_URL -e API_KEY -v data:/data:ro -v
 output:/output <image> --input /data/cases.jsonl --output /output/predictions.jsonl` on the whole test split in
 OST's format, every row once as task A (booklet) and once as task B (reference), 986 cases
-(`experiments/v1/ost_cases.py`), no response cache, the two models run side by side: exit code 0, 986 lines, no
+(`experiments/v1/ost_cases.py`), no response cache, the two models run side by side (70B rerun alone after the gated re-check): exit code 0, 986 lines, no
 error for either model. OST's `evaluate.py` gives:
 
 | Model | Task A macro-F1 (493) | Task A evidence | Task B macro-F1 (493) | Task A input tok. | Task A ms mean / p95 |
 | --- | --- | --- | --- | --- | --- |
 | 8B | 0.961 | 314 of 324 | 0.977 | 2,163 | 469 / 1,443 |
-| 70B | 0.963 | 311 of 324 | 0.974 | 1,417 | 1,140 / 2,495 |
+| 70B | 0.965 | 312 of 324 | 0.976 | 1,460 | 1,059 / 2,344 |
 
-The labels equal those of the stored runs except for 1 of 986 (8B) and 3 of 986 (70B) cases (the endpoint is
-not fully deterministic at temperature 0). Times here include parsing each of the 21 booklets on first use and two
-runs sharing the endpoint, so they are higher than the cold runs above. An earlier check on only 40 + 40 of these
+The labels equal those of the stored runs except for 1 of 986 (8B) and 2 of 986 (70B) cases (the endpoint is
+not fully deterministic at temperature 0). Times here include parsing each of the 21 booklets on first use (and, for 8B, two
+runs sharing the endpoint), so they are higher than the cold runs above. An earlier check on only 40 + 40 of these
 cases had shown 8B task A at 0.897: that sample happened to hold 4 of the 8B errors (10 % instead of 4 %), with
 labels identical to the full run; 40 cases are too few for a macro-F1.
 
@@ -281,12 +297,12 @@ label on 50/50 (8B) and 49/50 (70B). Commit of the submission: [[NIKLAS: submiss
 ## 6. Limitations
 
 493 test claims (371 distinct) from 7 voting dates: differences below about 0.02–0.03 macro-F1 are within
-the cluster-bootstrap interval (the defaults differ by 0.004, 70B − 8B), and test was evaluated 24 times
-(§4); per voting date the defaults range from 0.87 to 1.00. The model-aware defaults (examples,
-decomposition and neutral re-check only for 8B) were chosen on 450 development claims. The section keywords cover the federal booklet
+the cluster-bootstrap interval (the defaults differ by 0.006, 70B − 8B), and test was evaluated 25 times
+(§4); per voting date the defaults range from 0.87 to 1.00. The model-aware defaults (examples
+and decomposition only for 8B, re-check gates per model) were chosen on 450 development claims. The section keywords cover the federal booklet
 layouts of 2018–2026; other layouts fall back to plain BM25. Main error sources are topical but unsupported claims, attribution (committee vs.
 Federal Council) and contradictions that change one detail, which Apertus calls neutral with high confidence
-(no probability gate finds them; the narrow re-check finds some for 8B, while 70B then over-calls contradiction). Booklets without a text layer are not handled (OST provides text PDFs). Labels and evidence are an automated reading of the booklet, not a voting recommendation.
+(19 of 30 70B errors on development data; the gated re-check finds a few, a broader one over-calls contradiction). Booklets without a text layer are not handled (OST provides text PDFs). Labels and evidence are an automated reading of the booklet, not a voting recommendation.
 
 OST's Solution API Guide and starter repository (7–8 October) settled page numbering (1-based PDF page), the
 Beginner page (`null`) and the evidence match (fuzzy quote inside the gold passage). Still open: the weighting
@@ -322,8 +338,8 @@ configured model name nor a model list, the container cannot find the proxy's na
   to the booklet language).
 - **Read the scoring script.** OST counts a case if any of the first five quotes matches; returning five
   sentences instead of at most two raised the evidence score by about four points without a token.
-- **Keep a split nobody looked at.** Test was evaluated 24 times; the 546 development claims no
-  option was chosen on (0.971 / 0.967) are the more honest estimate for unseen claims on the same booklets.
+- **Keep a split nobody looked at.** Test was evaluated 25 times; the 546 development claims no
+  option was chosen on (0.971 / 0.971) are the more honest estimate for unseen claims on the same booklets.
 
 Next steps: extend to Romansh [@stuessi2026votingbooklets] and to booklets without a text layer.
 
