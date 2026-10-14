@@ -1,0 +1,766 @@
+{
+ "apertus-v1.5-8b": {
+  "rows": 995,
+  "errors": 29,
+  "by_type": {
+   "cross-lingual": 22,
+   "confident": 19,
+   "numbers": 13,
+   "C->E": 11,
+   "C->N": 9,
+   "negation": 5,
+   "time": 5,
+   "E->N": 4,
+   "E->C": 3,
+   "N->C": 2,
+   "evidence-not-in-gold": 2
+  },
+  "list": [
+   {
+    "id": "v1-0187",
+    "split": "dev_s_v11",
+    "tags": [
+     "E->C",
+     "numbers",
+     "negation",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Si le vote est approuvé, les entreprises ne seront plus tenues de payer la moindre redevance radiotélévisuelle.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0283",
+    "split": "dev_s_v11",
+    "tags": [
+     "E->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Si le vote est approuvé, le Conseil fédéral appliquera la modification législative et l’initiative populaire sera définitivement retirée.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-0489",
+    "split": "dev_s_v11",
+    "tags": [
+     "E->C",
+     "numbers",
+     "cross-lingual"
+    ],
+    "claim": "Se la votazione sarà approvata, la Confederazione dovrà finanziare almeno due terzi delle riduzioni dei premi, mentre la parte restante sarà a carico dei cantoni.",
+    "steps": "retrieval+decompose",
+    "confidence": 0.8807
+   },
+   {
+    "id": "v1-0766",
+    "split": "dev_s_v11",
+    "tags": [
+     "N->C",
+     "numbers",
+     "time",
+     "evidence-not-in-gold"
+    ],
+    "claim": "D’après le texte de vote, la Suisse aurait signé un accord de libre-échange avec le Japon en 2019.",
+    "steps": "retrieval+decompose",
+    "confidence": 0.5
+   },
+   {
+    "id": "v1-1004",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Das Komitee vertritt die Ansicht, dass die SSR ihre Aktivitäten über den öffentlichen Dienst hinaus ausweiten und den Wettbewerb mit privaten Medien mithilfe der Gebührenmittel verstärken sollte.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1050",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "confident"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass ein Losverfahren die demokratische Legitimation des Bundesgerichts stärkt und die unterschiedlichen gesellschaftlichen Strömungen ausgewogener repräsentiert",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1139",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass die e-ID einem Pass oder einer Identitätskarte gleichgestellt ist.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1180",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Selon le texte soumis au vote, la présente loi prend effet immédiatement après l’expiration infructueuse du délai référendaire ou son approbation par votation populaire.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1181",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le texte de vote affirme que la taxe anticipative sur les revenus du capital est fixée à 30 % de la prestation imposable.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1234",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual"
+    ],
+    "claim": "Le résumé précise que l’initiative définit la manière dont les salaires et le développement économique doivent être mesurés.",
+    "steps": "retrieval",
+    "confidence": 0.9916
+   },
+   {
+    "id": "v1-1259",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le résumé précise que les intérêts sont soumis à une retenue à la source de 15 %.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1284",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E"
+    ],
+    "claim": "Le comité estime que la loi est bénéfique et recommande de voter Oui.",
+    "steps": "retrieval",
+    "confidence": 0.9705
+   },
+   {
+    "id": "v1-1475",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il riassunto sostiene che la deduzione per i figli verrà diminuita nell’ambito dell’imposta federale diretta.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-0005",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "numbers",
+     "time",
+     "confident"
+    ],
+    "claim": "Der Bundesrat führt an, dass die Schweiz in den vergangenen zehn Jahren etwa 80 Milliarden Franken für Erdöl- und Erdgasimporte aufgewendet hat und das Gesetz ihre Abhängigkeit von ausländischen Erdöl",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0236",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "negation",
+     "cross-lingual"
+    ],
+    "claim": "Le comité estime que le contre-projet direct répond aux préoccupations de l’initiative sans compliquer inutilement l’ordre juridique, puisqu’il reprend des formulations déjà existantes.",
+    "steps": "retrieval",
+    "confidence": 0.995
+   },
+   {
+    "id": "v1-0397",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->C",
+     "numbers",
+     "cross-lingual"
+    ],
+    "claim": "Se la votazione sarà approvata, la Confederazione dovrà finanziare almeno due terzi delle riduzioni dei premi, mentre la parte restante sarà a carico dei cantoni.",
+    "steps": "retrieval+decompose",
+    "confidence": 0.8807
+   },
+   {
+    "id": "v1-0492",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "numbers",
+     "cross-lingual"
+    ],
+    "claim": "Il riassunto sostiene che l’Indonesia è il quarto Paese più popoloso al mondo e che l’accordo prevede l’abolizione dei dazi sui prodotti industriali indonesiani, in cambio dell’accesso tariffario al m",
+    "steps": "retrieval",
+    "confidence": 0.9985
+   },
+   {
+    "id": "v1-0791",
+    "split": "dev_rest_v11",
+    "tags": [
+     "N->C"
+    ],
+    "claim": "Le Conseil fédéral recommande au peuple et aux cantons d’accepter l’initiative populaire « Pour une interdiction du glyphosate ».",
+    "steps": "retrieval+decompose",
+    "confidence": 0.5
+   },
+   {
+    "id": "v1-1022",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "negation",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Laut der Zusammenfassung wird der Kinderabzug bei der direkten Bundessteuer reduziert, damit die Familien nicht übermäßig belastet werden.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1029",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Laut der Zusammenfassung wurden die finanziellen Hilfen auf Personen begrenzt, die bereits genügend Unterstützung erhalten hatten.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1061",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "negation",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Laut der Zusammenfassung gilt die Abschaffung der Vermietungswertbesteuerung nur für Zweitwohnungen, nicht für Hauptwohnungen.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1076",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "negation",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Laut der Zusammenfassung wird der Kinderabzug bei der direkten Bundessteuer reduziert, damit die Familien nicht übermäßig belastet werden.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1143",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "confident"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass ein Losverfahren die demokratische Legitimation des Bundesgerichts stärkt und die unterschiedlichen gesellschaftlichen Strömungen ausgewogener repräsentiert",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1160",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Laut der Zusammenfassung wurden die finanziellen Hilfen auf Personen begrenzt, die bereits genügend Unterstützung erhalten hatten.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1301",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "cross-lingual"
+    ],
+    "claim": "Selon le texte soumis au vote, l’interdiction de se couvrir le visage concerne aussi les lieux de culte.",
+    "steps": "retrieval",
+    "confidence": 0.9859
+   },
+   {
+    "id": "v1-1315",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "cross-lingual",
+     "confident",
+     "evidence-not-in-gold"
+    ],
+    "claim": "Le résumé précise que la majeure partie de la redistribution s’effectue par l’intermédiaire des impôts.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1318",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "confident"
+    ],
+    "claim": "Le résumé précise qu’un tiers des recettes de l’impôt sur les successions et les donations reviendrait à la Confédération, et les deux tiers restants aux cantons.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1350",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Secondo il testo di voto, le imprese che propongono film in Svizzera devono destinare ogni anno almeno il 10% delle loro entrate lorde alla produzione cinematografica indipendente svizzera, oppure ver",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1474",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "time",
+     "cross-lingual"
+    ],
+    "claim": "Stando al testo di voto, il Consiglio federale copre interamente i costi delle misure cantonali di emergenza destinate alle imprese con un fatturato annuo fino a 5 milioni di franchi.",
+    "steps": "retrieval",
+    "confidence": 0.9121
+   }
+  ]
+ },
+ "apertus-v1.5-70b": {
+  "rows": 995,
+  "errors": 30,
+  "by_type": {
+   "confident": 21,
+   "cross-lingual": 20,
+   "numbers": 16,
+   "C->N": 12,
+   "time": 7,
+   "C->E": 7,
+   "E->N": 6,
+   "E->C": 4,
+   "negation": 4,
+   "evidence-not-in-gold": 2,
+   "N->C": 1
+  },
+  "list": [
+   {
+    "id": "v1-0247",
+    "split": "dev_s_v11",
+    "tags": [
+     "E->C",
+     "confident"
+    ],
+    "claim": "Si la votation est acceptée, la Confédération devra fixer les conditions de travail dans les hôpitaux, les établissements médico-sociaux et les organisations d’aide et de soins à domicile, notamment l",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0283",
+    "split": "dev_s_v11",
+    "tags": [
+     "E->N",
+     "cross-lingual"
+    ],
+    "claim": "Si le vote est approuvé, le Conseil fédéral appliquera la modification législative et l’initiative populaire sera définitivement retirée.",
+    "steps": "retrieval",
+    "confidence": 0.9948
+   },
+   {
+    "id": "v1-0766",
+    "split": "dev_s_v11",
+    "tags": [
+     "N->C",
+     "numbers",
+     "time",
+     "confident",
+     "evidence-not-in-gold"
+    ],
+    "claim": "D’après le texte de vote, la Suisse aurait signé un accord de libre-échange avec le Japon en 2019.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1050",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass ein Losverfahren die demokratische Legitimation des Bundesgerichts stärkt und die unterschiedlichen gesellschaftlichen Strömungen ausgewogener repräsentiert",
+    "steps": "retrieval",
+    "confidence": 0.7311
+   },
+   {
+    "id": "v1-1139",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass die e-ID einem Pass oder einer Identitätskarte gleichgestellt ist.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1180",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Selon le texte soumis au vote, la présente loi prend effet immédiatement après l’expiration infructueuse du délai référendaire ou son approbation par votation populaire.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1181",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le texte de vote affirme que la taxe anticipative sur les revenus du capital est fixée à 30 % de la prestation imposable.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1259",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le résumé précise que les intérêts sont soumis à une retenue à la source de 15 %.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1353",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "negation",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il comitato ritiene che 25 anni di transizione non bastino a consentire ai produttori di riconvertire le proprie attività.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1392",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "negation",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il comitato ritiene che 25 anni di transizione non bastino a consentire ai produttori di riconvertire le proprie attività.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1416",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "cross-lingual"
+    ],
+    "claim": "Nel riassunto si sostiene che la Confederazione copre al massimo un terzo dei costi delle riduzioni dei premi previste dall’iniziativa.",
+    "steps": "retrieval",
+    "confidence": 0.9914
+   },
+   {
+    "id": "v1-1421",
+    "split": "dev_s_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il testo di voto afferma che il contributo destinato ai media online può coprire al massimo l’80 per cento del fatturato rilevante.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0005",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "numbers",
+     "time",
+     "confident"
+    ],
+    "claim": "Der Bundesrat führt an, dass die Schweiz in den vergangenen zehn Jahren etwa 80 Milliarden Franken für Erdöl- und Erdgasimporte aufgewendet hat und das Gesetz ihre Abhängigkeit von ausländischen Erdöl",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0013",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->C",
+     "cross-lingual"
+    ],
+    "claim": "Wird die Abstimmung angenommen, soll der Bund verbindliche Regelungen zu den Arbeitsbedingungen in Spitälern, Pflegeheimen und Organisationen der häuslichen Pflege erlassen.",
+    "steps": "retrieval",
+    "confidence": 0.7772
+   },
+   {
+    "id": "v1-0233",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->C",
+     "confident"
+    ],
+    "claim": "Si la votation est acceptée, la Confédération devra fixer les conditions de travail dans les hôpitaux, les établissements médico-sociaux et les organisations d’aide et de soins à domicile, notamment l",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0236",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "negation",
+     "cross-lingual"
+    ],
+    "claim": "Le comité estime que le contre-projet direct répond aux préoccupations de l’initiative sans compliquer inutilement l’ordre juridique, puisqu’il reprend des formulations déjà existantes.",
+    "steps": "retrieval",
+    "confidence": 0.7773
+   },
+   {
+    "id": "v1-0315",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->C",
+     "confident"
+    ],
+    "claim": "Si la votation est acceptée, la Confédération devra fixer les conditions de travail dans les hôpitaux, les établissements médico-sociaux et les organisations d’aide et de soins à domicile, notamment l",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-0387",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "confident"
+    ],
+    "claim": "Se il voto viene approvato, il Consiglio federale attuerà la modifica della legge sui trapianti e l’iniziativa popolare «Favorire la donazione di organi e salvare vite umane» sarà definitivamente riti",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-0482",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "confident"
+    ],
+    "claim": "Se il voto viene approvato, il Consiglio federale attuerà la modifica della legge sui trapianti e l’iniziativa popolare «Favorire la donazione di organi e salvare vite umane» sarà definitivamente riti",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-0492",
+    "split": "dev_rest_v11",
+    "tags": [
+     "E->N",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il riassunto sostiene che l’Indonesia è il quarto Paese più popoloso al mondo e che l’accordo prevede l’abolizione dei dazi sui prodotti industriali indonesiani, in cambio dell’accesso tariffario al m",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1029",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual"
+    ],
+    "claim": "Laut der Zusammenfassung wurden die finanziellen Hilfen auf Personen begrenzt, die bereits genügend Unterstützung erhalten hatten.",
+    "steps": "retrieval",
+    "confidence": 0.9047
+   },
+   {
+    "id": "v1-1143",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "numbers"
+    ],
+    "claim": "Der Bundesrat vertritt die Auffassung, dass ein Losverfahren die demokratische Legitimation des Bundesgerichts stärkt und die unterschiedlichen gesellschaftlichen Strömungen ausgewogener repräsentiert",
+    "steps": "retrieval",
+    "confidence": 0.7311
+   },
+   {
+    "id": "v1-1160",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual"
+    ],
+    "claim": "Laut der Zusammenfassung wurden die finanziellen Hilfen auf Personen begrenzt, die bereits genügend Unterstützung erhalten hatten.",
+    "steps": "retrieval",
+    "confidence": 0.9047
+   },
+   {
+    "id": "v1-1216",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "cross-lingual"
+    ],
+    "claim": "Le résumé précise qu’il n’est désormais plus possible de voter sur de nouveaux projets énergétiques.",
+    "steps": "retrieval",
+    "confidence": 0.9526
+   },
+   {
+    "id": "v1-1248",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le texte de vote affirme que la Confédération consacre chaque année 60 millions de francs à la distribution matinale des journaux.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1315",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Le résumé précise que la majeure partie de la redistribution s’effectue par l’intermédiaire des impôts.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   },
+   {
+    "id": "v1-1318",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "confident"
+    ],
+    "claim": "Le résumé précise qu’un tiers des recettes de l’impôt sur les successions et les donations reviendrait à la Confédération, et les deux tiers restants aux cantons.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1344",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "cross-lingual",
+     "confident",
+     "evidence-not-in-gold"
+    ],
+    "claim": "Il comitato ritiene che questa legge sia necessaria al Consiglio federale per assistere chi ha subito danni a causa delle misure pandemiche.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1354",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->E",
+     "numbers",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il testo di voto afferma che il contributo destinato ai media online può coprire al massimo l’80 per cento del fatturato rilevante.",
+    "steps": "retrieval",
+    "confidence": 1.0
+   },
+   {
+    "id": "v1-1376",
+    "split": "dev_rest_v11",
+    "tags": [
+     "C->N",
+     "numbers",
+     "negation",
+     "time",
+     "cross-lingual",
+     "confident"
+    ],
+    "claim": "Il comitato ritiene che 25 anni di transizione non bastino a consentire ai produttori di riconvertire le proprie attività.",
+    "steps": "retrieval",
+    "confidence": 0.9999
+   }
+  ]
+ }
+}

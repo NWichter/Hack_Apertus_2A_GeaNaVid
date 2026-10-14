@@ -45,8 +45,10 @@ class _Model:
         self.model = model
 
 
-def test_recheck_and_terms_default_on_for_8b_only():
+def test_recheck_defaults_per_model():
     small, large = Pipeline(_Model("apertus-v1.5-8b"), Options()), Pipeline(_Model("apertus-v1.5-70b"), Options())
-    assert small.recheck and small.committee_terms
-    assert not large.recheck and not large.committee_terms
+    assert small.recheck and small.committee_terms and small.tau_recheck == 0.5
+    # 70B re-checks unsure neutral answers too, but flips only on a near-certain contradiction (14.10.)
+    assert large.recheck and large.tau_recheck == 0.999 and not large.committee_terms
+    assert Pipeline(_Model("apertus-v1.5-70b"), Options(tau_recheck=0.7)).tau_recheck == 0.7
     assert not Pipeline(_Model("apertus-v1.5-8b"), Options(recheck=False)).recheck

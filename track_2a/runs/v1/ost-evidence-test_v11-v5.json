@@ -1,0 +1,16 @@
+{
+  "test_v11/apertus-v1.5-8b/final-v5": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.9691,
+    "first_item_matches": 0.8488,
+    "items_per_case": 4.77,
+    "chars_per_case": 811
+  },
+  "test_v11/apertus-v1.5-70b/final-v5": {
+    "gold_ec_cases": 324,
+    "ost_evidence_score": 0.963,
+    "first_item_matches": 0.8488,
+    "items_per_case": 4.74,
+    "chars_per_case": 800
+  }
+}

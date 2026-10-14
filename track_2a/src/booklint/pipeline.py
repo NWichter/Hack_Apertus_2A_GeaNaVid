@@ -103,7 +103,9 @@ class Options:
     translate_passages: bool = False
     recheck: object = None
     recheck_min_bm25: float = 0.0
-    tau_recheck: float = 0.5
+    tau_recheck: float = -1.0  # -1 = auto: 0.5 for 8B, 0.999 for 70B (14.10., dev_s + dev_rest)
+    fewshot_ids: str = ""  # comma-separated example ids instead of the first n
+    recheck_numbers: str = ""  # re-check an entailment with numbers: "missing" (claim numbers not in the passages) or "any"
     recheck_below: float = 0.999  # re-check a neutral verdict only if Apertus is less sure than this (14.10., dev_s)
     recheck_context: str = "all"
     recheck_entailment: bool = False
@@ -241,9 +243,13 @@ class Pipeline:
         self._kinds = {}
         small = small_model(getattr(llm, "model", ""))
         self.decompose = options.decompose if options.decompose is not None else small
-        self.recheck = options.recheck if options.recheck is not None else small
+        self.recheck = options.recheck if options.recheck is not None else True
+        self.tau_recheck = options.tau_recheck if options.tau_recheck >= 0 else (0.5 if small else 0.999)
         self.committee_terms = options.committee_terms if options.committee_terms is not None else small
         self.examples = load_examples(fewshot_for(options.fewshot, getattr(llm, "model", "")))
+        if options.fewshot_ids and self.examples:
+            pool = {e["id"]: e for e in load_examples(99)}
+            self.examples = [pool[i] for i in options.fewshot_ids.split(",") if i in pool]
         self.render = options.render if options.render != "auto" else ("full" if small else "compact")
         if self.render == "compact":
             self.examples = [dict(e, passages=[compact_example(x) for x in e["passages"]]) for e in self.examples]
@@ -723,19 +729,24 @@ class Pipeline:
                 result = dict(result, label=agg, step=result["step"] + "+decompose")
         recheck = None
         first = result["label"]
+        unsure = result["confidence"] is None or result["confidence"] < self.opt.recheck_below
+        number_gap = (
+            self.opt.recheck_numbers
+            and first == "entailment"
+            and bool(numbers.check(claim, state.get("passages") or [])["missing" if self.opt.recheck_numbers == "missing" else "claim"])
+        )
         if (
-            ((self.recheck and first == "neutral") or (self.opt.recheck_entailment and first == "entailment"))
+            ((self.recheck and first == "neutral" and unsure) or (self.opt.recheck_entailment and first == "entailment") or number_gap)
             and mode not in ("claim-only", "baseline", "easy", "oracle")
             and state.get("passages")
             and best >= self.opt.recheck_min_bm25
-            and (result["confidence"] is None or result["confidence"] < self.opt.recheck_below)
         ):
             ids, passages = state.get("ids") or [], state["passages"]
             if self.opt.recheck_context == "hits" and booklet is not None and hits:
                 ids = list(hits)
                 passages = self._render(booklet, ids)
             recheck = self._recheck(passages, claim, claim_lang, booklet_lang, translation, usage, first)
-            tau = self.opt.tau_recheck if first == "neutral" else self.opt.tau_recheck_entailment
+            tau = self.tau_recheck if first == "neutral" else self.opt.tau_recheck_entailment
             if recheck["p_contradiction"] >= tau:
                 n = recheck["passage"]
                 result = dict(

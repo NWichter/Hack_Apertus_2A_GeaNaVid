@@ -606,7 +606,7 @@ def add_common(p):
         dest="recheck",
         action="store_true",
         default=None,
-        help="ask once more, only for a contradiction, when the answer is neutral (default: on for 8B models)",
+        help="ask once more, only for a contradiction, when a neutral answer has p < --recheck-below (default: on; flip at p >= 0.5 for 8B, 0.999 for 70B, --tau-recheck)",
     )
     p.add_argument("--no-recheck", dest="recheck", action="store_false")
     p.add_argument("--tau-recheck", dest="tau_recheck", type=float, default=None)
