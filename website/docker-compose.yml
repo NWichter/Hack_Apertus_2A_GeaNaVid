@@ -15,5 +15,7 @@ services:
     environment:
       LLM_BASE_URL: ${LLM_BASE_URL:?}
       LLM_API_KEY: ${LLM_API_KEY:?}
-      LLM_NAME: ${LLM_NAME:-apertus-v1.5-8b}
+      LLM_NAME: ${LLM_NAME:-apertus-v1.5-70b}
+      # the submitted model first, so the demo opens with 70B; rate limits below keep the shared key in budget
+      DEMO_MODELS: ${DEMO_MODELS:-apertus-v1.5-70b,apertus-v1.5-8b}
       TRUST_PROXY: "1"
