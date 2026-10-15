@@ -307,7 +307,8 @@ error for either model. OST's `evaluate.py` gives (a second 70B run the same eve
 
 The labels equal those of the stored runs except for 1 of 986 (8B) and 2 of 986 (70B) cases (the endpoint is
 not fully deterministic at temperature 0). Times here include parsing each of the 21 booklets on first use (and, for 8B, two
-runs sharing the endpoint), so they are higher than the cold runs above. An earlier check on only 40 + 40 of these
+runs sharing the endpoint), so the 8B times and the 70B p95 are higher than in the cold runs above (the 70B mean is
+lower, 1,059 vs 1,274 ms: the endpoint load differed). An earlier check on only 40 + 40 of these
 cases had shown 8B task A at 0.897: that sample happened to hold 4 of the 8B errors (10 % instead of 4 %), with
 labels identical to the full run; 40 cases are too few for a macro-F1.
 
@@ -334,8 +335,8 @@ the cluster-bootstrap interval (the defaults differ by 0.006, 70B − 8B), and t
 (§4); per voting date the defaults range from 0.87 to 1.00. The model-aware defaults (examples
 and decomposition only for 8B, re-check gates per model) were chosen on 450 development claims. The section keywords cover the federal booklet
 layouts of 2018–2026; older layouts are scoped by their outline (stress set, synthetic, no human labels). Main error sources are topical but unsupported claims, attribution (committee vs.
-Federal Council) and contradictions that change one detail, which Apertus calls neutral with high confidence
-(19 of 30 70B errors on development data; the gated re-check finds a few, a broader one over-calls contradiction). Booklets without a text layer are not handled (OST provides text PDFs). Labels and evidence are an automated reading of the booklet, not a voting recommendation.
+Federal Council) and contradictions that change one detail, which Apertus often calls neutral with high confidence
+(missed contradictions: 19 of 30 70B errors on development data, 12 of them called neutral; the gated re-check finds a few, a broader one over-calls contradiction). Booklets without a text layer are not handled (OST provides text PDFs). Labels and evidence are an automated reading of the booklet, not a voting recommendation.
 
 OST's Solution API Guide and starter repository (7–8 October) settled page numbering (1-based PDF page), the
 Beginner page (`null`) and the evidence match (fuzzy quote inside the gold passage). Still open: the weighting
@@ -361,7 +362,7 @@ configured model name nor a model list, the container cannot find the proxy's na
   when the first answer has p < 0.999 keeps almost all of the gain with a twentieth of the re-checks: −19 % tokens
   and −44 % p95 latency for 8B.
 - **Cheap evidence.** Choosing the evidence sentence after the decision costs no tokens and lands in the
-  gold section more often than the whole cited passage (0.79 vs. 0.62 for 8B).
+  gold section more often than the whole cited passage (early ablation: 0.79 vs. 0.62 for 8B).
 - **Read where the claim says it comes from.** "According to the summary" or "the committee thinks" names the
   section that holds the answer; routing on these words raised evidence hits by 7–8 points and macro-F1 by
   0.013–0.017 at fewer tokens, with no model call.
@@ -386,3 +387,5 @@ CDLA-Permissive-2.0; their quoted booklet passages are official texts under Art.
 All HackApertus projects are open-sourced.
 
 ## References
+
+The reference list is rendered in the PDF from [`report/refs.bib`](report/refs.bib).

@@ -14,7 +14,7 @@ whole booklet. The test split was evaluated 26 times (24 configurations); 546 de
 subset give a second check (0.971 / 0.971). By the rule of OST's evaluation script, one of our five quoted
 sentences lies in the gold passage for 97 % (8B) and 96 % (70B) of the 324 gold entailment and contradiction cases.
 Run as OST runs it (Docker, all 493 test rows as task A and as task B, OST's `evaluate.py`): task A 0.961 / 0.965,
-task B 0.977 / 0.976 (8B / 70B).
+task B 0.977 / 0.976 (8B / 70B; 0.974 in a second 70B run).
 Older booklets (1998–2018), which OST v1.1 does not cover, are checked on two synthetic stress sets (26 voting dates,
 802 claims by an open model, labels agreed by two other open models, no human;
 [`track_2a/data/stress-synth/`](track_2a/data/stress-synth/)): reading the proposal structure of older layouts raised
