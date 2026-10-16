@@ -57,6 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
   claimLang.addEventListener("change", updateCliPreview);
   voteTitle.addEventListener("input", updateCliPreview);
   modelSelect.addEventListener("change", updateCliPreview);
+  modelSelect.addEventListener("change", syncModelBadge);
+
+  function syncModelBadge() {
+    if (modelSelect.value) modelBadge.textContent = `Model: ${modelSelect.value}`;
+  }
 
   // Mode Switcher
   function setMode(mode) {
@@ -211,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const big = models.find((m) => /70b/i.test(m));
         if (big) modelSelect.value = big;
+        syncModelBadge();
         modelGroup.classList.toggle("hidden", models.length < 2);
         bookletSources = data.booklet_sources || {};
         if (data.booklets && data.booklets.length) {
